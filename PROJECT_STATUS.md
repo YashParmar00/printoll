@@ -7,7 +7,7 @@ Separate from `RESEARCH.md` (competitor + integration research) and `CLAUDE.md` 
 every new page, component, placeholder, env var, dependency, and blocker. Keep it as scannable
 status tables, not paragraphs.
 
-**Last updated:** after M3 commit (`a8fa7da`); M4 (cart/checkout/Razorpay/COD) in progress.
+**Last updated:** after M4 build (cart/checkout/Razorpay/COD). M4 not yet committed.
 
 ---
 
@@ -16,9 +16,9 @@ status tables, not paragraphs.
 | Milestone | Status | Missing |
 |---|---|---|
 | **M1** Research → RESEARCH.md + CLAUDE.md | ✅ Done | Exact supplier create-order schema deferred to M5. |
-| **M2** Scaffold + design system + homepage | ✅ Done · committed | Imagery placeholder. Commit `553ee31`. |
-| **M3** Products + live personalization preview | ✅ Done · committed `a8fa7da` | Real images; photo-upload *persistence* (preview-only for now). |
-| **M4** Cart/checkout + Razorpay + COD | 🟡 In progress | Cart page, checkout, payments (dummy keys), server price validation. |
+| **M2** Scaffold + design system + homepage | ✅ Done · committed `553ee31` | Imagery placeholder. |
+| **M3** Products + live personalization preview | ✅ Done · committed `a8fa7da` | Photo-upload persistence (preview-only). |
+| **M4** Cart/checkout + Razorpay + COD | ✅ Built · **uncommitted** | Prepaid needs **real Razorpay test keys** to run; orders in local file (not DB); not yet runtime-tested live. |
 | **M5** Supplier integration + admin | ❌ Not started | Supplier client (generic), order push/tracking, `/admin`. |
 | **M6** Remaining pages + SEO | ❌ Not started | About/Contact/FAQ/Category/Track + 4 policies; sitemap/robots/JSON-LD. |
 | **M7** QA + deploy | ❌ Not started | Tests, Lighthouse, deploy, handover doc. |
@@ -29,19 +29,20 @@ status tables, not paragraphs.
 
 | Page | Route/file | Content | Nav-linked | Mobile |
 |---|---|---|---|---|
-| Home | ✅ `src/app/page.tsx` | Real copy, placeholder imagery | ✅ | ✅ |
-| Product ×4 | ✅ `src/app/product/[slug]/page.tsx` (SSG) | Real copy + live preview; placeholder imagery | ✅ from home grid + related | ✅ + sticky ATC bar |
+| Home | ✅ `app/page.tsx` | Real copy, placeholder imagery | ✅ | ✅ |
+| Product ×4 | ✅ `app/product/[slug]/page.tsx` (SSG) | Real copy + live preview | ✅ | ✅ + sticky ATC |
+| Cart | ✅ `app/cart/page.tsx` | Real (localStorage cart) | ✅ header badge | ✅ |
+| Checkout | ✅ `app/checkout/page.tsx` | Real form + payment toggle | ✅ from cart | ✅ |
+| Thank-you | ✅ `app/thank-you/page.tsx` | Real order summary | ✅ post-order | ✅ |
 | Category | ❌ | — | Not linked | — |
 | About | ❌ | — | Linked → 404 | — |
 | Contact | ❌ | — | Not linked | — |
 | FAQ | ❌ | — | Not linked | — |
 | Shipping / Return / Privacy / Terms | ❌ | — | Footer → 404 | — |
 | Track Order | ❌ | — | Linked → 404 | — |
-| Cart | ❌ | — | **Now linked** (header badge, "View cart") → 404 | — |
-| Checkout | ❌ | — | Not linked | — |
 | Admin | ❌ | — | Not linked | — |
 
-Built: Home + 4 Product pages. Dead links degrade to branded 404.
+Built: Home, 4 Product, Cart, Checkout, Thank-you (8 pages).
 
 ---
 
@@ -49,10 +50,11 @@ Built: Home + 4 Product pages. Dead links degrade to branded 404.
 
 | System | Built | Tested | Credentials | Notes |
 |---|---|---|---|---|
-| Razorpay | ❌ | ❌ | none | M4 with **dummy/placeholder test keys** in `.env.local`. |
-| Supplier (TBD) | ❌ | ❌ | none | Generic `supplierSku` only; no Qikink hardcoding. |
-| Database (Postgres/Prisma) | ❌ | ❌ | none | Catalogue still static array; cart is localStorage. |
-| Email (Resend) | ❌ | ❌ | none | M4. |
+| Razorpay | 🟡 Built | ❌ | **placeholder** | Order create (fetch) + payment signature verify + webhook verify done. Prepaid disabled until real `rzp_test_` keys added. |
+| Server-side price validation | ✅ Built | ❌ live | n/a | `/api/checkout` recomputes all prices from catalogue; client sends only slug+qty (price tampering not possible). |
+| Supplier (TBD) | ❌ | ❌ | none | Generic `supplierSku` only. M5. |
+| Database (Postgres/Prisma) | ❌ | ❌ | none | **Orders in local JSON file** (`.data/orders.json`) — placeholder until hosted DB. Interface in `lib/orders.ts`. |
+| Email (Resend) | ❌ | ❌ | none | M4/M6. |
 | Analytics (GA4 / Meta Pixel) | ❌ | ❌ | none | M6–M7. |
 
 ---
@@ -62,17 +64,17 @@ Built: Home + 4 Product pages. Dead links degrade to branded 404.
 | # | Item | Status |
 |---|---|---|
 | 1 | Honest hero trust strip | ✅ Live |
-| 2 | WhatsApp primary support | ✅ Live (FAB + header + footer + mobile nav + PDP) |
+| 2 | WhatsApp primary support | ✅ Live (everywhere incl. thank-you) |
 | 3 | Mobile bottom nav | ✅ Live |
-| 4 | Strike-through anchor pricing | ✅ Live on home **and PDP** |
-| 5 | Delivery-date promise before ATC | ✅ **Live on PDP** ("Order today, delivery by <date>") |
+| 4 | Strike-through anchor pricing | ✅ Live (home + PDP) |
+| 5 | Delivery-date promise before ATC | ✅ Live (PDP) |
 | 6 | Occasion-first + Rakhi countdown | ✅ Live |
-| 7 | Personalizable tag + **live preview** | ✅ **Live** (text engraving + photo overlay) |
+| 7 | Personalizable tag + live preview | ✅ Live |
 | 8 | Footer trust block | ✅ Live |
-| 9 | Positive specific return policy | 🟡 Messaging ✅ (badge on PDP); policy page ❌ |
-| 10 | Free-shipping + prepaid nudge | 🟡 Messaging ✅; cart toggle ❌ (M4) |
+| 9 | Positive specific return policy | 🟡 Messaging ✅; policy page ❌ (M6) |
+| 10 | Free-shipping + **prepaid nudge** | ✅ Live (checkout ₹50-off prepaid toggle + free shipping) |
 
-Live 8/10 · Partial 2/10.
+Live 9/10 · Partial 1/10 (#9 needs the policy page).
 
 ---
 
@@ -80,17 +82,17 @@ Live 8/10 · Partial 2/10.
 
 | Placeholder | Location | Needs |
 |---|---|---|
-| Product mockups (live preview) | `src/components/product/ProductMockup.tsx` (CSS/SVG per `shape`) | Real supplier mockups → phone photos |
-| Product gallery thumbnails | `PersonalizationStudio.tsx` (Main/Detail/Packaging/Lifestyle tiles) | Real secondary shots |
+| Product mockups / gallery | `product/ProductMockup.tsx`, `PersonalizationStudio.tsx` | Real supplier images |
 | Home imagery | `ProductCard.tsx`, `Hero.tsx` | Real images |
 | Testimonials | `home/Testimonials.tsx` (labelled) | Real reviews + photos |
 | Catalogue + prices + supplier SKUs | `src/lib/products.ts` | Confirmed real data |
-| Ratings | `products.ts` `rating` (reviews:0 → "New arrival") | Real ratings |
-| Public email | `site.ts` `email` = hello@auraamarts.com | Forwarding setup (else bounces) |
-| Instagram link · delivery SLA | `site.ts` | Confirm |
-| **Uploaded photo** | preview-only (in-memory object URL); cart stores **filename only** | Real upload/persistence (M4/M5) |
+| Ratings | `products.ts` `rating` (reviews:0) | Real ratings |
+| Uploaded photo | preview-only; cart stores filename | Real upload/persistence (M5) |
+| **Razorpay keys** | `.env.local` (`rzp_test_PLACEHOLDER`) | Real Razorpay **test** keys |
+| **Order store** | `.data/orders.json` (local file) | Hosted Postgres/Prisma |
+| Public email · Instagram · SLA | `site.ts` | Confirm / forwarding |
 
-Real now: phone, address, Rakhi date (9 Aug 2026), brand persona, product copy.
+Real now: phone, address, Rakhi date, brand persona, product copy, checkout math.
 
 ---
 
@@ -98,14 +100,15 @@ Real now: phone, address, Rakhi date (9 Aug 2026), brand persona, product copy.
 
 | Blocker | Gates | Owner |
 |---|---|---|
-| Razorpay test keys (real) | M4 live testing (dummy keys unblock build) | Yash |
+| **Razorpay real test keys** | Prepaid/online payment (COD works without) | Yash |
+| Razorpay webhook secret | webhook verification live | Yash |
+| DB host (Neon/Supabase) + `DATABASE_URL` | order persistence (file is ephemeral on serverless), photo upload | Yash |
 | Supplier choice + API creds | M5 | Yash |
-| DB host (Neon/Supabase) + connection string | catalogue/orders/photo upload in DB | Yash |
-| Resend API key | M4 email | Yash |
+| Resend API key | order emails | Yash |
 | Final SKUs/prices/supplier SKU codes | real product data | Yash |
 | Supplier mockup images | real imagery | Yash |
 | Policy facts (returns, GST, jurisdiction) | M6 policies | Yash |
-| Domain + `hello@` forwarding | pre-launch (email bounce) | Yash |
+| Domain + `hello@` forwarding | pre-launch email | Yash |
 | Deploy target confirm (Vercel) | M7 | Yash |
 
 ---
@@ -115,14 +118,14 @@ Real now: phone, address, Rakhi date (9 Aug 2026), brand persona, product copy.
 | Decision | Choice |
 |---|---|
 | Framework | Next.js 16 + React 19 + TypeScript + Tailwind v4 |
-| Supplier | **Deferred** — generic `supplierSku: string`, no Qikink-specific hardcoding |
-| GitHub push | **Deferred** — local commits only, no remote |
-| Razorpay (M4) | Build now with **dummy/placeholder test keys** (swap for real later; logic identical) |
-| Database | Choice pending; catalogue static, cart in localStorage |
-| Customer-facing identity | Brand persona **"Team AuraaMarts"** — personal name never on storefront |
-| Public email | `hello@auraamarts.com` (needs forwarding); private `ownerEmail` = Gmail |
-| Guest checkout | No forced accounts; admin-only auth later |
-| Cart | M3 = client store (localStorage); cart page + checkout = M4 |
+| Supplier | **Deferred** — generic `supplierSku`, no Qikink hardcoding |
+| GitHub push | **Deferred** — local commits only |
+| Razorpay (M4) | Built with **placeholder test keys**; prepaid gated until real keys (COD works now). Logic identical when keys swapped. |
+| Database | Choice pending; orders in local JSON file for now |
+| Order storage | `lib/orders.ts` interface → file now, DB later |
+| Customer-facing identity | Brand persona **"Team AuraaMarts"** |
+| Public email | `hello@auraamarts.com` (needs forwarding); `ownerEmail` = Gmail |
+| Guest checkout | No forced accounts |
 
 ---
 
@@ -130,9 +133,8 @@ Real now: phone, address, Rakhi date (9 Aug 2026), brand persona, product copy.
 
 | Type | Present |
 |---|---|
-| Dependencies | `next@16.2.10`, `react@19.2.4`, `react-dom@19.2.4` (dev: tailwind v4, typescript, eslint). **No new npm deps in M3** (Dancing Script loads via `next/font`). |
-| Fonts | Playfair Display, Poppins, **Dancing Script** (engraving preview) — all via `next/font/google` |
-| Env vars | none yet (no `.env.local`); added from M4 |
+| Dependencies | `next@16.2.10`, `react@19.2.4`, `react-dom@19.2.4` (dev: tailwind v4, typescript, eslint). **No new npm deps in M4** (Razorpay via fetch + `node:crypto`). |
+| Env vars | `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET`, `RAZORPAY_WEBHOOK_SECRET`, `NEXT_PUBLIC_RAZORPAY_KEY_ID` — placeholders in `.env.local` (git-ignored); template in `.env.example` (committed). |
 
 ---
 
@@ -140,14 +142,16 @@ Real now: phone, address, Rakhi date (9 Aug 2026), brand persona, product copy.
 
 | Area | Files |
 |---|---|
-| `src/app` | `layout.tsx` (fonts + CartProvider), `page.tsx` (home), `not-found.tsx`, `product/[slug]/page.tsx` |
-| `src/lib` | `site.ts`, `format.ts`, `products.ts` (extended), `cart.tsx` (CartProvider/useCart) |
-| `components/site` | `Header.tsx`, `Footer.tsx`, `MobileBottomNav.tsx`, `WhatsAppFab.tsx`, `TrustBadges.tsx`, `CartBadge.tsx` |
-| `components/home` | `Hero.tsx`, `FeaturedProducts.tsx`, `HowItWorks.tsx`, `Occasions.tsx`, `RakhiCountdown.tsx`, `Testimonials.tsx`, `AboutTeaser.tsx` |
-| `components/ui` | `icons.tsx` (+Upload/Plus/Minus), `ProductCard.tsx` |
-| `components/product` | `ProductMockup.tsx` (client), `PersonalizationStudio.tsx` (client), `Breadcrumbs.tsx`, `ProductFAQ.tsx`, `ProductReviews.tsx`, `RelatedProducts.tsx` |
+| `src/app` | `layout.tsx`, `page.tsx`, `not-found.tsx`, `product/[slug]/page.tsx`, `cart/page.tsx`, `checkout/page.tsx`, `thank-you/page.tsx` |
+| `src/app/api` | `checkout/route.ts`, `razorpay/verify/route.ts`, `razorpay/webhook/route.ts` |
+| `src/lib` | `site.ts`, `format.ts`, `products.ts`, `cart.tsx`, `checkout.ts` (pricing+validation), `orders.ts` (store, server-only), `razorpay.ts` (server-only) |
+| `components/site` | Header, Footer, MobileBottomNav, WhatsAppFab, TrustBadges, CartBadge |
+| `components/home` | Hero, FeaturedProducts, HowItWorks, Occasions, RakhiCountdown, Testimonials, AboutTeaser |
+| `components/ui` | icons, ProductCard |
+| `components/product` | ProductMockup, PersonalizationStudio, Breadcrumbs, ProductFAQ, ProductReviews, RelatedProducts |
+| `components/cart` | ClearCart |
 
-Client components (`"use client"`): `RakhiCountdown`, `cart` provider, `CartBadge`, `ProductMockup`, `PersonalizationStudio`. Everything else is a Server Component.
+Client components: `RakhiCountdown`, `cart` provider, `CartBadge`, `ProductMockup`, `PersonalizationStudio`, `cart/page`, `checkout/page`, `ClearCart`. Everything else is a Server Component. `lib/orders.ts` + `lib/razorpay.ts` are server-only (node APIs).
 
 ---
 
@@ -155,18 +159,21 @@ Client components (`"use client"`): `RakhiCountdown`, `cart` provider, `CartBadg
 
 | Commit | Contents |
 |---|---|
-| `553ee31` M2: scaffold, design system, homepage + real contact details | M2 baseline + brand persona + real contacts + Rakhi fix + PROJECT_STATUS.md |
-| `a8fa7da` M3: product pages + live personalization preview + cart store | 4 SSG product pages, personalization studio, cart store, header badge |
+| `553ee31` M2: scaffold, design system, homepage + real contact details | M2 baseline + contacts + status file |
+| `a8fa7da` M3: product pages + live personalization preview + cart store | 4 SSG product pages, studio, cart store |
+| `d4ef837` docs: record M3 commit | status doc update |
+| *(pending)* M4 | Cart + checkout + Razorpay/COD + server price validation — **built, awaiting review** |
 
 ---
 
 ## 11. Changelog
 
-- **M3** — Extended product model (`supplierSku`, `shape`, `description[]`, `highlights`, `faqs`).
-  Added `/product/[slug]` (SSG, 4 pages) with: breadcrumb, live personalization studio (text
-  engraving + photo-upload overlay, live preview), anchor pricing, delivery-date widget, quantity,
-  add-to-cart, sticky mobile ATC bar, description, highlights, native-details FAQs, honest reviews
-  empty-state, "people also bought". Added client cart store (localStorage) + header cart badge.
-  New fonts token (Dancing Script). No new npm deps, no env vars.
-- **M2** — Scaffold + design system + homepage + site chrome + branded 404. Committed `553ee31`.
+- **M4** — Cart page, single-page checkout (validated name/phone/pincode), COD + prepaid toggle with
+  server-side ₹50 prepaid discount. `/api/checkout` recomputes all prices server-side (client sends
+  only slug+qty). Razorpay: order creation (fetch), payment signature verification, webhook verification
+  (`node:crypto`, no SDK). Order store (`lib/orders.ts`, local JSON file). Thank-you page + WhatsApp
+  confirmation + cart clear. Env: `.env.local` placeholder keys + `.env.example`; `.gitignore` updated
+  (`!.env.example`, `/.data`). README rewritten with setup + placeholder-keys note. No new npm deps.
+- **M3** — Product model + `/product/[slug]` (SSG), live personalization studio, cart store, header badge. `a8fa7da`.
+- **M2** — Scaffold + design system + homepage + chrome + 404. `553ee31`.
 - **M1** — RESEARCH.md + CLAUDE.md.
