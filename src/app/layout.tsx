@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Poppins } from "next/font/google";
+import { Playfair_Display, Poppins, Dancing_Script } from "next/font/google";
 import "./globals.css";
 import { site } from "@/lib/site";
+import { CartProvider } from "@/lib/cart";
 import Header from "@/components/site/Header";
 import Footer from "@/components/site/Footer";
 import MobileBottomNav from "@/components/site/MobileBottomNav";
@@ -18,6 +19,14 @@ const poppins = Poppins({
   variable: "--font-poppins",
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
+  display: "swap",
+});
+
+// Script face for the engraving live-preview.
+const dancing = Dancing_Script({
+  variable: "--font-dancing",
+  subsets: ["latin"],
+  weight: ["500", "600", "700"],
   display: "swap",
 });
 
@@ -47,13 +56,18 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${playfair.variable} ${poppins.variable} h-full`}>
+    <html
+      lang="en"
+      className={`${playfair.variable} ${poppins.variable} ${dancing.variable} h-full`}
+    >
       <body className="flex min-h-full flex-col bg-white pb-16 text-charcoal antialiased lg:pb-0">
-        <Header />
-        <main className="flex-1">{children}</main>
-        <Footer />
-        <MobileBottomNav />
-        <WhatsAppFab />
+        <CartProvider>
+          <Header />
+          <main className="flex-1">{children}</main>
+          <Footer />
+          <MobileBottomNav />
+          <WhatsAppFab />
+        </CartProvider>
       </body>
     </html>
   );

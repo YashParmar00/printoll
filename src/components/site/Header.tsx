@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { site, whatsappLink } from "@/lib/site";
 import { WhatsAppIcon } from "@/components/ui/icons";
+import CartBadge from "@/components/site/CartBadge";
 
 const nav = [
   { label: "Shop", href: "/#featured" },
@@ -23,8 +24,8 @@ export default function Header() {
       <div className="border-b border-line bg-white/95 backdrop-blur">
         <div className="container-page flex h-16 items-center justify-between gap-4">
           <Link href="/" className="text-2xl font-semibold tracking-tight" aria-label={`${site.name} home`}>
-            <span className="font-[family-name:var(--font-heading)] text-plum">Auraa</span>
-            <span className="font-[family-name:var(--font-heading)] text-gold-dark">Marts</span>
+            <span className="font-heading text-plum">Auraa</span>
+            <span className="font-heading text-gold-dark">Marts</span>
           </Link>
 
           <nav className="hidden items-center gap-8 lg:flex" aria-label="Primary">
@@ -39,15 +40,18 @@ export default function Header() {
             ))}
           </nav>
 
-          <a
-            href={whatsappLink(`Hi ${site.name}, I have a question about a gift.`)}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 rounded-full border border-line px-3 py-2 text-sm font-medium text-charcoal transition-colors hover:border-[#25D366] hover:text-[#1ebe5a]"
-          >
-            <WhatsAppIcon className="h-5 w-5 text-[#25D366]" />
-            <span className="hidden sm:inline">Chat 10–8</span>
-          </a>
+          <div className="flex items-center gap-1.5">
+            <a
+              href={whatsappLink(`Hi ${site.name}, I have a question about a gift.`)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-full border border-line px-3 py-2 text-sm font-medium text-charcoal transition-colors hover:border-[#25D366] hover:text-[#1ebe5a]"
+            >
+              <WhatsAppIcon className="h-5 w-5 text-[#25D366]" />
+              <span className="hidden sm:inline">Chat 10–8</span>
+            </a>
+            <CartBadge />
+          </div>
         </div>
       </div>
     </header>

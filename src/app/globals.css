@@ -22,6 +22,8 @@
   /* Typography — mapped to next/font CSS variables set in layout.tsx */
   --font-heading: var(--font-playfair), Georgia, "Times New Roman", serif;
   --font-body: var(--font-poppins), system-ui, -apple-system, sans-serif;
+  /* Script face used for the engraving live-preview */
+  --font-script: var(--font-dancing), "Segoe Script", cursive;
 }
 
 :root {
@@ -75,5 +77,11 @@ body {
   }
   .pill {
     @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold;
+  }
+  .field {
+    @apply w-full rounded-xl border border-line bg-white px-4 py-3 text-base text-charcoal outline-none transition placeholder:text-ink/50 focus:border-plum focus:ring-2 focus:ring-plum/20;
+  }
+  .field-label {
+    @apply mb-1.5 block text-sm font-semibold text-charcoal;
   }
 }
