@@ -7,7 +7,7 @@ Separate from `RESEARCH.md` (competitor + integration research) and `CLAUDE.md` 
 every new page, component, placeholder, env var, dependency, and blocker. Keep it as scannable
 status tables, not paragraphs.
 
-**Last updated:** after M3 build (product pages + live personalization preview). M3 not yet committed.
+**Last updated:** after M3 commit (`a8fa7da`); M4 (cart/checkout/Razorpay/COD) in progress.
 
 ---
 
@@ -17,8 +17,8 @@ status tables, not paragraphs.
 |---|---|---|
 | **M1** Research → RESEARCH.md + CLAUDE.md | ✅ Done | Exact supplier create-order schema deferred to M5. |
 | **M2** Scaffold + design system + homepage | ✅ Done · committed | Imagery placeholder. Commit `553ee31`. |
-| **M3** Products + live personalization preview | ✅ Done · **uncommitted** | Real images; photo-upload *persistence* (preview-only for now). |
-| **M4** Cart/checkout + Razorpay + COD | ❌ Not started | Cart page, checkout, payments (dummy keys), server price validation. |
+| **M3** Products + live personalization preview | ✅ Done · committed `a8fa7da` | Real images; photo-upload *persistence* (preview-only for now). |
+| **M4** Cart/checkout + Razorpay + COD | 🟡 In progress | Cart page, checkout, payments (dummy keys), server price validation. |
 | **M5** Supplier integration + admin | ❌ Not started | Supplier client (generic), order push/tracking, `/admin`. |
 | **M6** Remaining pages + SEO | ❌ Not started | About/Contact/FAQ/Category/Track + 4 policies; sitemap/robots/JSON-LD. |
 | **M7** QA + deploy | ❌ Not started | Tests, Lighthouse, deploy, handover doc. |
@@ -156,7 +156,7 @@ Client components (`"use client"`): `RakhiCountdown`, `cart` provider, `CartBadg
 | Commit | Contents |
 |---|---|
 | `553ee31` M2: scaffold, design system, homepage + real contact details | M2 baseline + brand persona + real contacts + Rakhi fix + PROJECT_STATUS.md |
-| *(pending)* M3 | Product pages + live personalization preview + cart store — **built, awaiting review before commit** |
+| `a8fa7da` M3: product pages + live personalization preview + cart store | 4 SSG product pages, personalization studio, cart store, header badge |
 
 ---
 
