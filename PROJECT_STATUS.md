@@ -7,7 +7,7 @@ Separate from `RESEARCH.md` (competitor + integration research) and `CLAUDE.md` 
 every new page, component, placeholder, env var, dependency, and blocker. Keep it as scannable
 status tables, not paragraphs.
 
-**Last updated:** after M4 build (cart/checkout/Razorpay/COD). M4 not yet committed.
+**Last updated:** after M4 commit (`fbd487f`) + COD smoke-test; M5 admin panel in progress.
 
 ---
 
@@ -18,8 +18,8 @@ status tables, not paragraphs.
 | **M1** Research → RESEARCH.md + CLAUDE.md | ✅ Done | Exact supplier create-order schema deferred to M5. |
 | **M2** Scaffold + design system + homepage | ✅ Done · committed `553ee31` | Imagery placeholder. |
 | **M3** Products + live personalization preview | ✅ Done · committed `a8fa7da` | Photo-upload persistence (preview-only). |
-| **M4** Cart/checkout + Razorpay + COD | ✅ Built · **uncommitted** | Prepaid needs **real Razorpay test keys** to run; orders in local file (not DB); not yet runtime-tested live. |
-| **M5** Supplier integration + admin | ❌ Not started | Supplier client (generic), order push/tracking, `/admin`. |
+| **M4** Cart/checkout + Razorpay + COD | ✅ Done · committed `fbd487f` | Prepaid needs real Razorpay test keys; orders in local file (not DB). **COD smoke-tested ✓** (order landed, server total correct). |
+| **M5** Supplier integration + admin | 🟡 In progress | Admin panel being built now. **Supplier auto-push deferred** (no supplier chosen) — stubbed behind `lib/supplier.ts`. |
 | **M6** Remaining pages + SEO | ❌ Not started | About/Contact/FAQ/Category/Track + 4 policies; sitemap/robots/JSON-LD. |
 | **M7** QA + deploy | ❌ Not started | Tests, Lighthouse, deploy, handover doc. |
 
@@ -162,7 +162,8 @@ Client components: `RakhiCountdown`, `cart` provider, `CartBadge`, `ProductMocku
 | `553ee31` M2: scaffold, design system, homepage + real contact details | M2 baseline + contacts + status file |
 | `a8fa7da` M3: product pages + live personalization preview + cart store | 4 SSG product pages, studio, cart store |
 | `d4ef837` docs: record M3 commit | status doc update |
-| *(pending)* M4 | Cart + checkout + Razorpay/COD + server price validation — **built, awaiting review** |
+| `fbd487f` M4: cart + checkout + Razorpay + COD + server-side price validation | cart/checkout/thank-you, 3 API routes, order store, Razorpay verify/webhook |
+| *(pending)* M5 (partial) | Admin panel — **building now, awaiting review** |
 
 ---
 
