@@ -7,8 +7,8 @@ Separate from `RESEARCH.md` (competitor + integration research) and `CLAUDE.md` 
 every new page, component, placeholder, env var, dependency, and blocker. Keep it as scannable
 status tables, not paragraphs.
 
-**Last updated:** after M5 admin panel + **partial-advance payment model** (₹99 advance on personalized
-items, rest COD). **Uncommitted.** Supplier auto-push intentionally deferred (stubbed).
+**Last updated:** after M5 admin + **partial-advance payment model** (₹99 advance on personalized items,
+rest COD) — committed & **pushed to GitHub** (`ca8652b`). Supplier auto-push deferred (stubbed). Next: M6.
 
 ---
 
@@ -20,7 +20,7 @@ items, rest COD). **Uncommitted.** Supplier auto-push intentionally deferred (st
 | **M2** Scaffold + design system + homepage | ✅ Done · committed `553ee31` | Imagery placeholder. |
 | **M3** Products + live personalization preview | ✅ Done · committed `a8fa7da` | Photo-upload persistence (preview-only). |
 | **M4** Cart/checkout + Razorpay + COD | ✅ Done · committed `fbd487f` | Prepaid needs real Razorpay test keys; orders in local file. COD smoke-tested ✓. |
-| **M5** Supplier + admin | 🟡 **Admin done · uncommitted** | **Supplier auto-push deferred** (no supplier chosen) — stubbed in `lib/supplier.ts`. Admin panel built + auth-verified. |
+| **M5** Supplier + admin | ✅ Admin done · committed `ca8652b` | **Supplier auto-push deferred** (no supplier chosen) — stubbed in `lib/supplier.ts`. Admin panel built + auth-verified. |
 | **M6** Remaining pages + SEO | ❌ Not started | About/Contact/FAQ/Category/Track + 4 policies; sitemap/robots/JSON-LD. **FAQ + Return/Refund policy MUST carry matching ₹advance wording** (founder to supply exact copy). |
 | **M7** QA + deploy | ❌ Not started | Tests, Lighthouse, deploy, handover doc. |
 
@@ -108,7 +108,7 @@ Real now: phone, address, Rakhi date, brand persona, product copy, checkout math
 |---|---|
 | Framework | Next.js 16 + React 19 + TypeScript + Tailwind v4 |
 | Supplier | **Deferred** — generic `supplierSku`; auto-push stubbed in `lib/supplier.ts`, no hardcoding |
-| GitHub push | **Deferred** — local commits only |
+| GitHub push | **Connected** → https://github.com/YashParmar00/AuraaMarts — full history pushed to `origin/main`. `.env.local` + `.data/` git-ignored (never pushed). |
 | Razorpay | Placeholder test keys; prepaid gated until real keys (COD works). Logic identical when swapped. |
 | **Payment model** | Personalized items (`requiresAdvance`) → **₹99 online advance + rest COD**; acupressure mat → full COD. Per-product flag (default true for personalized), flip-able. Full-prepaid (−₹50) still offered. **Once real Razorpay keys are added, the full-COD option AUTO-DISAPPEARS for personalized carts** — only `advance_cod` + `prepaid` remain (enforced client-side in `app/checkout/page.tsx` and server-side via the `ADVANCE_REQUIRED` guard in `/api/checkout`). The full-COD fallback for personalized carts is **TEMPORARY / dev-only** while keys are placeholders — not permanent. |
 | Database | Choice pending; orders in local JSON file |
@@ -148,7 +148,10 @@ Server-only (node APIs): `lib/orders.ts`, `lib/razorpay.ts`, `lib/supplier.ts`, 
 
 ---
 
-## 10. Commits (local only, no remote)
+## 10. Commits & remote
+
+**Remote:** `origin` → https://github.com/YashParmar00/AuraaMarts — full history pushed to `origin/main`.
+`.env.local` and `.data/` are git-ignored and are **NOT** on GitHub.
 
 | Commit | Contents |
 |---|---|
@@ -157,7 +160,7 @@ Server-only (node APIs): `lib/orders.ts`, `lib/razorpay.ts`, `lib/supplier.ts`, 
 | `d4ef837` docs | record M3 commit |
 | `fbd487f` M4 | cart + checkout + Razorpay + COD + server-side price validation |
 | `9f5cee3` docs | record M4 commit; ignore local .claude settings |
-| *(pending)* M5 (partial) | **Admin panel + supplier stub + proxy auth — built & verified, awaiting review** |
+| `ca8652b` feat | partial ₹99 advance payment + M5 admin panel + supplier stub + proxy auth |
 
 ---
 
