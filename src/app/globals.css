@@ -84,4 +84,25 @@ body {
   .field-label {
     @apply mb-1.5 block text-sm font-semibold text-charcoal;
   }
+
+  /* Long-form content pages (policies, about, FAQ) */
+  .content h2 {
+    @apply mt-9 text-2xl;
+  }
+  .content h3 {
+    @apply mt-6 text-lg text-charcoal;
+  }
+  .content p {
+    @apply leading-relaxed text-ink;
+  }
+  .content ul {
+    @apply list-disc space-y-1.5 pl-5 text-ink;
+  }
+  .content p a,
+  .content li a {
+    @apply text-plum underline underline-offset-2;
+  }
+  .content strong {
+    @apply text-charcoal;
+  }
 }

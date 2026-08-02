@@ -4,7 +4,7 @@ import { WhatsAppIcon } from "@/components/ui/icons";
 import CartBadge from "@/components/site/CartBadge";
 
 const nav = [
-  { label: "Shop", href: "/#featured" },
+  { label: "Shop", href: "/category" },
   { label: "Occasions", href: "/#occasions" },
   { label: "About", href: "/about" },
   { label: "Track Order", href: "/track" },

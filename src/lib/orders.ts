@@ -47,6 +47,8 @@ export interface Order {
   codDue: number; // collected in cash on delivery (0 for full prepaid)
   currency: string;
   razorpay?: { orderId?: string; paymentId?: string };
+  /** Set when a supplier ships the order (populated by the supplier push, M5+). */
+  trackingUrl?: string;
 }
 
 const DATA_DIR = path.join(process.cwd(), ".data");

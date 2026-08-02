@@ -6,7 +6,7 @@ import { HomeIcon, BagIcon, CalendarHeartIcon, WhatsAppIcon } from "@/components
 export default function MobileBottomNav() {
   const items = [
     { label: "Home", href: "/", Icon: HomeIcon, external: false },
-    { label: "Shop", href: "/#featured", Icon: BagIcon, external: false },
+    { label: "Shop", href: "/category", Icon: BagIcon, external: false },
     { label: "Occasions", href: "/#occasions", Icon: CalendarHeartIcon, external: false },
   ];
 

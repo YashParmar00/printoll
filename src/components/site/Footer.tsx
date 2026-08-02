@@ -3,10 +3,12 @@ import { site, whatsappLink } from "@/lib/site";
 import { RupeeIcon, ShieldIcon, WhatsAppIcon } from "@/components/ui/icons";
 
 const shopLinks = [
-  { label: "All Gifts", href: "/#featured" },
+  { label: "All Gifts", href: "/category" },
   { label: "Shop by Occasion", href: "/#occasions" },
   { label: "Track Order", href: "/track" },
   { label: "About Us", href: "/about" },
+  { label: "FAQ", href: "/faq" },
+  { label: "Contact", href: "/contact" },
 ];
 
 const policyLinks = [

@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getProduct, products, relatedProducts } from "@/lib/products";
 import { inr } from "@/lib/format";
+import { site } from "@/lib/site";
 import Breadcrumbs from "@/components/product/Breadcrumbs";
 import PersonalizationStudio from "@/components/product/PersonalizationStudio";
 import ProductFAQ from "@/components/product/ProductFAQ";
@@ -39,8 +40,25 @@ export default async function ProductPage({
 
   const related = relatedProducts(product.slug, 3);
 
+  // Product structured data. No aggregateRating — we never fabricate reviews.
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.name,
+    description: product.tagline,
+    brand: { "@type": "Brand", name: site.name },
+    offers: {
+      "@type": "Offer",
+      priceCurrency: "INR",
+      price: product.price,
+      availability: "https://schema.org/InStock",
+      url: `${site.url}/product/${product.slug}`,
+    },
+  };
+
   return (
     <div className="pb-24 lg:pb-0">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <div className="container-page pt-6">
         <Breadcrumbs name={product.name} />
       </div>
