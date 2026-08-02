@@ -8,8 +8,8 @@ every new page, component, placeholder, env var, dependency, and blocker. Keep i
 status tables, not paragraphs.
 
 **Last updated:** after **M6** (about/contact/faq/category/track + 4 policies + SEO) — all routes
-verified **200 live**; FAQ + Return advance copy **finalized** (founder's exact wording). Supplier
-auto-push deferred (stubbed).
+verified **200 live**; FAQ + Return advance copy **finalized** (founder's exact wording). Committed &
+pushed (`0b4abdb`). Supplier auto-push deferred (stubbed). M7 not started (awaiting credentials).
 
 ---
 
@@ -152,7 +152,7 @@ Server-only (node APIs): `lib/orders.ts`, `lib/razorpay.ts`, `lib/supplier.ts`, 
 
 ## 10. Commits & remote
 
-**Remote:** `origin` → https://github.com/YashParmar00/AuraaMarts — pushed through `e674fe8`.
+**Remote:** `origin` → https://github.com/YashParmar00/AuraaMarts — pushed through `0b4abdb`.
 `.env.local` and `.data/` are git-ignored and **NOT** on GitHub.
 
 | Commit | Contents |
@@ -164,7 +164,7 @@ Server-only (node APIs): `lib/orders.ts`, `lib/razorpay.ts`, `lib/supplier.ts`, 
 | `9f5cee3` docs | record M4 commit; ignore local .claude settings |
 | `ca8652b` feat | partial ₹99 advance payment + M5 admin panel + supplier stub + proxy auth |
 | `e674fe8` docs | record GitHub remote connected |
-| *(pending)* M6 | **Remaining pages + SEO — built & verified 200 live, awaiting review** |
+| `0b4abdb` M6 | about/contact/faq/category/track + 4 policies + SEO + final advance wording |
 
 ---
 
