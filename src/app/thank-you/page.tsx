@@ -35,9 +35,11 @@ export default async function ThankYouPage({
             Your order <strong className="text-charcoal">{order.orderNumber}</strong> is placed.
             {order.paymentMethod === "cod"
               ? " We'll confirm the details with you on WhatsApp shortly."
-              : order.status === "paid"
-                ? " Payment received — we're on it."
-                : " We'll confirm shortly."}
+              : order.paymentMethod === "advance_cod"
+                ? ` Your ${inr(order.advancePaid)} advance is received — pay the remaining ${inr(order.codDue)} in cash on delivery.`
+                : order.status === "paid"
+                  ? " Payment received — we're on it."
+                  : " We'll confirm shortly."}
           </p>
         ) : (
           <p className="mt-2 text-ink">Your order is placed. We&apos;ll be in touch on WhatsApp shortly.</p>
@@ -75,11 +77,21 @@ export default async function ThankYouPage({
               </div>
             )}
             <div className="flex justify-between border-t border-line pt-2 text-base">
-              <dt className="font-semibold text-charcoal">
-                Total {order.paymentMethod === "cod" ? "(pay on delivery)" : "(paid)"}
-              </dt>
+              <dt className="font-semibold text-charcoal">Order total</dt>
               <dd className="font-bold text-plum">{inr(order.total)}</dd>
             </div>
+            {order.advancePaid > 0 && (
+              <div className="flex justify-between">
+                <dt className="text-ink">Paid online{order.paymentMethod === "advance_cod" ? " (advance)" : ""}</dt>
+                <dd className="font-semibold text-charcoal">{inr(order.advancePaid)}</dd>
+              </div>
+            )}
+            {order.codDue > 0 && (
+              <div className="flex justify-between">
+                <dt className="text-ink">Pay on delivery</dt>
+                <dd className="font-semibold text-charcoal">{inr(order.codDue)}</dd>
+              </div>
+            )}
           </dl>
 
           <div className="mt-4 border-t border-line pt-4 text-sm text-ink">

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import {
   computeTotals,
+  itemsRequireAdvance,
   validateCustomer,
   CheckoutError,
   type CheckoutLineInput,
@@ -9,6 +10,7 @@ import {
 } from "@/lib/checkout";
 import { createOrder, updateOrder } from "@/lib/orders";
 import { isRazorpayConfigured, createRazorpayOrder, publicKeyId } from "@/lib/razorpay";
+import { site } from "@/lib/site";
 
 export const runtime = "nodejs";
 
@@ -16,6 +18,10 @@ interface CheckoutRequestBody {
   items?: CheckoutLineInput[];
   customer?: CustomerInput;
   paymentMethod?: string;
+}
+
+function normalizeMethod(v: unknown): PaymentMethod {
+  return v === "prepaid" ? "prepaid" : v === "advance_cod" ? "advance_cod" : "cod";
 }
 
 export async function POST(req: Request) {
@@ -26,12 +32,40 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Invalid request." }, { status: 400 });
   }
 
-  const paymentMethod: PaymentMethod = body.paymentMethod === "prepaid" ? "prepaid" : "cod";
   const items = body.items ?? [];
+  let paymentMethod = normalizeMethod(body.paymentMethod);
 
   const customerError = validateCustomer(body.customer);
   if (customerError) return NextResponse.json({ error: customerError }, { status: 400 });
   const customer = body.customer as CustomerInput;
+
+  const requiresAdvance = itemsRequireAdvance(items);
+  const razorpayReady = isRazorpayConfigured();
+
+  // If advance was requested but nothing in the cart needs it, treat as full COD.
+  if (paymentMethod === "advance_cod" && !requiresAdvance) paymentMethod = "cod";
+
+  // Online-collecting methods need Razorpay configured.
+  if ((paymentMethod === "prepaid" || paymentMethod === "advance_cod") && !razorpayReady) {
+    return NextResponse.json(
+      {
+        error: "Online payment isn't enabled yet — please choose Cash on Delivery.",
+        code: "RAZORPAY_NOT_CONFIGURED",
+      },
+      { status: 503 },
+    );
+  }
+
+  // Once online is live, personalized carts must pay the advance (no full COD).
+  if (paymentMethod === "cod" && requiresAdvance && razorpayReady) {
+    return NextResponse.json(
+      {
+        error: `Personalized items need a ₹${site.advanceAmount} advance. Please choose the advance option.`,
+        code: "ADVANCE_REQUIRED",
+      },
+      { status: 400 },
+    );
+  }
 
   // Server-side price validation — recomputed from the catalogue, client total ignored.
   let totals;
@@ -42,18 +76,8 @@ export async function POST(req: Request) {
     throw e;
   }
 
-  if (paymentMethod === "prepaid" && !isRazorpayConfigured()) {
-    return NextResponse.json(
-      {
-        error: "Online payment isn't enabled yet — please choose Cash on Delivery.",
-        code: "RAZORPAY_NOT_CONFIGURED",
-      },
-      { status: 503 },
-    );
-  }
-
   const order = createOrder({
-    status: paymentMethod === "prepaid" ? "awaiting_payment" : "pending",
+    status: paymentMethod === "cod" ? "pending" : "awaiting_payment",
     paymentMethod,
     customer: {
       name: customer.name.trim(),
@@ -69,26 +93,38 @@ export async function POST(req: Request) {
     discount: totals.discount,
     shipping: totals.shipping,
     total: totals.total,
+    advancePaid: totals.advancePaid,
+    codDue: totals.codDue,
     currency: totals.currency,
   });
 
-  if (paymentMethod === "prepaid") {
+  // Collect the online portion (full amount for prepaid, the advance for advance_cod).
+  if (paymentMethod === "prepaid" || paymentMethod === "advance_cod") {
     try {
-      const rzp = await createRazorpayOrder(totals.total * 100, order.orderNumber);
+      const rzp = await createRazorpayOrder(totals.advancePaid * 100, order.orderNumber);
       updateOrder(order.orderNumber, { razorpay: { orderId: rzp.id } });
       return NextResponse.json({
         orderNumber: order.orderNumber,
+        paymentMethod,
         total: totals.total,
+        advancePaid: totals.advancePaid,
+        codDue: totals.codDue,
         razorpay: { orderId: rzp.id, amount: rzp.amount, keyId: publicKeyId() },
       });
     } catch {
       updateOrder(order.orderNumber, { status: "cancelled" });
       return NextResponse.json(
-        { error: "Could not start online payment. Please try Cash on Delivery." },
+        { error: "Could not start online payment. Please try again." },
         { status: 502 },
       );
     }
   }
 
-  return NextResponse.json({ orderNumber: order.orderNumber, total: totals.total, paymentMethod: "cod" });
+  return NextResponse.json({
+    orderNumber: order.orderNumber,
+    paymentMethod: "cod",
+    total: totals.total,
+    advancePaid: 0,
+    codDue: totals.codDue,
+  });
 }

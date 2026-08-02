@@ -38,8 +38,11 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Payment verification failed." }, { status: 400 });
   }
 
+  // Full prepaid → "paid". Advance + COD → advance secured, so "confirmed"
+  // (the COD balance is still collected on delivery).
+  const newStatus = order.paymentMethod === "advance_cod" ? "confirmed" : "paid";
   updateOrder(orderNumber, {
-    status: "paid",
+    status: newStatus,
     razorpay: { orderId: razorpay_order_id, paymentId: razorpay_payment_id },
   });
   return NextResponse.json({ ok: true, orderNumber });

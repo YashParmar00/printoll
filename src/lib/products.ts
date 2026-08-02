@@ -30,6 +30,13 @@ export interface Product {
   shape: ProductShape;
   /** Generic fulfilment SKU. Supplier not yet chosen — do NOT hardcode Qikink. */
   supplierSku: string;
+  /**
+   * Require a small online advance (rest as COD) instead of full COD.
+   * Personalized items can't be resold if returned, so they default to true;
+   * non-personalized (e.g. acupressure mat) stay full COD. Per-product config
+   * (not a hardcoded rule) so it can be flipped later.
+   */
+  requiresAdvance: boolean;
   occasions: string[];
   rating: number; // seed ratings are placeholders until real reviews land
   reviews: number;
@@ -54,6 +61,7 @@ export const products: Product[] = [
     personalization: "text",
     shape: "pendant",
     supplierSku: "AM-NECK-ENGRAVE-01",
+    requiresAdvance: true,
     occasions: ["Rakhi", "Birthday", "Anniversary"],
     rating: 4.8,
     reviews: 0,
@@ -95,6 +103,7 @@ export const products: Product[] = [
     personalization: "photo",
     shape: "mug",
     supplierSku: "AM-MUG-PHOTO-01",
+    requiresAdvance: true,
     occasions: ["Birthday", "Anniversary"],
     rating: 4.9,
     reviews: 0,
@@ -135,6 +144,7 @@ export const products: Product[] = [
     personalization: "photo",
     shape: "frame",
     supplierSku: "AM-FRAME-PHOTO-01",
+    requiresAdvance: true,
     occasions: ["Anniversary", "Birthday"],
     rating: 4.8,
     reviews: 0,
@@ -175,6 +185,7 @@ export const products: Product[] = [
     personalization: "none",
     shape: "mat",
     supplierSku: "AM-WELL-ACUMAT-01",
+    requiresAdvance: false,
     occasions: [],
     rating: 4.7,
     reviews: 0,

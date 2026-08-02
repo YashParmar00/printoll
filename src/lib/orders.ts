@@ -16,6 +16,10 @@ export type OrderStatus =
   | "pending" // COD, awaiting founder confirmation
   | "awaiting_payment" // prepaid order created, not yet paid
   | "paid" // prepaid payment verified
+  | "confirmed" // founder confirmed — ready to fulfil
+  | "pushed_to_supplier" // auto-pushed to supplier (enabled once a supplier is chosen)
+  | "shipped"
+  | "delivered"
   | "cancelled";
 
 export interface OrderCustomer {
@@ -39,6 +43,8 @@ export interface Order {
   discount: number;
   shipping: number;
   total: number;
+  advancePaid: number; // collected online now (0 for full COD)
+  codDue: number; // collected in cash on delivery (0 for full prepaid)
   currency: string;
   razorpay?: { orderId?: string; paymentId?: string };
 }

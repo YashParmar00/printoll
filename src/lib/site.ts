@@ -33,7 +33,8 @@ export const site = {
 
   // Store-wide promises used across the UI (kept honest per RESEARCH.md §B).
   deliveryDays: 6, // "order today, delivery by" = today + 6 days
-  prepaidDiscount: 50, // ₹ off for paying online (RTO reducer)
+  prepaidDiscount: 50, // ₹ off for paying full amount online (RTO reducer)
+  advanceAmount: 99, // ₹ advance collected online for items with requiresAdvance; rest is COD
 } as const;
 
 /** Build a wa.me deep link, optionally with a prefilled message. */

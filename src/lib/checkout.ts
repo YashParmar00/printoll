@@ -4,11 +4,17 @@
  * `computeTotals` recomputes every price from the catalogue and IGNORES any
  * price the client sends. The client may import it for a live preview, but the
  * API re-runs it on submit so a tampered cart total can never be trusted.
+ *
+ * Payment models:
+ *   - "cod"         full Cash on Delivery (₹0 online).
+ *   - "prepaid"     pay the full amount online now (₹50 off), ₹0 on delivery.
+ *   - "advance_cod" pay a small ₹advance online now, the rest as COD on delivery.
+ *                   Applies only to carts containing an item with requiresAdvance.
  */
 import { getProduct } from "@/lib/products";
 import { site } from "@/lib/site";
 
-export type PaymentMethod = "cod" | "prepaid";
+export type PaymentMethod = "cod" | "prepaid" | "advance_cod";
 
 export interface CheckoutLineInput {
   slug: string;
@@ -23,6 +29,7 @@ export interface OrderLine {
   qty: number;
   unitPrice: number;
   lineTotal: number;
+  requiresAdvance: boolean;
   personalizationText?: string;
   personalizationPhotoName?: string;
 }
@@ -32,7 +39,10 @@ export interface OrderTotals {
   subtotal: number;
   discount: number;
   shipping: number;
-  total: number;
+  total: number; // final order value
+  advancePaid: number; // collected online now
+  codDue: number; // collected in cash on delivery
+  requiresAdvance: boolean; // any line item requires an advance
   currency: "INR";
 }
 
@@ -46,7 +56,12 @@ export function clampQty(n: unknown): number {
   return Math.min(MAX_QTY, q);
 }
 
-/** Authoritative totals. Prices come from the catalogue, never the client. */
+/** Does this cart contain any item that requires an advance? */
+export function itemsRequireAdvance(items: CheckoutLineInput[]): boolean {
+  return items.some((it) => getProduct(it.slug)?.requiresAdvance ?? false);
+}
+
+/** Authoritative totals + advance/COD split. Prices come from the catalogue. */
 export function computeTotals(items: CheckoutLineInput[], paymentMethod: PaymentMethod): OrderTotals {
   if (!Array.isArray(items) || items.length === 0) {
     throw new CheckoutError("Your cart is empty.");
@@ -62,17 +77,41 @@ export function computeTotals(items: CheckoutLineInput[], paymentMethod: Payment
       qty,
       unitPrice: product.price, // authoritative
       lineTotal: product.price * qty,
+      requiresAdvance: product.requiresAdvance,
       personalizationText: it.personalizationText?.slice(0, 40),
       personalizationPhotoName: it.personalizationPhotoName?.slice(0, 120),
     };
   });
 
+  const requiresAdvance = lineItems.some((li) => li.requiresAdvance);
   const subtotal = lineItems.reduce((s, li) => s + li.lineTotal, 0);
   const shipping = 0; // free shipping baked into price (RESEARCH §B10)
+
+  // Full-prepaid discount applies only when paying the entire amount online.
   const discount = paymentMethod === "prepaid" ? Math.min(site.prepaidDiscount, subtotal) : 0;
   const total = subtotal - discount + shipping;
 
-  return { lineItems, subtotal, discount, shipping, total, currency: "INR" };
+  let advancePaid = 0;
+  let codDue = total;
+  if (paymentMethod === "prepaid") {
+    advancePaid = total;
+    codDue = 0;
+  } else if (paymentMethod === "advance_cod" && requiresAdvance) {
+    advancePaid = Math.min(site.advanceAmount, total);
+    codDue = total - advancePaid;
+  }
+
+  return {
+    lineItems,
+    subtotal,
+    discount,
+    shipping,
+    total,
+    advancePaid,
+    codDue,
+    requiresAdvance,
+    currency: "INR",
+  };
 }
 
 // ---- Customer validation ----------------------------------------------------
