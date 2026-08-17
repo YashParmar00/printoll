@@ -9,7 +9,7 @@ status tables, not paragraphs.
 
 **Last updated:** real Qikink catalog + **curated homepage grid** (4 personalized gifts) + **Razorpay
 TEST keys live & verified** (advance order created, invalid-signature reject, ADVANCE_REQUIRED all pass).
-FAQ/Return product lists updated. Supplier auto-push deferred (stubbed). M7 not started.
+FAQ/Return product lists updated. Committed & pushed (`1ab4cbe`). Supplier auto-push deferred (stubbed). M7 not started.
 
 ---
 
@@ -152,7 +152,7 @@ Server-only (node APIs): `lib/orders.ts`, `lib/razorpay.ts`, `lib/supplier.ts`, 
 
 ## 10. Commits & remote
 
-**Remote:** `origin` → https://github.com/YashParmar00/AuraaMarts — pushed through `0b4abdb`.
+**Remote:** `origin` → https://github.com/YashParmar00/AuraaMarts — pushed through `1ab4cbe`.
 `.env.local` and `.data/` are git-ignored and **NOT** on GitHub.
 
 | Commit | Contents |
@@ -165,6 +165,8 @@ Server-only (node APIs): `lib/orders.ts`, `lib/razorpay.ts`, `lib/supplier.ts`, 
 | `ca8652b` feat | partial ₹99 advance payment + M5 admin panel + supplier stub + proxy auth |
 | `e674fe8` docs | record GitHub remote connected |
 | `0b4abdb` M6 | about/contact/faq/category/track + 4 policies + SEO + final advance wording |
+| `41dd754` docs | record M6 commit |
+| `1ab4cbe` feat | real Qikink catalog (necklace/frame/magic mug/white mug) + curated homepage grid |
 
 ---
 
