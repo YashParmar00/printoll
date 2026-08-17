@@ -7,9 +7,9 @@ Separate from `RESEARCH.md` (competitor + integration research) and `CLAUDE.md` 
 every new page, component, placeholder, env var, dependency, and blocker. Keep it as scannable
 status tables, not paragraphs.
 
-**Last updated:** after **M6** (about/contact/faq/category/track + 4 policies + SEO) — all routes
-verified **200 live**; FAQ + Return advance copy **finalized** (founder's exact wording). Committed &
-pushed (`0b4abdb`). Supplier auto-push deferred (stubbed). M7 not started (awaiting credentials).
+**Last updated:** real Qikink catalog + **curated homepage grid** (4 personalized gifts) + **Razorpay
+TEST keys live & verified** (advance order created, invalid-signature reject, ADVANCE_REQUIRED all pass).
+FAQ/Return product lists updated. Supplier auto-push deferred (stubbed). M7 not started.
 
 ---
 
@@ -33,7 +33,7 @@ pushed (`0b4abdb`). Supplier auto-push deferred (stubbed). M7 not started (await
 | Page | Route | Content | Nav-linked | Mobile |
 |---|---|---|---|---|
 | Home | ✅ `app/page.tsx` | Real copy, placeholder imagery | ✅ | ✅ |
-| Product ×4 | ✅ `app/product/[slug]` (SSG) | Real copy + live preview + JSON-LD | ✅ | ✅ sticky ATC |
+| Product ×5 | ✅ `app/product/[slug]` (SSG) | Real Qikink products + live preview + JSON-LD | ✅ | ✅ sticky ATC |
 | Category | ✅ `app/category` | Personalized grid + occasion/price filter | ✅ Shop | ✅ |
 | Cart | ✅ `app/cart` | localStorage cart | ✅ badge | ✅ |
 | Checkout | ✅ `app/checkout` | Form + COD/advance/prepaid | ✅ | ✅ |
@@ -53,7 +53,7 @@ pushed (`0b4abdb`). Supplier auto-push deferred (stubbed). M7 not started (await
 
 | System | Built | Tested | Credentials | Notes |
 |---|---|---|---|---|
-| Razorpay | 🟡 Built | COD path ✓ | **placeholder** | Order create + signature + webhook verify. Full prepaid **and ₹99 advance** gated until real `rzp_test_` keys. |
+| Razorpay | ✅ Built | **✓ live (test keys)** | test keys in `.env.local` | Advance ₹99 order creation, invalid-signature reject, and ADVANCE_REQUIRED **verified live**. Webhook verify code ready; webhook secret pending (needs public URL, M7). |
 | Server-side price validation | ✅ | ✓ (COD smoke) | n/a | `/api/checkout` recomputes from catalogue; client sends only slug+qty. |
 | Admin auth | ✅ | ✓ (401/200) | dev pw in `.env.local` | HTTP Basic via `src/proxy.ts`. |
 | Track order | ✅ | ✓ (200 live) | n/a | `/api/track` looks up by order # + phone (order store). |
@@ -81,14 +81,14 @@ pushed (`0b4abdb`). Supplier auto-push deferred (stubbed). M7 not started (await
 |---|---|---|
 | Product mockups / gallery / home imagery | `product/ProductMockup.tsx`, `PersonalizationStudio.tsx`, `ProductCard.tsx`, `Hero.tsx` | Real supplier images |
 | Testimonials | `home/Testimonials.tsx` (labelled) | Real reviews + photos |
-| Catalogue + prices + supplier SKUs | `src/lib/products.ts` | Confirmed real data |
+| ✅ RESOLVED — real catalogue | `src/lib/products.ts` | Real Qikink products + prices. Necklace `UP11` + Frame `AF22` confirmed; **mug SKUs `MAGIC-MUG`/`WHITE-MUG` are placeholders** pending sample order |
 | **Policy copy** | `app/*-policy`, `app/terms` | Final legal review before launch |
 | Uploaded photo | preview-only; cart stores filename | Real upload/persistence |
-| Razorpay keys · Admin password | `.env.local` | Real values before deploy |
+| Admin password · Razorpay **live** keys · webhook secret | `.env.local` | Test keys set; production/live values + webhook secret before launch |
 | Order store | `.data/orders.json` | Hosted Postgres/Prisma |
 | Public email · Instagram · SLA | `site.ts` | Confirm / forwarding |
 
-Real now: phone, address, Rakhi date, brand persona, product copy, checkout math, page structure.
+Real now: phone, address, Rakhi date, brand persona, **real Qikink catalogue + prices**, product copy, checkout math, page structure.
 
 ---
 
@@ -96,7 +96,7 @@ Real now: phone, address, Rakhi date, brand persona, product copy, checkout math
 
 | Blocker | Gates | Owner |
 |---|---|---|
-| Razorpay real test keys + webhook secret | online payment (prepaid + ₹99 advance); COD works now | Yash |
+| Razorpay **webhook secret** (needs public URL) | webhook confirmation (payment signature verify already works) | Yash / M7 |
 | Supplier choice + API creds | supplier auto-push (M5 remainder) | Yash |
 | DB host (Neon/Supabase) + `DATABASE_URL` | order persistence, photo upload | Yash |
 | Resend API key | order emails | Yash |
@@ -110,9 +110,9 @@ Real now: phone, address, Rakhi date, brand persona, product copy, checkout math
 | Decision | Choice |
 |---|---|
 | Framework | Next.js 16 + React 19 + TypeScript + Tailwind v4 |
-| Supplier | **Deferred** — generic `supplierSku`; auto-push stubbed in `lib/supplier.ts` |
+| Supplier | **Qikink** for product sourcing (real SKUs `UP11`/`AF22`; mug SKUs pending sample order). Auto-push integration still **stubbed** in `lib/supplier.ts` |
 | GitHub push | **Connected** → https://github.com/YashParmar00/AuraaMarts — full history pushed. `.env.local` + `.data/` git-ignored. |
-| Razorpay | Placeholder test keys; prepaid/advance gated until real keys (COD works). Logic identical when swapped. |
+| Razorpay | **TEST keys live** in `.env.local` — prepaid + ₹99 advance enabled & verified. Webhook secret pending (M7/deploy). |
 | **Payment model** | Personalized items → **₹99 online advance + rest COD**; mat → full COD. Per-product `requiresAdvance` flag. **Once real keys added, full-COD AUTO-DISAPPEARS for personalized carts** (client + `ADVANCE_REQUIRED` server guard); the dev COD fallback is TEMPORARY. |
 | Database | Choice pending; orders in local JSON file |
 | Admin auth | HTTP Basic (single founder login) via `src/proxy.ts` |
@@ -170,6 +170,14 @@ Server-only (node APIs): `lib/orders.ts`, `lib/razorpay.ts`, `lib/supplier.ts`, 
 
 ## 11. Changelog
 
+- **Real catalog** — replaced placeholder catalogue with 4 real Qikink products: Engraved Name Necklace
+  (Bar Pendant `UP11`, silver, ₹549/₹899), Custom Photo Frame (Acrylic w/ stand `AF22`, ₹649/₹999),
+  **Magic Photo Mug** (colour-changing reveal, ₹649/₹999), Custom Photo Mug (White, ₹429/₹699) — all
+  `requiresAdvance: true`. Mat unchanged. FAQ + Return/Refund product lists updated to match. Mug SKUs
+  (`MAGIC-MUG`/`WHITE-MUG`) are placeholders pending sample order. Curated the homepage "Bestselling
+  Gifts" grid to the 4 personalized gifts (mat excluded). **Razorpay TEST keys added + verified** —
+  advance ₹99 order created (real `order_…`), invalid signature rejected, full-COD blocked on
+  personalized carts.
 - **M6 — remaining pages + SEO** — Category (occasion/price filter), About (brand voice), Contact
   (WhatsApp-composing form), FAQ (~10 Qs incl. DRAFT advance), Track Order (`/api/track` lookup by
   order # + phone), 4 policy pages (Shipping, Return & Refund [DRAFT advance copy], Privacy, Terms).

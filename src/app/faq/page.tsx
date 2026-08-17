@@ -19,7 +19,7 @@ const faqs: { q: string; a: string }[] = [
   },
   {
     q: "Why do personalized items need a ₹99 advance?",
-    a: "Since gifts like the Engraved Name Necklace, Custom Photo Mug, and Custom Photo Frame are made specially for you, we ask for a small ₹99 advance before we start personalizing your order. A customized item can't be resold if it's returned, so this advance covers our production cost — you pay the remaining amount in cash when your order is delivered. If we're ever unable to deliver your order, your ₹99 is fully refunded within 5–7 business days.",
+    a: "Since gifts like the Engraved Name Necklace, Custom Photo Frame, Magic Photo Mug, and Custom Photo Mug are made specially for you, we ask for a small ₹99 advance before we start personalizing your order. A customized item can't be resold if it's returned, so this advance covers our production cost — you pay the remaining amount in cash when your order is delivered. If we're ever unable to deliver your order, your ₹99 is fully refunded within 5–7 business days.",
   },
   {
     q: "How does personalization work?",

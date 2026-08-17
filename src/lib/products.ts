@@ -1,11 +1,13 @@
 /**
- * Launch catalogue (seed data). In a later milestone this moves behind
- * Prisma/Postgres, but the shape here mirrors the future Product model so the
- * swap is mechanical.
+ * Launch catalogue — 4 real personalized products sourced from Qikink
+ * (verified from their dashboard catalog + pricing sheet) plus the wellness mat.
+ * In a later milestone this moves behind Prisma/Postgres; the shape here mirrors
+ * the future Product model so the swap is mechanical.
  *
- * TODO(Yash §D): confirm final SKUs, prices and the supplier's own SKU codes.
- * `supplierSku` is intentionally GENERIC — no supplier has been chosen yet, so
- * nothing Qikink-specific is hardcoded anywhere.
+ * `supplierSku` holds the Qikink style code. UP11 (necklace) and AF22 (frame)
+ * are confirmed; the two mug codes are placeholders pending the sample order.
+ * Qikink base costs are noted per product for margin reference (some unconfirmed
+ * until a sample order verifies them).
  */
 
 export type PersonalizationType = "none" | "text" | "photo" | "both";
@@ -28,7 +30,7 @@ export interface Product {
   category: "personalized" | "wellness";
   personalization: PersonalizationType;
   shape: ProductShape;
-  /** Generic fulfilment SKU. Supplier not yet chosen — do NOT hardcode Qikink. */
+  /** Supplier SKU / style code (Qikink). Two mug codes are placeholders for now. */
   supplierSku: string;
   /**
    * Require a small online advance (rest as COD) instead of full COD.
@@ -52,34 +54,36 @@ export interface Product {
 
 export const products: Product[] = [
   {
+    // Qikink "Bar Pendant" (UP11) — cuboid bar, silver. Base cost ~₹110
+    // (before engraving charge; unconfirmed until a sample order verifies).
     slug: "engraved-name-necklace",
     name: "Engraved Name Necklace",
     tagline: "Her name, worn close to the heart.",
-    price: 799,
-    compareAtPrice: 1299,
+    price: 549,
+    compareAtPrice: 899,
     category: "personalized",
     personalization: "text",
     shape: "pendant",
-    supplierSku: "AM-NECK-ENGRAVE-01",
+    supplierSku: "UP11",
     requiresAdvance: true,
     occasions: ["Rakhi", "Birthday", "Anniversary"],
     rating: 4.8,
     reviews: 0,
     description: [
-      "Some gifts get used once and forgotten. A name worn around the neck isn't one of them. Our Engraved Name Necklace turns a single word — her name, your nickname for her, a date you both remember — into something she'll reach for every single day.",
-      "Each piece is engraved to order in a clean, modern script on a gold-tone stainless steel bar that keeps its shine — no green necks, no fading. It arrives in a gift-ready box, so you can hand it over exactly as it should be: ready to open.",
+      "Some gifts get used once and forgotten. A name worn around the neck isn't one of them. Our Engraved Name Necklace turns a single word — her name, your nickname for her, a date you both hold onto — into something she reaches for every single day.",
+      "Each sleek silver bar pendant is engraved to order in a clean, modern script and arrives in a gift-ready box — ready to hand over exactly as it should be.",
     ],
     highlights: [
-      "Gold-tone stainless steel — won't tarnish or fade",
-      "Engraved with any name, up to 12 characters",
-      "Adjustable 45–50 cm chain",
+      "Sleek silver bar pendant, engraved with any name (up to 12 characters)",
+      "Clean, modern engraving done to order",
+      "Adjustable chain — sits comfortably on everyone",
       "Arrives in a gift-ready box",
-      "Cash on Delivery available across India",
+      "Order with a ₹99 advance, pay the rest on delivery",
     ],
     faqs: [
       {
         q: "How do I personalize it?",
-        a: "Type the name in the box on this page and you'll see it on the necklace instantly. That exact spelling is what we engrave — so double-check it before you order.",
+        a: "Type the name in the box on this page and you'll see it on the pendant instantly. That exact spelling is what we engrave — so double-check it before you order.",
       },
       {
         q: "When will it arrive?",
@@ -90,74 +94,34 @@ export const products: Product[] = [
         a: "We replace any item that reaches you damaged or defective within 7 days — just message us on WhatsApp with a photo.",
       },
     ],
-    accent: ["#7c4b7f", "#d4a947"],
-    badge: "Bestseller",
+    accent: ["#7c4b7f", "#b9bcc2"],
   },
   {
-    slug: "custom-photo-mug",
-    name: "Custom Photo Mug",
-    tagline: "Their favourite memory, with every morning chai.",
-    price: 499,
-    compareAtPrice: 799,
-    category: "personalized",
-    personalization: "photo",
-    shape: "mug",
-    supplierSku: "AM-MUG-PHOTO-01",
-    requiresAdvance: true,
-    occasions: ["Birthday", "Anniversary"],
-    rating: 4.9,
-    reviews: 0,
-    description: [
-      "A photo sitting in your phone gets scrolled past. The same photo on a mug they hold every morning? That gets noticed — every single day.",
-      "Upload your favourite picture and we print it edge-to-edge, in full colour, on a sturdy 330 ml ceramic mug that's safe for the microwave and dishwasher. It's the kind of small, thoughtful gift that keeps saying 'I was thinking of you' long after the occasion has passed.",
-    ],
-    highlights: [
-      "330 ml ceramic mug — microwave & dishwasher safe",
-      "Your photo printed edge-to-edge in full colour",
-      "Fade-resistant, long-lasting print",
-      "Upload any JPG, PNG or WebP",
-      "Gift-ready packaging · COD available",
-    ],
-    faqs: [
-      {
-        q: "How do I add my photo?",
-        a: "Upload it in the box on this page and you'll see it on the mug instantly. Use a clear, high-resolution photo for the sharpest print.",
-      },
-      {
-        q: "What if my photo looks low quality?",
-        a: "We check every photo before printing and message you on WhatsApp if anything looks blurry — we'd rather get it right than print something you won't love.",
-      },
-      {
-        q: "When will it arrive?",
-        a: "Made to order and delivered in 5–7 days across India. Cash on Delivery is available.",
-      },
-    ],
-    accent: ["#5b2a5e", "#7c4b7f"],
-  },
-  {
+    // Qikink "Acrylic Photo Frame with Stand" (AF22) — standard, white.
+    // Base cost ~₹180.
     slug: "custom-photo-frame",
     name: "Custom Photo Frame",
-    tagline: "A moment they'll want on the wall forever.",
-    price: 899,
-    compareAtPrice: 1499,
+    tagline: "A moment they'll want on display forever.",
+    price: 649,
+    compareAtPrice: 999,
     category: "personalized",
     personalization: "photo",
     shape: "frame",
-    supplierSku: "AM-FRAME-PHOTO-01",
+    supplierSku: "AF22",
     requiresAdvance: true,
     occasions: ["Anniversary", "Birthday"],
     rating: 4.8,
     reviews: 0,
     description: [
-      "The best moments deserve more than a camera roll. Our Custom Photo Frame gives one of yours a permanent place on the shelf, the desk, or the wall — somewhere it'll catch their eye and make them smile mid-day.",
-      "Upload your photo, see it framed instantly on this page, and we'll print and mount it ready to display. It's a gift that turns a memory into something they can actually hold onto.",
+      "The best moments deserve more than a camera roll. Our Custom Photo Frame gives one of yours a permanent place on the shelf or desk — somewhere it'll catch their eye and make them smile mid-day.",
+      "Upload your photo, see it framed instantly on this page, and we print and mount it in a clear acrylic frame with a stand — ready to display the moment it arrives.",
     ],
     highlights: [
-      "Photo printed and mounted, ready to display",
+      "Clear acrylic photo frame with a stand — ready to display",
+      "Your photo printed in rich, fade-resistant colour",
+      "Standard size with a clean, modern finish",
       "Upload any JPG, PNG or WebP",
-      "Rich, fade-resistant colour",
-      "Sturdy frame with a clean finish",
-      "Gift-ready · COD available",
+      "Order with a ₹99 advance, pay the rest on delivery",
     ],
     faqs: [
       {
@@ -174,6 +138,93 @@ export const products: Product[] = [
       },
     ],
     accent: ["#b28623", "#e7cb82"],
+  },
+  {
+    // Qikink "Magic Coffee Mug" — colour-changing (matte black cold → photo
+    // reveals when hot). Base cost ~₹200. SKU placeholder until sample order.
+    slug: "magic-photo-mug",
+    name: "Magic Photo Mug",
+    tagline: "Pour in hot chai — and watch their photo appear.",
+    price: 649,
+    compareAtPrice: 999,
+    category: "personalized",
+    personalization: "photo",
+    shape: "mug",
+    supplierSku: "MAGIC-MUG", // TODO(Yash): real Qikink SKU after sample order
+    requiresAdvance: true,
+    occasions: ["Birthday", "Anniversary"],
+    rating: 4.9,
+    reviews: 0,
+    description: [
+      "This one gets a reaction. The Magic Photo Mug looks like a plain matte-black mug — until hot chai or coffee is poured in, and their photo slowly appears like magic.",
+      "Upload your favourite picture and we print it as the hidden reveal. It's the gift people pick up, gasp at, and show everyone — a memory that comes to life every single morning.",
+    ],
+    highlights: [
+      "Colour-changing magic mug — matte black when cold, your photo appears when hot",
+      "The reveal effect makes it a genuine showstopper gift",
+      "Full-colour photo, printed to order",
+      "Ceramic — hand-wash to keep the colour-change coating vivid",
+      "Order with a ₹99 advance, pay the rest on delivery",
+    ],
+    faqs: [
+      {
+        q: "How does the magic effect work?",
+        a: "The mug is coated so it looks solid black when cold. Pour in any hot drink and the heat reveals your photo in full colour; it hides again as the mug cools.",
+      },
+      {
+        q: "How do I add my photo?",
+        a: "Upload it in the box on this page — you'll see a preview of what gets printed. Use a clear, high-resolution photo for the sharpest reveal.",
+      },
+      {
+        q: "How should I care for it?",
+        a: "Hand-wash is best — it keeps the colour-changing coating looking its best for longer. Avoid the dishwasher and microwave.",
+      },
+    ],
+    accent: ["#2b2b2b", "#5b2a5e"],
+    badge: "Colour-changing",
+  },
+  {
+    // Qikink "White Coffee Mug" — classic white photo mug. Base cost ~₹115.
+    // SKU placeholder until sample order.
+    slug: "custom-photo-mug",
+    name: "Custom Photo Mug (White)",
+    tagline: "Their favourite memory, with every morning chai.",
+    price: 429,
+    compareAtPrice: 699,
+    category: "personalized",
+    personalization: "photo",
+    shape: "mug",
+    supplierSku: "WHITE-MUG", // TODO(Yash): real Qikink SKU after sample order
+    requiresAdvance: true,
+    occasions: ["Birthday", "Anniversary"],
+    rating: 4.8,
+    reviews: 0,
+    description: [
+      "A photo sitting in your phone gets scrolled past. The same photo on a mug they hold every morning gets noticed — every single day.",
+      "Upload your favourite picture and we print it edge-to-edge, in full colour, on a classic white ceramic mug that's safe for the microwave and dishwasher. Small, thoughtful, and used all the time.",
+    ],
+    highlights: [
+      "Classic white ceramic mug — microwave & dishwasher safe",
+      "Your photo printed edge-to-edge in full colour",
+      "Fade-resistant, long-lasting print",
+      "Upload any JPG, PNG or WebP",
+      "Order with a ₹99 advance, pay the rest on delivery",
+    ],
+    faqs: [
+      {
+        q: "How do I add my photo?",
+        a: "Upload it in the box on this page and you'll see it on the mug instantly. Use a clear, high-resolution photo for the sharpest print.",
+      },
+      {
+        q: "What if my photo looks low quality?",
+        a: "We check every photo before printing and message you on WhatsApp if anything looks blurry — we'd rather get it right than print something you won't love.",
+      },
+      {
+        q: "When will it arrive?",
+        a: "Made to order and delivered in 5–7 days across India.",
+      },
+    ],
+    accent: ["#7c4b7f", "#e7cb82"],
   },
   {
     slug: "acupressure-mat",
@@ -219,7 +270,9 @@ export const products: Product[] = [
   },
 ];
 
-export const featuredProducts = products;
+// Homepage "Bestselling Gifts" row shows only the personalized gifts (the mat
+// stays on its own product page + related rows, not the gifts grid).
+export const featuredProducts = products.filter((p) => p.category === "personalized");
 
 export function getProduct(slug: string): Product | undefined {
   return products.find((p) => p.slug === slug);

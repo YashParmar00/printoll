@@ -29,7 +29,7 @@ export default function ReturnPolicyPage() {
       {/* Advance-payment wording — founder's final approved copy (matches the FAQ). */}
       <h2>Advance Payment for Personalized Items</h2>
       <p>
-        Personalized products (Engraved Name Necklace, Custom Photo Mug, Custom Photo Frame) require a ₹99
+        Personalized products (Engraved Name Necklace, Custom Photo Frame, Magic Photo Mug, Custom Photo Mug) require a ₹99
         advance payment at checkout, with the remaining balance payable via Cash on Delivery. This advance
         is fully refunded if we are unable to fulfill or deliver your order for any reason, and
         non-refundable if you refuse the delivery after your order has already been personalized and
