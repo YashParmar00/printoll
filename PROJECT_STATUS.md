@@ -7,9 +7,9 @@ Separate from `RESEARCH.md` (competitor + integration research) and `CLAUDE.md` 
 every new page, component, placeholder, env var, dependency, and blocker. Keep it as scannable
 status tables, not paragraphs.
 
-**Last updated:** real Qikink catalog + **curated homepage grid** (4 personalized gifts) + **Razorpay
-TEST keys live & verified** (advance order created, invalid-signature reject, ADVANCE_REQUIRED all pass).
-FAQ/Return product lists updated. Committed & pushed (`1ab4cbe`). Supplier auto-push deferred (stubbed). M7 not started.
+**Last updated:** **DB migration** — Supabase Postgres + Prisma. Orders + OrderItem live in Postgres
+(order write verified 0→1); Product/Review models created + catalogue **seeded (5)**. **Uncommitted.**
+Product *reads* still on the static array (client-coupled checkout) — cutover is the documented next step.
 
 ---
 
@@ -58,7 +58,7 @@ FAQ/Return product lists updated. Committed & pushed (`1ab4cbe`). Supplier auto-
 | Admin auth | ✅ | ✓ (401/200) | dev pw in `.env.local` | HTTP Basic via `src/proxy.ts`. |
 | Track order | ✅ | ✓ (200 live) | n/a | `/api/track` looks up by order # + phone (order store). |
 | Supplier (TBD) | ❌ (stub) | ❌ | none | `lib/supplier.ts` + disabled admin push button. |
-| Database (Postgres/Prisma) | ❌ | ❌ | none | Orders in `.data/orders.json` (local file). |
+| Database (Supabase Postgres/Prisma) | ✅ | ✓ order write verified | `.env.local` | **Orders + OrderItem in Postgres** (file store retired). Product + Review models + **catalogue seeded (5)**. Product *reads* still on static array — cutover next. |
 | Email (Resend) / Analytics (GA4/Pixel) | ❌ | ❌ | none | M7 / not started. |
 
 ---
@@ -85,7 +85,7 @@ FAQ/Return product lists updated. Committed & pushed (`1ab4cbe`). Supplier auto-
 | **Policy copy** | `app/*-policy`, `app/terms` | Final legal review before launch |
 | Uploaded photo | preview-only; cart stores filename | Real upload/persistence |
 | Admin password · Razorpay **live** keys · webhook secret | `.env.local` | Test keys set; production/live values + webhook secret before launch |
-| Order store | `.data/orders.json` | Hosted Postgres/Prisma |
+| ✅ RESOLVED — order store | `lib/orders.ts` (Prisma) | Orders now in Supabase Postgres (was `.data/orders.json`) |
 | Public email · Instagram · SLA | `site.ts` | Confirm / forwarding |
 
 Real now: phone, address, Rakhi date, brand persona, **real Qikink catalogue + prices**, product copy, checkout math, page structure.
@@ -98,7 +98,7 @@ Real now: phone, address, Rakhi date, brand persona, **real Qikink catalogue + p
 |---|---|---|
 | Razorpay **webhook secret** (needs public URL) | webhook confirmation (payment signature verify already works) | Yash / M7 |
 | Supplier choice + API creds | supplier auto-push (M5 remainder) | Yash |
-| DB host (Neon/Supabase) + `DATABASE_URL` | order persistence, photo upload | Yash |
+| Photo-upload storage (Supabase Storage / Cloudinary) | persisting uploaded personalization photos | Yash |
 | Resend API key | order emails | Yash |
 | Final SKUs/prices/supplier SKUs · supplier images | real product data/imagery | Yash |
 | Strong `ADMIN_PASSWORD` · Domain + `hello@` forwarding · Deploy target | pre-launch / M7 | Yash |
@@ -114,7 +114,7 @@ Real now: phone, address, Rakhi date, brand persona, **real Qikink catalogue + p
 | GitHub push | **Connected** → https://github.com/YashParmar00/AuraaMarts — full history pushed. `.env.local` + `.data/` git-ignored. |
 | Razorpay | **TEST keys live** in `.env.local` — prepaid + ₹99 advance enabled & verified. Webhook secret pending (M7/deploy). |
 | **Payment model** | Personalized items → **₹99 online advance + rest COD**; mat → full COD. Per-product `requiresAdvance` flag. **Once real keys added, full-COD AUTO-DISAPPEARS for personalized carts** (client + `ADVANCE_REQUIRED` server guard); the dev COD fallback is TEMPORARY. |
-| Database | Choice pending; orders in local JSON file |
+| Database | **Supabase Postgres (ap-south-1) + Prisma.** Schema applied via `prisma db push` (Supabase pooler can't create the shadow DB `migrate dev` needs). Orders in Postgres; catalogue seeded. |
 | Admin auth | HTTP Basic (single founder login) via `src/proxy.ts` |
 | Middleware | Next 16 `proxy.ts` (renamed from deprecated `middleware.ts`) |
 | Customer-facing identity | Brand persona "Team AuraaMarts" |
@@ -126,9 +126,9 @@ Real now: phone, address, Rakhi date, brand persona, **real Qikink catalogue + p
 
 | Type | Present |
 |---|---|
-| Dependencies | `next@16.2.10`, `react@19.2.4`, `react-dom@19.2.4` (dev: tailwind v4, typescript, eslint). **No new npm deps.** |
+| Dependencies | `next@16.2.10`, `react@19.2.4`, `react-dom@19.2.4`, **`@prisma/client@6.19.3`** (dev: tailwind v4, typescript, eslint, **`prisma@6.19.3`**, **`dotenv-cli`**, **`tsx`**). |
 | Fonts | Playfair Display, Poppins, Dancing Script (engraving) — `next/font/google` |
-| Env vars | `RAZORPAY_KEY_ID/_SECRET/_WEBHOOK_SECRET`, `NEXT_PUBLIC_RAZORPAY_KEY_ID`, `ADMIN_USER/_PASSWORD` — placeholders in `.env.local` (ignored); template `.env.example`. |
+| Env vars | `RAZORPAY_KEY_ID/_SECRET/_WEBHOOK_SECRET`, `NEXT_PUBLIC_RAZORPAY_KEY_ID`, `ADMIN_USER/_PASSWORD`, **`DATABASE_URL`/`DIRECT_URL`** (Supabase) — in `.env.local` (ignored); template `.env.example`. |
 
 ---
 
@@ -139,7 +139,8 @@ Real now: phone, address, Rakhi date, brand persona, **real Qikink catalogue + p
 | `src/app` | `layout`, `page`, `not-found`, `product/[slug]`, `category`, `cart`, `checkout`, `thank-you`, `about`, `contact`, `faq`, `track`, `shipping-policy`, `return-policy`, `privacy-policy`, `terms`, `admin` (+`admin/actions.ts`), `sitemap.ts`, `robots.ts` |
 | `src/app/api` | `checkout`, `razorpay/verify`, `razorpay/webhook`, `track` |
 | `src` | `proxy.ts` (admin basic-auth) |
-| `src/lib` | `site`, `format`, `products`, `cart.tsx`, `checkout`, `orders` (store), `razorpay`, `supplier` (stub) |
+| `src/lib` | `site`, `format`, `products`, `cart.tsx`, `checkout`, `orders` (Prisma store), `razorpay`, `supplier` (stub), **`prisma`** (client singleton) |
+| `prisma/` | `schema.prisma` (Product/Review/Order/OrderItem), `seed.ts` (5 products), `check.ts` (db check helper) |
 | `components/site` | Header, Footer, MobileBottomNav, WhatsAppFab, TrustBadges, CartBadge, **PageShell** |
 | `components/home` | Hero, FeaturedProducts, HowItWorks, Occasions, RakhiCountdown, Testimonials, AboutTeaser |
 | `components/ui` | icons, ProductCard |
@@ -172,6 +173,11 @@ Server-only (node APIs): `lib/orders.ts`, `lib/razorpay.ts`, `lib/supplier.ts`, 
 
 ## 11. Changelog
 
+- **DB migration (Supabase Postgres + Prisma)** — schema (Product, Review, Order, OrderItem) applied via
+  `prisma db push`; `lib/prisma.ts` singleton; `prisma/seed.ts` seeded 5 products; `lib/orders.ts` rewritten
+  on Prisma (async, same `Order` shape via mapper) with all call sites awaited; `.data/orders.json` retired.
+  Verified: placing a COD order writes to Supabase (orders 0→1). Product *reads* still on the static array
+  (client checkout coupling) — cutover deferred. New deps: prisma, @prisma/client, dotenv-cli, tsx. Not committed.
 - **Real catalog** — replaced placeholder catalogue with 4 real Qikink products: Engraved Name Necklace
   (Bar Pendant `UP11`, silver, ₹549/₹899), Custom Photo Frame (Acrylic w/ stand `AF22`, ₹649/₹999),
   **Magic Photo Mug** (colour-changing reveal, ₹649/₹999), Custom Photo Mug (White, ₹429/₹699) — all
