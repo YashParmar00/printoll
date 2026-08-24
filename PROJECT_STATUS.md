@@ -8,7 +8,7 @@ every new page, component, placeholder, env var, dependency, and blocker. Keep i
 status tables, not paragraphs.
 
 **Last updated:** **DB migration** — Supabase Postgres + Prisma. Orders + OrderItem live in Postgres
-(order write verified 0→1); Product/Review models created + catalogue **seeded (5)**. **Uncommitted.**
+(order write verified 0→1); Product/Review models created + catalogue **seeded (5)**. Committed & pushed (`7691adf`).
 Product *reads* still on the static array (client-coupled checkout) — cutover is the documented next step.
 
 ---
@@ -153,7 +153,7 @@ Server-only (node APIs): `lib/orders.ts`, `lib/razorpay.ts`, `lib/supplier.ts`, 
 
 ## 10. Commits & remote
 
-**Remote:** `origin` → https://github.com/YashParmar00/AuraaMarts — pushed through `1ab4cbe`.
+**Remote:** `origin` → https://github.com/YashParmar00/AuraaMarts — pushed through `7691adf`.
 `.env.local` and `.data/` are git-ignored and **NOT** on GitHub.
 
 | Commit | Contents |
@@ -168,6 +168,8 @@ Server-only (node APIs): `lib/orders.ts`, `lib/razorpay.ts`, `lib/supplier.ts`, 
 | `0b4abdb` M6 | about/contact/faq/category/track + 4 policies + SEO + final advance wording |
 | `41dd754` docs | record M6 commit |
 | `1ab4cbe` feat | real Qikink catalog (necklace/frame/magic mug/white mug) + curated homepage grid |
+| `aa0e740` docs | record catalog/grid commit + Razorpay test keys verified |
+| `7691adf` feat | migrate orders to Supabase Postgres via Prisma + seed catalogue |
 
 ---
 
