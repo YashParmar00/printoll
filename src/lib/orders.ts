@@ -1,23 +1,21 @@
 /**
- * Order store — SERVER ONLY (uses node:fs). Backed by a local JSON file so
- * orders survive dev restarts and are visible to the founder. This is a
- * placeholder for the real Postgres/Prisma store (M5) — the exported functions
- * are the interface that swap keeps stable.
+ * Order store — SERVER ONLY. Backed by Prisma/Postgres (Supabase).
  *
- * NOTE: file storage is fine for local dev, but is ephemeral on serverless
- * hosts (Vercel). Moving to a hosted DB is a blocker tracked in PROJECT_STATUS.
+ * The exported `Order` shape (nested `customer` + `razorpay`) is unchanged from
+ * the old file store, via the `toOrder` mapper — so callers only needed to add
+ * `await`. Replaces the previous `.data/orders.json` file store.
  */
-import fs from "node:fs";
-import path from "node:path";
 import crypto from "node:crypto";
+import type { Order as DbOrder, OrderItem as DbOrderItem } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 import type { OrderLine, PaymentMethod } from "@/lib/checkout";
 
 export type OrderStatus =
   | "pending" // COD, awaiting founder confirmation
-  | "awaiting_payment" // prepaid order created, not yet paid
-  | "paid" // prepaid payment verified
-  | "confirmed" // founder confirmed — ready to fulfil
-  | "pushed_to_supplier" // auto-pushed to supplier (enabled once a supplier is chosen)
+  | "awaiting_payment" // online order created, not yet paid
+  | "paid" // full prepaid verified
+  | "confirmed" // founder confirmed / advance secured — ready to fulfil
+  | "pushed_to_supplier" // auto-pushed to supplier (once a supplier is chosen)
   | "shipped"
   | "delivered"
   | "cancelled";
@@ -43,28 +41,11 @@ export interface Order {
   discount: number;
   shipping: number;
   total: number;
-  advancePaid: number; // collected online now (0 for full COD)
-  codDue: number; // collected in cash on delivery (0 for full prepaid)
+  advancePaid: number;
+  codDue: number;
   currency: string;
   razorpay?: { orderId?: string; paymentId?: string };
-  /** Set when a supplier ships the order (populated by the supplier push, M5+). */
   trackingUrl?: string;
-}
-
-const DATA_DIR = path.join(process.cwd(), ".data");
-const FILE = path.join(DATA_DIR, "orders.json");
-
-function readAll(): Order[] {
-  try {
-    return JSON.parse(fs.readFileSync(FILE, "utf8")) as Order[];
-  } catch {
-    return [];
-  }
-}
-
-function writeAll(orders: Order[]): void {
-  fs.mkdirSync(DATA_DIR, { recursive: true });
-  fs.writeFileSync(FILE, JSON.stringify(orders, null, 2), "utf8");
 }
 
 export function generateOrderNumber(): string {
@@ -74,36 +55,129 @@ export function generateOrderNumber(): string {
   return `AM-${ymd}-${rand}`;
 }
 
-export function createOrder(input: Omit<Order, "orderNumber" | "createdAt">): Order {
-  const order: Order = {
-    ...input,
-    orderNumber: generateOrderNumber(),
-    createdAt: new Date().toISOString(),
+/** Reshape a Prisma row (+items) back into the app's `Order` shape. */
+function toOrder(row: DbOrder & { items: DbOrderItem[] }): Order {
+  return {
+    orderNumber: row.orderNumber,
+    createdAt: row.createdAt.toISOString(),
+    status: row.status as OrderStatus,
+    paymentMethod: row.paymentMethod as PaymentMethod,
+    customer: {
+      name: row.customerName,
+      phone: row.customerPhone,
+      email: row.customerEmail ?? undefined,
+      address: row.address,
+      city: row.city,
+      state: row.state,
+      pincode: row.pincode,
+    },
+    items: row.items.map((it) => ({
+      slug: it.slug,
+      name: it.name,
+      qty: it.qty,
+      unitPrice: it.unitPrice,
+      lineTotal: it.lineTotal,
+      requiresAdvance: it.requiresAdvance,
+      personalizationText: it.personalizationText ?? undefined,
+      personalizationPhotoName: it.personalizationPhotoName ?? undefined,
+    })),
+    subtotal: row.subtotal,
+    discount: row.discount,
+    shipping: row.shipping,
+    total: row.total,
+    advancePaid: row.advancePaid,
+    codDue: row.codDue,
+    currency: row.currency,
+    razorpay:
+      row.razorpayOrderId || row.razorpayPaymentId
+        ? { orderId: row.razorpayOrderId ?? undefined, paymentId: row.razorpayPaymentId ?? undefined }
+        : undefined,
+    trackingUrl: row.trackingUrl ?? undefined,
   };
-  const orders = readAll();
-  orders.push(order);
-  writeAll(orders);
-  return order;
 }
 
-export function getOrder(orderNumber: string): Order | undefined {
-  return readAll().find((o) => o.orderNumber === orderNumber);
+export async function createOrder(input: Omit<Order, "orderNumber" | "createdAt">): Promise<Order> {
+  const row = await prisma.order.create({
+    data: {
+      orderNumber: generateOrderNumber(),
+      status: input.status,
+      paymentMethod: input.paymentMethod,
+      customerName: input.customer.name,
+      customerPhone: input.customer.phone,
+      customerEmail: input.customer.email ?? null,
+      address: input.customer.address,
+      city: input.customer.city,
+      state: input.customer.state,
+      pincode: input.customer.pincode,
+      subtotal: input.subtotal,
+      discount: input.discount,
+      shipping: input.shipping,
+      total: input.total,
+      advancePaid: input.advancePaid,
+      codDue: input.codDue,
+      currency: input.currency,
+      razorpayOrderId: input.razorpay?.orderId ?? null,
+      razorpayPaymentId: input.razorpay?.paymentId ?? null,
+      trackingUrl: input.trackingUrl ?? null,
+      items: {
+        create: input.items.map((it) => ({
+          slug: it.slug,
+          name: it.name,
+          qty: it.qty,
+          unitPrice: it.unitPrice,
+          lineTotal: it.lineTotal,
+          requiresAdvance: it.requiresAdvance,
+          personalizationText: it.personalizationText ?? null,
+          personalizationPhotoName: it.personalizationPhotoName ?? null,
+        })),
+      },
+    },
+    include: { items: true },
+  });
+  return toOrder(row);
 }
 
-/** Track-order lookup (M6) uses number + phone so orders aren't guessable. */
-export function getOrderByNumberAndPhone(orderNumber: string, phone: string): Order | undefined {
-  return readAll().find((o) => o.orderNumber === orderNumber && o.customer.phone === phone);
+export async function getOrder(orderNumber: string): Promise<Order | undefined> {
+  const row = await prisma.order.findUnique({ where: { orderNumber }, include: { items: true } });
+  return row ? toOrder(row) : undefined;
 }
 
-export function updateOrder(orderNumber: string, patch: Partial<Order>): Order | undefined {
-  const orders = readAll();
-  const idx = orders.findIndex((o) => o.orderNumber === orderNumber);
-  if (idx < 0) return undefined;
-  orders[idx] = { ...orders[idx], ...patch };
-  writeAll(orders);
-  return orders[idx];
+/** Track-order lookup — number + phone so orders aren't guessable. */
+export async function getOrderByNumberAndPhone(
+  orderNumber: string,
+  phone: string,
+): Promise<Order | undefined> {
+  const row = await prisma.order.findFirst({
+    where: { orderNumber, customerPhone: phone },
+    include: { items: true },
+  });
+  return row ? toOrder(row) : undefined;
 }
 
-export function listOrders(): Order[] {
-  return readAll().sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+export async function updateOrder(orderNumber: string, patch: Partial<Order>): Promise<Order | undefined> {
+  const data: Record<string, unknown> = {};
+  if (patch.status !== undefined) data.status = patch.status;
+  if (patch.trackingUrl !== undefined) data.trackingUrl = patch.trackingUrl;
+  if (patch.razorpay !== undefined) {
+    if (patch.razorpay.orderId !== undefined) data.razorpayOrderId = patch.razorpay.orderId;
+    if (patch.razorpay.paymentId !== undefined) data.razorpayPaymentId = patch.razorpay.paymentId;
+  }
+  try {
+    const row = await prisma.order.update({
+      where: { orderNumber },
+      data,
+      include: { items: true },
+    });
+    return toOrder(row);
+  } catch {
+    return undefined; // order not found
+  }
+}
+
+export async function listOrders(): Promise<Order[]> {
+  const rows = await prisma.order.findMany({
+    include: { items: true },
+    orderBy: { createdAt: "desc" },
+  });
+  return rows.map(toOrder);
 }

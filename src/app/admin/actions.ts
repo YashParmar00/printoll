@@ -10,7 +10,7 @@ export async function updateStatusAction(formData: FormData) {
   const orderNumber = String(formData.get("orderNumber") ?? "");
   const status = String(formData.get("status") ?? "") as OrderStatus;
   if (orderNumber && MANUAL_STATUSES.includes(status)) {
-    updateOrder(orderNumber, { status });
+    await updateOrder(orderNumber, { status });
     revalidatePath("/admin");
   }
 }

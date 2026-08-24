@@ -15,7 +15,7 @@ export default async function ThankYouPage({
   searchParams: Promise<{ order?: string }>;
 }) {
   const { order: orderNumber } = await searchParams;
-  const order = orderNumber ? getOrder(orderNumber) : undefined;
+  const order = orderNumber ? await getOrder(orderNumber) : undefined;
 
   const waMessage = order
     ? `Hi ${site.name}, I just placed order ${order.orderNumber} (${order.paymentMethod === "cod" ? "Cash on Delivery" : "Paid online"}). Please confirm.`

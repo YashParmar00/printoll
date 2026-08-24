@@ -76,7 +76,7 @@ export async function POST(req: Request) {
     throw e;
   }
 
-  const order = createOrder({
+  const order = await createOrder({
     status: paymentMethod === "cod" ? "pending" : "awaiting_payment",
     paymentMethod,
     customer: {
@@ -102,7 +102,7 @@ export async function POST(req: Request) {
   if (paymentMethod === "prepaid" || paymentMethod === "advance_cod") {
     try {
       const rzp = await createRazorpayOrder(totals.advancePaid * 100, order.orderNumber);
-      updateOrder(order.orderNumber, { razorpay: { orderId: rzp.id } });
+      await updateOrder(order.orderNumber, { razorpay: { orderId: rzp.id } });
       return NextResponse.json({
         orderNumber: order.orderNumber,
         paymentMethod,
@@ -112,7 +112,7 @@ export async function POST(req: Request) {
         razorpay: { orderId: rzp.id, amount: rzp.amount, keyId: publicKeyId() },
       });
     } catch {
-      updateOrder(order.orderNumber, { status: "cancelled" });
+      await updateOrder(order.orderNumber, { status: "cancelled" });
       return NextResponse.json(
         { error: "Could not start online payment. Please try again." },
         { status: 502 },

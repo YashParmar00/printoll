@@ -19,7 +19,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Missing payment details." }, { status: 400 });
   }
 
-  const order = getOrder(orderNumber);
+  const order = await getOrder(orderNumber);
   if (!order) return NextResponse.json({ error: "Order not found." }, { status: 404 });
 
   // Defense-in-depth: the paid Razorpay order must match the one we created.
@@ -34,14 +34,14 @@ export async function POST(req: Request) {
   });
 
   if (!valid) {
-    updateOrder(orderNumber, { status: "cancelled" });
+    await updateOrder(orderNumber, { status: "cancelled" });
     return NextResponse.json({ error: "Payment verification failed." }, { status: 400 });
   }
 
   // Full prepaid → "paid". Advance + COD → advance secured, so "confirmed"
   // (the COD balance is still collected on delivery).
   const newStatus = order.paymentMethod === "advance_cod" ? "confirmed" : "paid";
-  updateOrder(orderNumber, {
+  await updateOrder(orderNumber, {
     status: newStatus,
     razorpay: { orderId: razorpay_order_id, paymentId: razorpay_payment_id },
   });

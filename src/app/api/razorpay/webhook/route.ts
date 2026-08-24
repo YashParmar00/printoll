@@ -30,9 +30,10 @@ export async function POST(req: Request) {
     const rzpOrderId = event.payload?.payment?.entity?.order_id;
     const paymentId = event.payload?.payment?.entity?.id;
     if (rzpOrderId) {
-      const order = listOrders().find((o) => o.razorpay?.orderId === rzpOrderId);
+      const orders = await listOrders();
+      const order = orders.find((o) => o.razorpay?.orderId === rzpOrderId);
       if (order && order.status !== "paid") {
-        updateOrder(order.orderNumber, {
+        await updateOrder(order.orderNumber, {
           status: "paid",
           razorpay: { orderId: rzpOrderId, paymentId },
         });

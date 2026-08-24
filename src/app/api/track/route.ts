@@ -13,7 +13,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Enter your order number and phone." }, { status: 400 });
   }
 
-  const order = getOrderByNumberAndPhone(orderNumber, phone);
+  const order = await getOrderByNumberAndPhone(orderNumber, phone);
   if (!order) return NextResponse.json({ found: false });
 
   // Return only what's safe to show — no full address.

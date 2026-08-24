@@ -48,8 +48,8 @@ function StatusButton({
   );
 }
 
-export default function AdminPage() {
-  const orders = listOrders();
+export default async function AdminPage() {
+  const orders = await listOrders();
   const todayStr = new Date().toDateString();
   const active = orders.filter((o) => o.status !== "cancelled");
   const revenue = active.reduce((s, o) => s + o.total, 0);
@@ -71,7 +71,7 @@ export default function AdminPage() {
       </div>
 
       <p className="mt-4 rounded-xl border border-line bg-cream px-4 py-3 text-sm text-ink">
-        Orders are stored in a local file (<code>.data/orders.json</code>) until a hosted database is added.
+        Orders are stored in <strong>Supabase Postgres</strong> (via Prisma).
         Automatic supplier push is <strong>stubbed</strong> — it turns on once a supplier is chosen
         (<code>src/lib/supplier.ts</code>).
       </p>

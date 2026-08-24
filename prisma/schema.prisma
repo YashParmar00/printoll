@@ -1,0 +1,96 @@
+// AuraaMarts — Prisma schema (Supabase Postgres).
+// Mirrors the shapes in src/lib/orders.ts and src/lib/products.ts.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL") // pooled (pgbouncer=true) — app runtime
+  directUrl = env("DIRECT_URL")   // session pooler — migrations
+}
+
+model Product {
+  id              String   @id @default(cuid())
+  slug            String   @unique
+  name            String
+  tagline         String
+  price           Int
+  compareAtPrice  Int
+  category        String // "personalized" | "wellness"
+  personalization String // "none" | "text" | "photo" | "both"
+  shape           String // "pendant" | "mug" | "frame" | "mat"
+  supplierSku     String
+  requiresAdvance Boolean  @default(true)
+  occasions       String[]
+  rating          Float    @default(0)
+  reviewsCount    Int      @default(0)
+  description     String[]
+  highlights      String[]
+  faqs            Json // [{ q, a }]
+  accent          String[] // [from, to]
+  badge           String?
+  active          Boolean  @default(true)
+  sortOrder       Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  reviews         Review[]
+}
+
+model Review {
+  id          String   @id @default(cuid())
+  product     Product  @relation(fields: [productSlug], references: [slug], onDelete: Cascade)
+  productSlug String
+  name        String
+  rating      Int
+  text        String
+  photoUrl    String?
+  approved    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  @@index([productSlug])
+}
+
+model Order {
+  id                String      @id @default(cuid())
+  orderNumber       String      @unique
+  status            String // pending | awaiting_payment | paid | confirmed | pushed_to_supplier | shipped | delivered | cancelled
+  paymentMethod     String // cod | prepaid | advance_cod
+  customerName      String
+  customerPhone     String
+  customerEmail     String?
+  address           String
+  city              String
+  state             String
+  pincode           String
+  subtotal          Int
+  discount          Int
+  shipping          Int
+  total             Int
+  advancePaid       Int         @default(0)
+  codDue            Int         @default(0)
+  currency          String      @default("INR")
+  razorpayOrderId   String?
+  razorpayPaymentId String?
+  trackingUrl       String?
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+  items             OrderItem[]
+
+  @@index([customerPhone])
+}
+
+model OrderItem {
+  id                       String  @id @default(cuid())
+  order                    Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderId                  String
+  slug                     String
+  name                     String
+  qty                      Int
+  unitPrice                Int
+  lineTotal                Int
+  requiresAdvance          Boolean @default(false)
+  personalizationText      String?
+  personalizationPhotoName String?
+}
