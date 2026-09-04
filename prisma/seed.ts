@@ -24,6 +24,8 @@ async function main() {
       faqs: p.faqs as unknown as Prisma.InputJsonValue,
       accent: p.accent,
       badge: p.badge ?? null,
+      imageUrl: p.imageUrl ?? null,
+      imageUrls: p.imageUrls ?? (p.imageUrl ? [p.imageUrl] : []),
       active: true,
       sortOrder: i,
     };

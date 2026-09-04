@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { listOrders, type OrderStatus } from "@/lib/orders";
 import { inr } from "@/lib/format";
 import { updateStatusAction } from "./actions";
+import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
@@ -65,9 +66,9 @@ export default async function AdminPage() {
 
   return (
     <div className="container-page py-10">
-      <div>
-        <h1 className="text-3xl">Orders</h1>
-        <p className="text-sm text-ink">AuraaMarts admin</p>
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div><p className="eyebrow">AuraaMarts admin</p><h1 className="mt-1 text-3xl">Orders</h1></div>
+        <Link href="/admin/products" className="btn-secondary px-5 py-2.5 text-sm">Manage products</Link>
       </div>
 
       <p className="mt-4 rounded-xl border border-line bg-cream px-4 py-3 text-sm text-ink">

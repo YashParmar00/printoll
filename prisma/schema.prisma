@@ -31,6 +31,8 @@ model Product {
   faqs            Json // [{ q, a }]
   accent          String[] // [from, to]
   badge           String?
+  imageUrl        String?
+  imageUrls       String[] @default([])
   active          Boolean  @default(true)
   sortOrder       Int      @default(0)
   createdAt       DateTime @default(now())

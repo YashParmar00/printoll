@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { getProduct, products, relatedProducts } from "@/lib/products";
+import { findCatalogProduct, relatedCatalogProducts } from "@/lib/catalog";
 import { inr } from "@/lib/format";
 import { site } from "@/lib/site";
 import Breadcrumbs from "@/components/product/Breadcrumbs";
@@ -10,9 +10,7 @@ import ProductReviews from "@/components/product/ProductReviews";
 import RelatedProducts from "@/components/product/RelatedProducts";
 import { CheckIcon } from "@/components/ui/icons";
 
-export function generateStaticParams() {
-  return products.map((p) => ({ slug: p.slug }));
-}
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   params,
@@ -20,7 +18,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const product = getProduct(slug);
+  const product = await findCatalogProduct(slug);
   if (!product) return { title: "Product not found" };
   return {
     title: `${product.name} — ${inr(product.price)}`,
@@ -35,10 +33,10 @@ export default async function ProductPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const product = getProduct(slug);
+  const product = await findCatalogProduct(slug);
   if (!product) notFound();
 
-  const related = relatedProducts(product.slug, 3);
+  const related = await relatedCatalogProducts(product.slug, 3);
 
   // Product structured data. No aggregateRating — we never fabricate reviews.
   const jsonLd = {

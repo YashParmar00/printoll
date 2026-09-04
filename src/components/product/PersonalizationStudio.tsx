@@ -39,6 +39,8 @@ export default function PersonalizationStudio({ product }: { product: Product })
   const [error, setError] = useState("");
   const [added, setAdded] = useState(false);
   const [deliveryDate, setDeliveryDate] = useState<string | null>(null);
+  const gallery = product.imageUrls?.length ? product.imageUrls : product.imageUrl ? [product.imageUrl] : [];
+  const [selectedImage, setSelectedImage] = useState(0);
 
   useEffect(() => setDeliveryDate(deliveryBy(site.deliveryDays)), []);
   // Free the object URL when it changes or on unmount.
@@ -105,24 +107,12 @@ export default function PersonalizationStudio({ product }: { product: Product })
     <div className="grid gap-8 lg:grid-cols-2 lg:gap-12">
       {/* Left: live preview + gallery */}
       <div>
-        <ProductMockup
-          shape={product.shape}
-          accent={product.accent}
-          text={needsText ? text : undefined}
-          photoUrl={needsPhoto ? photoUrl : undefined}
-        />
-        {/* Placeholder secondary shots (real photos land in M6) */}
-        <div className="mt-3 grid grid-cols-4 gap-3">
-          {["Main", "Detail", "Packaging", "Lifestyle"].map((label, i) => (
-            <div
-              key={label}
-              className={`flex aspect-square items-end justify-center rounded-xl p-1.5 text-[9px] font-medium uppercase tracking-wide text-white/70 ${i === 0 ? "ring-2 ring-plum ring-offset-2" : ""}`}
-              style={{ background: `linear-gradient(140deg, ${product.accent[0]}, ${product.accent[1]})` }}
-            >
-              {label}
-            </div>
-          ))}
-        </div>
+        {gallery[selectedImage] && !photoUrl ? (
+          <div className="relative aspect-square overflow-hidden rounded-2xl" style={{ background: `linear-gradient(135deg, ${product.accent[0]}, ${product.accent[1]})` }}>
+            <img src={gallery[selectedImage]} alt={`${product.name} — photo ${selectedImage + 1}`} className="h-full w-full object-cover" />
+          </div>
+        ) : <ProductMockup shape={product.shape} accent={product.accent} text={needsText ? text : undefined} photoUrl={needsPhoto ? photoUrl : undefined} />}
+        {gallery.length > 1 && <div className="mt-3 grid grid-cols-5 gap-3">{gallery.map((url, index) => <button key={url} type="button" onClick={() => setSelectedImage(index)} aria-label={`View product photo ${index + 1}`} className={`relative aspect-square overflow-hidden rounded-xl border bg-cream ${selectedImage === index ? "border-plum ring-2 ring-plum ring-offset-2" : "border-line hover:border-plum"}`}><img src={url} alt="" className="h-full w-full object-cover" /><span className="sr-only">{index === 0 ? "Main photo" : `Photo ${index + 1}`}</span></button>)}</div>}
         <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-sm text-ink">
           <span className="inline-flex items-center gap-1.5"><ShieldIcon className="h-4 w-4 text-plum" /> 7-day damage replacement</span>
           <span className="inline-flex items-center gap-1.5"><TruckIcon className="h-4 w-4 text-plum" /> Free shipping across India</span>

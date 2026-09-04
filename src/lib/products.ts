@@ -27,7 +27,7 @@ export interface Product {
   tagline: string;
   price: number; // selling price, whole ₹
   compareAtPrice: number; // struck anchor price, whole ₹
-  category: "personalized" | "wellness";
+  category: string;
   personalization: PersonalizationType;
   shape: ProductShape;
   /** Supplier SKU / style code (Qikink). Two mug codes are placeholders for now. */
@@ -50,6 +50,12 @@ export interface Product {
   /** Placeholder gradient stops (from → to) until real mockups replace them. */
   accent: [string, string];
   badge?: string;
+  /** Optional hosted product photo, set from the admin panel. */
+  imageUrl?: string;
+  /** Up to five admin-managed gallery images; the first is the main product image. */
+  imageUrls?: string[];
+  sortOrder?: number;
+  active?: boolean;
 }
 
 export const products: Product[] = [

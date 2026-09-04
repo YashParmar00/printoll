@@ -1,13 +1,12 @@
 import { NextResponse } from "next/server";
 import {
-  computeTotals,
-  itemsRequireAdvance,
   validateCustomer,
   CheckoutError,
   type CheckoutLineInput,
   type CustomerInput,
   type PaymentMethod,
 } from "@/lib/checkout";
+import { catalogItemsRequireAdvance, computeDatabaseTotals } from "@/lib/checkout-server";
 import { createOrder, updateOrder } from "@/lib/orders";
 import { isRazorpayConfigured, createRazorpayOrder, publicKeyId } from "@/lib/razorpay";
 import { site } from "@/lib/site";
@@ -39,7 +38,7 @@ export async function POST(req: Request) {
   if (customerError) return NextResponse.json({ error: customerError }, { status: 400 });
   const customer = body.customer as CustomerInput;
 
-  const requiresAdvance = itemsRequireAdvance(items);
+  const requiresAdvance = await catalogItemsRequireAdvance(items);
   const razorpayReady = isRazorpayConfigured();
 
   // If advance was requested but nothing in the cart needs it, treat as full COD.
@@ -70,7 +69,7 @@ export async function POST(req: Request) {
   // Server-side price validation — recomputed from the catalogue, client total ignored.
   let totals;
   try {
-    totals = computeTotals(items, paymentMethod);
+    totals = await computeDatabaseTotals(items, paymentMethod);
   } catch (e) {
     if (e instanceof CheckoutError) return NextResponse.json({ error: e.message }, { status: 400 });
     throw e;

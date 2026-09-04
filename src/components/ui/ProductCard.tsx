@@ -17,11 +17,11 @@ export default function ProductCard({ product }: { product: Product }) {
       href={`/product/${product.slug}`}
       className="group flex flex-col overflow-hidden rounded-2xl border border-line bg-white shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-plum focus-visible:ring-offset-2"
     >
-      {/* Image placeholder */}
       <div
         className="relative aspect-square w-full"
         style={{ background: `linear-gradient(135deg, ${product.accent[0]}, ${product.accent[1]})` }}
       >
+        {(product.imageUrls?.[0] ?? product.imageUrl) && <img src={product.imageUrls?.[0] ?? product.imageUrl} alt={product.name} className="absolute inset-0 h-full w-full object-cover" />}
         {/* placeholder monogram + watermark */}
         <span className="absolute inset-0 flex items-center justify-center font-[family-name:var(--font-heading)] text-[5.5rem] font-semibold text-white/25">
           {product.name.charAt(0)}

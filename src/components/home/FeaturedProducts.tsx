@@ -1,7 +1,8 @@
-import { featuredProducts } from "@/lib/products";
+import { listCatalogProducts } from "@/lib/catalog";
 import ProductCard from "@/components/ui/ProductCard";
 
-export default function FeaturedProducts() {
+export default async function FeaturedProducts() {
+  const featuredProducts = (await listCatalogProducts()).filter((product) => product.category === "personalized");
   return (
     <section id="featured" className="scroll-mt-28 py-16">
       <div className="container-page">
