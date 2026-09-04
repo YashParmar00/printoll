@@ -4,7 +4,7 @@ import { NextResponse, type NextRequest } from "next/server";
  * Protect the admin area with HTTP Basic auth (single founder login).
  * Next 16 renamed the `middleware` file convention to `proxy`.
  */
-export const config = { matcher: ["/admin/:path*", "/api/admin/:path*"] };
+export const config = { matcher: ["/admin/:path*"] };
 
 export async function proxy(req: NextRequest) {
   if (req.nextUrl.pathname === "/admin/login") return NextResponse.next();
