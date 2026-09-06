@@ -3,19 +3,19 @@
  * touching components lives here. TODOs mark real values Yash must fill in.
  */
 export const site = {
-  name: "AuraaMarts",
-  legalName: "AuraaMarts",
-  tagline: "Gifts They'll Never Forget — Personalized in India",
+  name: "Pairwear",
+  legalName: "Pairwear",
+  tagline: "Matching Couple Tees, Made in India",
   description:
-    "Personalized gifts made in India — engraved name necklaces, custom photo mugs & frames. COD available, delivered in 5–7 days, 7-day damage replacement.",
-  url: "https://auraamarts.com",
+    "Matching couple T-shirt sets, personalized with your names, initials or your date. Two tees per set from ₹999 — COD available, delivered in 5–7 days across India.",
+  url: "https://pairwear.in",
 
   // Customer-facing signature / support persona — brand name, never a personal name.
-  founder: "Team AuraaMarts",
+  founder: "Team Pairwear",
   // Public support email shown to customers.
   // TODO(Yash): before launch, set up FREE forwarding (Cloudflare Email Routing
-  // or ImprovMX) hello@auraamarts.com -> ownerEmail, or customer mail will bounce.
-  email: "hello@auraamarts.com",
+  // or ImprovMX) hello@pairwear.in -> ownerEmail, or customer mail will bounce.
+  email: "hello@pairwear.in",
   // Private inbox that receives order / Razorpay / Resend notifications. Never shown publicly.
   ownerEmail: "yashparmar0084@gmail.com",
   phoneDisplay: "+91 85298 93292",
@@ -25,11 +25,16 @@ export const site = {
   addressLine: "Mangaldhara Complex, Alkapuri, Vadodara, Gujarat, India",
 
   social: {
-    instagram: "https://instagram.com/auraamarts",
+    instagram: "https://instagram.com/pairwear.in",
   },
 
-  // Raksha Bandhan 2026 falls on Sunday, 9 Aug 2026 (confirmed by founder).
-  rakhiDate: "2026-08-09T00:00:00+05:30",
+  // Featured-occasion countdown on the homepage.
+  // TODO(Yash): roll this forward each year (or swap to the next big couple date).
+  occasionName: "Valentine's Day",
+  occasionDate: "2027-02-14T00:00:00+05:30",
+
+  // Honest social-proof line used in the hero. Update as real order count grows.
+  couplesServed: "2,000+",
 
   // Store-wide promises used across the UI (kept honest per RESEARCH.md §B).
   deliveryDays: 6, // "order today, delivery by" = today + 6 days

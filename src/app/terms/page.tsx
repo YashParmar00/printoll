@@ -8,7 +8,7 @@ export default function TermsPage() {
   return (
     <PageShell eyebrow="Policies" title="Terms & Conditions" updated="26 July 2026">
       <p>
-        By using auraamarts.com and placing an order, you agree to these terms. Please read them
+        By using pairwear.in and placing an order, you agree to these terms. Please read them
         alongside our Shipping, Return &amp; Refund, and Privacy policies.
       </p>
 
@@ -21,23 +21,24 @@ export default function TermsPage() {
 
       <h2>Orders & payment</h2>
       <ul>
-        <li>You can pay by Cash on Delivery, a small online advance plus COD (on personalized items), or
+        <li>You can pay by Cash on Delivery, a small online advance plus COD (on personalized sets), or
           fully online via Razorpay.</li>
         <li>We may confirm Cash-on-Delivery orders by WhatsApp or phone before dispatch, and may cancel
           orders we&apos;re unable to verify or fulfil.</li>
       </ul>
 
-      <h2>Personalization is your responsibility</h2>
+      <h2>Personalization and sizes are your responsibility</h2>
       <p>
-        We produce personalized items exactly as you provide them. Please check the spelling of any name
-        and the quality of any uploaded photo before ordering — we can&apos;t replace items for errors in
-        the details you supplied (see our Return &amp; Refund Policy).
+        We print sets exactly as you provide them. Please check the spelling of every name and the
+        format of any date, and pick each size carefully, before ordering — we can&apos;t replace a set
+        for errors in the details you supplied or for a size you chose incorrectly (see our Return
+        &amp; Refund Policy).
       </p>
 
       <h2>Intellectual property</h2>
       <p>
-        Site content and branding belong to AuraaMarts. By uploading a photo, you confirm you have the
-        right to use it for your personalized product.
+        Site content, print designs and branding belong to Pairwear. By submitting names, a date or
+        any artwork, you confirm you have the right to use it on your printed set.
       </p>
 
       <h2>Limitation of liability</h2>

@@ -26,7 +26,7 @@ export default async function ThankYouPage({
       <ClearCart />
 
       <div className="text-center">
-        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-plum text-white">
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-coral text-white">
           <CheckIcon className="h-9 w-9" />
         </div>
         <h1 className="mt-5 text-3xl sm:text-4xl">Thank you!</h1>

@@ -95,10 +95,10 @@ export default function TrackOrderPage() {
       )}
 
       {result && (
-        <div className="mt-6 rounded-2xl border border-line bg-white p-6">
+        <div className="mt-6 rounded-2xl border border-line bg-night-card p-6">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <span className="font-semibold text-charcoal">{result.orderNumber}</span>
-            <span className="pill bg-plum/10 text-plum">{STATUS_LABEL[result.status] ?? result.status}</span>
+            <span className="pill bg-jet/10 text-plum">{STATUS_LABEL[result.status] ?? result.status}</span>
           </div>
           <p className="mt-1 text-xs text-ink">Placed {new Date(result.createdAt).toLocaleDateString("en-IN")}</p>
 

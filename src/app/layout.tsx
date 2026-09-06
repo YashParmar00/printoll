@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Poppins, Dancing_Script } from "next/font/google";
+import { Baloo_2, Inter } from "next/font/google";
 import "./globals.css";
 import { site } from "@/lib/site";
 import { CartProvider } from "@/lib/cart";
@@ -8,25 +8,17 @@ import Footer from "@/components/site/Footer";
 import MobileBottomNav from "@/components/site/MobileBottomNav";
 import WhatsAppFab from "@/components/site/WhatsAppFab";
 
-const playfair = Playfair_Display({
-  variable: "--font-playfair",
+// Bold, rounded display face for headlines (variable font — all weights available).
+const baloo = Baloo_2({
+  variable: "--font-display",
   subsets: ["latin"],
-  weight: ["500", "600", "700"],
   display: "swap",
 });
 
-const poppins = Poppins({
-  variable: "--font-poppins",
+// Clean sans for body copy (≥16px on mobile).
+const inter = Inter({
+  variable: "--font-sans",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
-  display: "swap",
-});
-
-// Script face for the engraving live-preview.
-const dancing = Dancing_Script({
-  variable: "--font-dancing",
-  subsets: ["latin"],
-  weight: ["500", "600", "700"],
   display: "swap",
 });
 
@@ -38,7 +30,7 @@ export const metadata: Metadata = {
   },
   description: site.description,
   openGraph: {
-    title: `${site.name} — Personalized Gifts, Made in India`,
+    title: `${site.name} — Matching Couple Tees, Made in India`,
     description: site.description,
     url: site.url,
     siteName: site.name,
@@ -47,7 +39,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: `${site.name} — Personalized Gifts, Made in India`,
+    title: `${site.name} — Matching Couple Tees, Made in India`,
     description: site.description,
   },
 };
@@ -56,11 +48,8 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html
-      lang="en"
-      className={`${playfair.variable} ${poppins.variable} ${dancing.variable} h-full`}
-    >
-      <body className="flex min-h-full flex-col bg-white pb-16 text-charcoal antialiased lg:pb-0">
+    <html lang="en" className={`${baloo.variable} ${inter.variable} h-full`}>
+      <body className="flex min-h-full flex-col bg-paper pb-16 text-noir antialiased lg:pb-0">
         <CartProvider>
           <Header />
           <main className="flex-1">{children}</main>

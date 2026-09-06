@@ -15,10 +15,10 @@ function partsUntil(targetMs: number): Parts {
 }
 
 /**
- * Rakhi countdown (RESEARCH.md §B6). Renders "--" until mounted to avoid a
- * server/client hydration mismatch, then ticks every second.
+ * Featured-occasion countdown (RESEARCH.md §B6). Renders "--" until mounted to
+ * avoid a server/client hydration mismatch, then ticks every second.
  */
-export default function RakhiCountdown({ target }: { target: string }) {
+export default function Countdown({ target, label }: { target: string; label: string }) {
   const targetMs = new Date(target).getTime();
   const [parts, setParts] = useState<Parts | null>(null);
 
@@ -36,13 +36,13 @@ export default function RakhiCountdown({ target }: { target: string }) {
   ];
 
   return (
-    <div className="flex gap-2" role="timer" aria-label="Time left until Raksha Bandhan">
+    <div className="flex gap-2" role="timer" aria-label={`Time left until ${label}`}>
       {units.map((u) => (
         <div
           key={u.label}
           className="min-w-[3.25rem] rounded-xl bg-white/15 px-2 py-1.5 text-center backdrop-blur"
         >
-          <div className="font-[family-name:var(--font-heading)] text-xl font-semibold tabular-nums">
+          <div className="font-display text-xl font-bold tabular-nums">
             {u.value === undefined ? "--" : String(u.value).padStart(2, "0")}
           </div>
           <div className="text-[10px] uppercase tracking-wider opacity-80">{u.label}</div>

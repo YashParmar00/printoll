@@ -5,7 +5,7 @@ import { WhatsAppIcon, RupeeIcon, ShieldIcon } from "@/components/ui/icons";
 
 export const metadata: Metadata = {
   title: "Contact Us",
-  description: "Chat with AuraaMarts on WhatsApp or email us — we reply within 2 hours, 10 AM–8 PM IST.",
+  description: "Chat with Pairwear on WhatsApp or email us — we reply within 2 hours, 10 AM–8 PM IST.",
 };
 
 export default function ContactPage() {
@@ -14,7 +14,7 @@ export default function ContactPage() {
       <p className="eyebrow">Contact</p>
       <h1 className="mt-2 text-3xl sm:text-4xl">We&apos;re here to help</h1>
       <p className="mt-3 text-lg text-ink">
-        Questions about a gift, personalization, or an order? We reply within 2 hours,{" "}
+        Questions about sizing, your print, or an order? We reply within 2 hours,{" "}
         {site.supportHours}.
       </p>
 

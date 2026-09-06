@@ -1,7 +1,7 @@
 import "server-only";
 import { cookies } from "next/headers";
 
-export const ADMIN_SESSION_COOKIE = "auraamarts_admin";
+export const ADMIN_SESSION_COOKIE = "pairwear_admin";
 
 export function sessionValue(user = process.env.ADMIN_USER ?? "", password = process.env.ADMIN_PASSWORD ?? "") {
   return Buffer.from(`${user}:${password}`, "utf8").toString("base64");

@@ -1,4 +1,4 @@
-// AuraaMarts — Prisma schema (Supabase Postgres).
+// Pairwear — Prisma schema (Supabase Postgres).
 // Mirrors the shapes in src/lib/orders.ts and src/lib/products.ts.
 
 generator client {
@@ -18,9 +18,9 @@ model Product {
   tagline         String
   price           Int
   compareAtPrice  Int
-  category        String // "personalized" | "wellness"
+  category        String // "couple-sets"
   personalization String // "none" | "text" | "photo" | "both"
-  shape           String // "pendant" | "mug" | "frame" | "mat"
+  shape           String // "tee" | "hoodie" | "tote"
   supplierSku     String
   requiresAdvance Boolean  @default(true)
   occasions       String[]

@@ -1,72 +1,76 @@
 import { StarIcon } from "@/components/ui/icons";
 
 /**
- * PLACEHOLDER testimonials — layout only.
- * TODO(Yash): replace with REAL first-customer reviews + photos before launch.
- * Never fabricate ratings or customers (RESEARCH.md §B1, §B9). These strings
- * exist purely to build and style the section; swap them the moment you have
- * genuine reviews (a review plugin/DB feeds this in a later milestone).
+ * ⚠️ PLACEHOLDER testimonials — design + layout only.
+ * TODO(Yash): these couples are NOT real customers. Swap every entry below for
+ * genuine first-customer reviews (their own words + their photo of the set)
+ * before launch. Never ship invented praise or ratings to a live storefront —
+ * photo reviews are the single biggest trust builder for COD shoppers, and a
+ * fake one is the fastest way to lose that trust.
  */
 const testimonials = [
   {
-    name: "Placeholder — Customer 1",
-    location: "City, State",
+    names: "Couple name",
+    city: "City, State",
     quote:
-      "Replace this with a real review. Keep the customer's own words, add their photo of the gift, and never invent a rating.",
-    initials: "C1",
-    accent: ["#7c4b7f", "#d4a947"],
+      "Replace this with a real review in the couple's own words. Keep their photo of the set, and never invent a rating.",
+    initials: "01",
+    accent: ["#d2603f", "#f0b49b"],
   },
   {
-    name: "Placeholder — Customer 2",
-    location: "City, State",
+    names: "Couple name",
+    city: "City, State",
     quote:
-      "Real photo reviews are the single biggest trust builder for COD shoppers. Seed this section only with genuine ones.",
-    initials: "C2",
-    accent: ["#5b2a5e", "#7c4b7f"],
+      "Photo reviews are the single biggest trust builder for COD shoppers — seed this section only with genuine ones.",
+    initials: "02",
+    accent: ["#3d3a38", "#6f645c"],
   },
   {
-    name: "Placeholder — Customer 3",
-    location: "City, State",
+    names: "Couple name",
+    city: "City, State",
     quote:
       "Until real reviews arrive, consider hiding this section rather than filling it with invented praise.",
-    initials: "C3",
-    accent: ["#b28623", "#e7cb82"],
+    initials: "03",
+    accent: ["#b0472a", "#d2603f"],
   },
 ];
 
 export default function Testimonials() {
   return (
-    <section className="bg-cream py-16">
+    <section className="bg-night py-20">
       <div className="container-page">
-        <div className="mb-8 text-center">
-          <p className="eyebrow">Real reviews only</p>
-          <h2 className="mt-2 text-3xl sm:text-4xl">Words from our customers</h2>
-          <p className="mx-auto mt-3 max-w-xl text-ink">
-            We seed this with genuine first-customer photos and words — never fabricated ratings.
+        <div className="mx-auto max-w-2xl text-center">
+          <p className="eyebrow-dark">Loved in the wild</p>
+          <h2 className="mt-3 text-3xl text-white sm:text-4xl">
+            Tiny matching moments, big feelings.
+          </h2>
+          <p className="mt-4 text-night-ink">
+            We only publish reviews we&apos;ve actually received — these slots are waiting for our
+            first couples.
           </p>
         </div>
 
-        <div className="grid gap-6 sm:grid-cols-3">
+        <div className="mt-10 grid gap-5 sm:grid-cols-3">
           {testimonials.map((t) => (
-            <figure key={t.name} className="rounded-2xl border border-line bg-white p-6 shadow-sm">
-              <div className="flex gap-0.5 text-gold" aria-label="5 out of 5 stars">
+            <figure key={t.initials} className="card-dark p-6">
+              <div className="flex gap-0.5 text-coral" aria-label="5 out of 5 stars">
                 {Array.from({ length: 5 }).map((_, i) => (
                   <StarIcon key={i} className="h-4 w-4" />
                 ))}
               </div>
-              <blockquote className="mt-3 text-sm leading-relaxed text-charcoal">
+              <blockquote className="mt-3 text-sm leading-relaxed text-white/90">
                 &ldquo;{t.quote}&rdquo;
               </blockquote>
-              <figcaption className="mt-4 flex items-center gap-3">
+              <figcaption className="mt-5 flex items-center gap-3">
                 <span
-                  className="flex h-10 w-10 items-center justify-center rounded-full text-sm font-semibold text-white"
+                  className="flex h-9 w-9 items-center justify-center rounded-full text-xs font-bold text-white"
                   style={{ background: `linear-gradient(135deg, ${t.accent[0]}, ${t.accent[1]})` }}
                 >
                   {t.initials}
                 </span>
-                <span className="text-sm">
-                  <span className="block font-semibold text-charcoal">{t.name}</span>
-                  <span className="text-ink">{t.location}</span>
+                <span className="text-sm leading-tight">
+                  <span className="block font-semibold text-white">{t.names}</span>
+                  <span className="text-night-ink">{t.city}</span>
                 </span>
               </figcaption>
             </figure>

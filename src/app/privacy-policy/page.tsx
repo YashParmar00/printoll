@@ -8,14 +8,14 @@ export default function PrivacyPolicyPage() {
   return (
     <PageShell eyebrow="Policies" title="Privacy Policy" updated="26 July 2026">
       <p>
-        AuraaMarts respects your privacy. This policy explains what we collect, why, and how we protect
+        Pairwear respects your privacy. This policy explains what we collect, why, and how we protect
         it.
       </p>
 
       <h2>What we collect</h2>
       <ul>
         <li>Contact & delivery details: name, phone number, email (optional), address and pincode.</li>
-        <li>Personalization content: the name you enter or the photo you upload for your gift.</li>
+        <li>Personalization content: the names, initials or date you enter, and the sizes you pick.</li>
         <li>Order details: what you bought and your order status.</li>
       </ul>
 
@@ -37,10 +37,10 @@ export default function PrivacyPolicyPage() {
         courier and fulfilment partner. We do not sell your personal data.
       </p>
 
-      <h2>Your uploaded photos</h2>
+      <h2>What you send us to print</h2>
       <p>
-        Photos you upload are used solely to produce your personalized item. Tell us on WhatsApp if
-        you&apos;d like yours removed after your order is complete.
+        The names, dates or files you send are used solely to produce your set. Tell us on WhatsApp
+        if you&apos;d like them removed once your order is complete.
       </p>
 
       <h2>Data retention & your rights</h2>

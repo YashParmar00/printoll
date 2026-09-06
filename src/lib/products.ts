@@ -1,19 +1,20 @@
 /**
- * Launch catalogue — 4 real personalized products sourced from Qikink
- * (verified from their dashboard catalog + pricing sheet) plus the wellness mat.
- * In a later milestone this moves behind Prisma/Postgres; the shape here mirrors
- * the future Product model so the swap is mechanical.
+ * Launch catalogue — 5 matching couple T-shirt sets (2 tees per set), printed
+ * and fulfilled by Qikink. This static array is the seed source for
+ * `prisma/seed.ts`; the live site reads products from Postgres via
+ * `src/lib/catalog.ts`, so edit here + reseed (or use /admin/products).
  *
- * `supplierSku` holds the Qikink style code. UP11 (necklace) and AF22 (frame)
- * are confirmed; the two mug codes are placeholders pending the sample order.
- * Qikink base costs are noted per product for margin reference (some unconfirmed
- * until a sample order verifies them).
+ * `supplierSku` holds the Qikink style code for the set.
+ * TODO(Yash): the set codes below are placeholders — replace each with the two
+ * real Qikink unisex round-neck tee style codes once the sample order confirms
+ * them. Qikink base cost is ~₹230–₹260 per printed tee (≈₹500 per set), which
+ * is what the ₹999 anchor is built on.
  */
 
 export type PersonalizationType = "none" | "text" | "photo" | "both";
 
 /** Drives the live preview mockup silhouette + print area. */
-export type ProductShape = "pendant" | "mug" | "frame" | "mat";
+export type ProductShape = "tee" | "hoodie" | "tote";
 
 export interface ProductFaq {
   q: string;
@@ -25,18 +26,18 @@ export interface Product {
   name: string;
   /** Short emotional hook shown under the name on cards. */
   tagline: string;
-  price: number; // selling price, whole ₹
+  price: number; // selling price for the full 2-tee set, whole ₹
   compareAtPrice: number; // struck anchor price, whole ₹
   category: string;
   personalization: PersonalizationType;
   shape: ProductShape;
-  /** Supplier SKU / style code (Qikink). Two mug codes are placeholders for now. */
+  /** Supplier SKU / style code (Qikink). Placeholders until the sample order. */
   supplierSku: string;
   /**
    * Require a small online advance (rest as COD) instead of full COD.
-   * Personalized items can't be resold if returned, so they default to true;
-   * non-personalized (e.g. acupressure mat) stay full COD. Per-product config
-   * (not a hardcoded rule) so it can be flipped later.
+   * Personalized sets can't be resold if refused at the door, so every printed
+   * set defaults to true. Per-product config (not a hardcoded rule) so it can
+   * be flipped later.
    */
   requiresAdvance: boolean;
   occasions: string[];
@@ -58,227 +59,174 @@ export interface Product {
   active?: boolean;
 }
 
-export const products: Product[] = [
+/**
+ * Placeholder imagery — free Pexels stock, allow-listed in `next.config.ts`.
+ * TODO(Yash): replace every URL below with the real Qikink mockups / your own
+ * product shots as soon as the sample order lands. Stock photos are a
+ * stand-in for layout only; they are not our actual product.
+ */
+const pexels = (id: number, w = 900) =>
+  `https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg?auto=compress&cs=tinysrgb&w=${w}`;
+
+/** Shown on a card when a product has no image of its own yet. */
+export const FALLBACK_PRODUCT_IMAGE = pexels(8217304, 700);
+
+/** Hero lifestyle shot. Same TODO applies — swap for a real couple photo. */
+export const HERO_IMAGE = pexels(29219966, 1200);
+
+/** Shared boilerplate — every set ships the same way, so keep it in one place. */
+const setFaqs: ProductFaq[] = [
   {
-    // Qikink "Bar Pendant" (UP11) — cuboid bar, silver. Base cost ~₹110
-    // (before engraving charge; unconfirmed until a sample order verifies).
-    slug: "engraved-name-necklace",
-    name: "Engraved Name Necklace",
-    tagline: "Her name, worn close to the heart.",
-    price: 549,
-    compareAtPrice: 899,
-    category: "personalized",
-    personalization: "text",
-    shape: "pendant",
-    supplierSku: "UP11",
-    requiresAdvance: true,
-    occasions: ["Rakhi", "Birthday", "Anniversary"],
-    rating: 4.8,
-    reviews: 0,
-    description: [
-      "Some gifts get used once and forgotten. A name worn around the neck isn't one of them. Our Engraved Name Necklace turns a single word — her name, your nickname for her, a date you both hold onto — into something she reaches for every single day.",
-      "Each sleek silver bar pendant is engraved to order in a clean, modern script and arrives in a gift-ready box — ready to hand over exactly as it should be.",
-    ],
-    highlights: [
-      "Sleek silver bar pendant, engraved with any name (up to 12 characters)",
-      "Clean, modern engraving done to order",
-      "Adjustable chain — sits comfortably on everyone",
-      "Arrives in a gift-ready box",
-      "Order with a ₹99 advance, pay the rest on delivery",
-    ],
-    faqs: [
-      {
-        q: "How do I personalize it?",
-        a: "Type the name in the box on this page and you'll see it on the pendant instantly. That exact spelling is what we engrave — so double-check it before you order.",
-      },
-      {
-        q: "When will it arrive?",
-        a: "We make each necklace to order and deliver in 5–7 days across India. The delivery date is shown on this page before you add to cart.",
-      },
-      {
-        q: "What if it arrives damaged?",
-        a: "We replace any item that reaches you damaged or defective within 7 days — just message us on WhatsApp with a photo.",
-      },
-    ],
-    accent: ["#7c4b7f", "#b9bcc2"],
+    q: "What exactly comes in a set?",
+    a: "Two T-shirts — one for each of you — printed with the same design and personalized with whatever you type on this page. You pick both sizes at checkout, and they can be different.",
   },
   {
-    // Qikink "Acrylic Photo Frame with Stand" (AF22) — standard, white.
-    // Base cost ~₹180.
-    slug: "custom-photo-frame",
-    name: "Custom Photo Frame",
-    tagline: "A moment they'll want on display forever.",
-    price: 649,
-    compareAtPrice: 999,
-    category: "personalized",
-    personalization: "photo",
-    shape: "frame",
-    supplierSku: "AF22",
-    requiresAdvance: true,
-    occasions: ["Anniversary", "Birthday"],
-    rating: 4.8,
-    reviews: 0,
-    description: [
-      "The best moments deserve more than a camera roll. Our Custom Photo Frame gives one of yours a permanent place on the shelf or desk — somewhere it'll catch their eye and make them smile mid-day.",
-      "Upload your photo, see it framed instantly on this page, and we print and mount it in a clear acrylic frame with a stand — ready to display the moment it arrives.",
-    ],
-    highlights: [
-      "Clear acrylic photo frame with a stand — ready to display",
-      "Your photo printed in rich, fade-resistant colour",
-      "Standard size with a clean, modern finish",
-      "Upload any JPG, PNG or WebP",
-      "Order with a ₹99 advance, pay the rest on delivery",
-    ],
-    faqs: [
-      {
-        q: "How do I add my photo?",
-        a: "Upload it in the box on this page and you'll see it in the frame instantly. A high-resolution photo prints best.",
-      },
-      {
-        q: "When will it arrive?",
-        a: "Made to order and delivered in 5–7 days across India, with the delivery date shown before you add to cart.",
-      },
-      {
-        q: "What if it arrives damaged?",
-        a: "Message us on WhatsApp with a photo within 7 days and we'll replace any item that arrives damaged or defective.",
-      },
-    ],
-    accent: ["#b28623", "#e7cb82"],
+    q: "How do sizes work?",
+    a: "Unisex fit, XS to XXL. Choose a size for each tee in the box on this page. If you're between sizes, size up — or message us on WhatsApp and we'll help.",
   },
   {
-    // Qikink "Magic Coffee Mug" — colour-changing (matte black cold → photo
-    // reveals when hot). Base cost ~₹200. SKU placeholder until sample order.
-    slug: "magic-photo-mug",
-    name: "Magic Photo Mug",
-    tagline: "Pour in hot chai — and watch their photo appear.",
-    price: 649,
-    compareAtPrice: 999,
-    category: "personalized",
-    personalization: "photo",
-    shape: "mug",
-    supplierSku: "MAGIC-MUG", // TODO(Yash): real Qikink SKU after sample order
-    requiresAdvance: true,
-    occasions: ["Birthday", "Anniversary"],
-    rating: 4.9,
-    reviews: 0,
-    description: [
-      "This one gets a reaction. The Magic Photo Mug looks like a plain matte-black mug — until hot chai or coffee is poured in, and their photo slowly appears like magic.",
-      "Upload your favourite picture and we print it as the hidden reveal. It's the gift people pick up, gasp at, and show everyone — a memory that comes to life every single morning.",
-    ],
-    highlights: [
-      "Colour-changing magic mug — matte black when cold, your photo appears when hot",
-      "The reveal effect makes it a genuine showstopper gift",
-      "Full-colour photo, printed to order",
-      "Ceramic — hand-wash to keep the colour-change coating vivid",
-      "Order with a ₹99 advance, pay the rest on delivery",
-    ],
-    faqs: [
-      {
-        q: "How does the magic effect work?",
-        a: "The mug is coated so it looks solid black when cold. Pour in any hot drink and the heat reveals your photo in full colour; it hides again as the mug cools.",
-      },
-      {
-        q: "How do I add my photo?",
-        a: "Upload it in the box on this page — you'll see a preview of what gets printed. Use a clear, high-resolution photo for the sharpest reveal.",
-      },
-      {
-        q: "How should I care for it?",
-        a: "Hand-wash is best — it keeps the colour-changing coating looking its best for longer. Avoid the dishwasher and microwave.",
-      },
-    ],
-    accent: ["#2b2b2b", "#5b2a5e"],
-    badge: "Colour-changing",
+    q: "When will it arrive?",
+    a: "Each set is printed after you order and delivered in 5–7 days across India. The delivery date is shown on this page before you add to cart.",
   },
   {
-    // Qikink "White Coffee Mug" — classic white photo mug. Base cost ~₹115.
-    // SKU placeholder until sample order.
-    slug: "custom-photo-mug",
-    name: "Custom Photo Mug (White)",
-    tagline: "Their favourite memory, with every morning chai.",
-    price: 429,
-    compareAtPrice: 699,
-    category: "personalized",
-    personalization: "photo",
-    shape: "mug",
-    supplierSku: "WHITE-MUG", // TODO(Yash): real Qikink SKU after sample order
-    requiresAdvance: true,
-    occasions: ["Birthday", "Anniversary"],
-    rating: 4.8,
-    reviews: 0,
-    description: [
-      "A photo sitting in your phone gets scrolled past. The same photo on a mug they hold every morning gets noticed — every single day.",
-      "Upload your favourite picture and we print it edge-to-edge, in full colour, on a classic white ceramic mug that's safe for the microwave and dishwasher. Small, thoughtful, and used all the time.",
-    ],
-    highlights: [
-      "Classic white ceramic mug — microwave & dishwasher safe",
-      "Your photo printed edge-to-edge in full colour",
-      "Fade-resistant, long-lasting print",
-      "Upload any JPG, PNG or WebP",
-      "Order with a ₹99 advance, pay the rest on delivery",
-    ],
-    faqs: [
-      {
-        q: "How do I add my photo?",
-        a: "Upload it in the box on this page and you'll see it on the mug instantly. Use a clear, high-resolution photo for the sharpest print.",
-      },
-      {
-        q: "What if my photo looks low quality?",
-        a: "We check every photo before printing and message you on WhatsApp if anything looks blurry — we'd rather get it right than print something you won't love.",
-      },
-      {
-        q: "When will it arrive?",
-        a: "Made to order and delivered in 5–7 days across India.",
-      },
-    ],
-    accent: ["#7c4b7f", "#e7cb82"],
-  },
-  {
-    slug: "acupressure-mat",
-    name: "Acupressure Mat",
-    tagline: "10 minutes a day to unknot the whole body.",
-    price: 999,
-    compareAtPrice: 1799,
-    category: "wellness",
-    personalization: "none",
-    shape: "mat",
-    supplierSku: "AM-WELL-ACUMAT-01",
-    requiresAdvance: false,
-    occasions: [],
-    rating: 4.7,
-    reviews: 0,
-    description: [
-      "Ten minutes on your back, thousands of tiny points doing the work — that's the whole idea. The Acupressure Mat is the simplest way to unknot a tense back, shoulders and neck at the end of a long day, no appointment required.",
-      "Lie down, breathe, and let the pressure points do what they've done for centuries. Most people feel the warmth spread in the first few minutes — and come back to it every evening.",
-    ],
-    highlights: [
-      "Thousands of acupressure points for full-back relief",
-      "Just 10–20 minutes a day",
-      "Lightweight — roll it up and take it anywhere",
-      "Comes with a carry bag",
-      "COD available across India",
-    ],
-    faqs: [
-      {
-        q: "How do I use it?",
-        a: "Lie back on the mat for 10–20 minutes a day. It feels intense for the first minute, then settles into a warm, relaxing pressure. Start over a thin t-shirt if you're new to it.",
-      },
-      {
-        q: "Is it safe for everyone?",
-        a: "Most people are fine, but if you're pregnant, have a skin condition, or a heart condition, please check with your doctor first.",
-      },
-      {
-        q: "When will it arrive?",
-        a: "Delivered in 5–7 days across India. Cash on Delivery is available.",
-      },
-    ],
-    accent: ["#431f46", "#5b2a5e"],
-    badge: "Wellness",
+    q: "Will the print fade in the wash?",
+    a: "No. We print with DTF/DTG inks that stay sharp for years. Wash inside out in cold water and skip the dryer to keep them looking new.",
   },
 ];
 
-// Homepage "Bestselling Gifts" row shows only the personalized gifts (the mat
-// stays on its own product page + related rows, not the gifts grid).
-export const featuredProducts = products.filter((p) => p.category === "personalized");
+const setHighlights = (line: string): string[] => [
+  "Two tees per set — one for each of you",
+  line,
+  "180 GSM soft-washed cotton, unisex fit (XS–XXL, pick a size for each)",
+  "Long-lasting print — wash inside out, cold water",
+  "Order with a ₹99 advance, pay the rest on delivery",
+];
+
+export const products: Product[] = [
+  {
+    slug: "king-queen-couple-tee-set",
+    name: "King & Queen Couple Tee Set",
+    tagline: "The one everybody asks about.",
+    price: 999,
+    compareAtPrice: 1599,
+    category: "couple-sets",
+    personalization: "text",
+    shape: "tee",
+    supplierSku: "PW-SET-KINGQUEEN", // TODO(Yash): real Qikink style codes ×2
+    requiresAdvance: true,
+    occasions: ["Anniversary", "Valentine's Day", "Birthday"],
+    rating: 4.8,
+    reviews: 0,
+    description: [
+      "Crowns on the chest, your names underneath. It's the couple tee everyone recognises — and the one that actually gets worn, on trips, on date nights, on lazy Sundays at home.",
+      "We print both tees to order with the names you type here, so it stops being a generic set the second it arrives. Two tees, one box, ready to wear together.",
+    ],
+    highlights: setHighlights("Crown print with your two names, printed exactly as you type them"),
+    faqs: setFaqs,
+    accent: ["#141414", "#d2603f"],
+    badge: "Bestseller",
+    imageUrls: [pexels(8217299), pexels(8217304), pexels(8217365)],
+  },
+  {
+    slug: "mr-mrs-couple-tee-set",
+    name: "Mr & Mrs Couple Tee Set",
+    tagline: "For the newly-weds who want to say it out loud.",
+    price: 1049,
+    compareAtPrice: 1699,
+    category: "couple-sets",
+    personalization: "text",
+    shape: "tee",
+    supplierSku: "PW-SET-MRMRS", // TODO(Yash): real Qikink style codes ×2
+    requiresAdvance: true,
+    occasions: ["Wedding", "Anniversary", "Honeymoon"],
+    rating: 4.9,
+    reviews: 0,
+    description: [
+      "The honeymoon-suitcase set. Clean type, your shared surname under it, and enough restraint that you'll still wear them long after the wedding photos are printed.",
+      "Add your surname and your wedding date and we print both tees to match — the kind of gift that lands well at a shagun, a bridal shower, or the morning after the reception.",
+    ],
+    highlights: setHighlights("Mr & Mrs type with your surname and wedding date"),
+    faqs: setFaqs,
+    accent: ["#232323", "#f0b49b"],
+    badge: "Wedding favourite",
+    imageUrls: [pexels(6214283), pexels(6214254), pexels(6213951)],
+  },
+  {
+    slug: "since-date-couple-tee-set",
+    name: "Since — Couple Tee Set",
+    tagline: "Your date, worn like a badge.",
+    price: 999,
+    compareAtPrice: 1599,
+    category: "couple-sets",
+    personalization: "text",
+    shape: "tee",
+    supplierSku: "PW-SET-SINCE", // TODO(Yash): real Qikink style codes ×2
+    requiresAdvance: true,
+    occasions: ["Anniversary", "Valentine's Day"],
+    rating: 4.8,
+    reviews: 0,
+    description: [
+      "One date, big and bold across the chest — the day you met, the day you said yes, the day it stopped being casual. Nobody else needs to know what it means.",
+      "Type the date exactly how you want it read and we print it on both tees. Quiet, specific, and far more personal than a slogan anyone can buy.",
+    ],
+    highlights: setHighlights("Your date printed large on both tees, in your own format"),
+    faqs: setFaqs,
+    accent: ["#d2603f", "#f3e3d3"],
+    imageUrls: [pexels(9370883), pexels(10614285)],
+  },
+  {
+    slug: "initials-couple-tee-set",
+    name: "Initials Couple Tee Set",
+    tagline: "Minimal enough to wear anywhere.",
+    price: 949,
+    compareAtPrice: 1499,
+    category: "couple-sets",
+    personalization: "text",
+    shape: "tee",
+    supplierSku: "PW-SET-INITIALS", // TODO(Yash): real Qikink style codes ×2
+    requiresAdvance: true,
+    occasions: ["Valentine's Day", "Birthday", "Anniversary"],
+    rating: 4.7,
+    reviews: 0,
+    description: [
+      "Two letters, small, left chest. This is the set for couples who want the matching thing without announcing it to the entire metro compartment.",
+      "Send us your initials — A & D, S ♥ R, whatever you both answer to — and we print them small and clean on each tee. Understated, and easily the most worn set we make.",
+    ],
+    highlights: setHighlights("Your initials printed small on the left chest of each tee"),
+    faqs: setFaqs,
+    accent: ["#3d3a38", "#fbf1e7"],
+    badge: "New print",
+    imageUrls: [pexels(15568939), pexels(11147277)],
+  },
+  {
+    slug: "her-one-his-only-couple-tee-set",
+    name: "Her One & His Only Couple Tee Set",
+    tagline: "The gift that gets the reaction.",
+    price: 999,
+    compareAtPrice: 1599,
+    category: "couple-sets",
+    personalization: "text",
+    shape: "tee",
+    supplierSku: "PW-SET-ONEONLY", // TODO(Yash): real Qikink style codes ×2
+    requiresAdvance: true,
+    occasions: ["Valentine's Day", "Anniversary", "Birthday"],
+    rating: 4.8,
+    reviews: 0,
+    description: [
+      "Two halves of one line — \"Her One\" on his, \"His Only\" on hers — so the set only really works when you're standing next to each other. That's the whole point.",
+      "We add your names underneath and print both tees to order. It's the set people gift when they want a reaction, not a polite thank-you.",
+    ],
+    highlights: setHighlights("Two-halves print that completes when you stand together, with your names"),
+    faqs: setFaqs,
+    accent: ["#b0472a", "#141414"],
+    badge: "Gift favourite",
+    imageUrls: [pexels(26797752), pexels(9294979), pexels(13640700)],
+  },
+];
+
+// Homepage "Bestselling Sets" row — the whole catalogue is couple sets today,
+// so this is just a stable, sorted view of it.
+export const featuredProducts = products;
 
 export function getProduct(slug: string): Product | undefined {
   return products.find((p) => p.slug === slug);

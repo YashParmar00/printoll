@@ -21,8 +21,8 @@ export default function CartPage() {
           <BagIcon className="h-8 w-8" />
         </div>
         <h1 className="mt-5 text-3xl">Your cart is empty</h1>
-        <p className="mt-2 max-w-sm text-ink">Find a gift they&apos;ll never forget — personalized and delivered in 5–7 days.</p>
-        <Link href="/#featured" className="btn-primary mt-6">Shop gifts</Link>
+        <p className="mt-2 max-w-sm text-ink">Pick a set, add your names, and we&apos;ll print and deliver it in 5–7 days.</p>
+        <Link href="/#featured" className="btn-primary mt-6">Shop couple sets</Link>
       </div>
     );
   }
@@ -112,7 +112,7 @@ export default function CartPage() {
             <span className="font-semibold text-charcoal">Total</span>
             <span className="text-xl font-bold text-plum">{inr(subtotal)}</span>
           </div>
-          <p className="mt-3 rounded-lg bg-white px-3 py-2 text-sm font-medium text-plum">
+          <p className="mt-3 rounded-lg bg-night-card px-3 py-2 text-sm font-medium text-plum">
             💸 Pay online at checkout & save ₹{site.prepaidDiscount}
           </p>
           <Link href="/checkout" className="btn-primary mt-4 w-full">

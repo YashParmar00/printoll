@@ -189,8 +189,8 @@ export default function CheckoutPage() {
     return (
       <div className="container-page flex flex-col items-center py-20 text-center">
         <h1 className="text-3xl">Your cart is empty</h1>
-        <p className="mt-2 text-ink">Add a gift before checking out.</p>
-        <Link href="/#featured" className="btn-primary mt-6">Shop gifts</Link>
+        <p className="mt-2 text-ink">Add a couple set before checking out.</p>
+        <Link href="/#featured" className="btn-primary mt-6">Shop couple sets</Link>
       </div>
     );
   }
@@ -317,7 +317,7 @@ export default function CheckoutPage() {
 
               {/* Advance / COD split */}
               {paymentMethod === "advance_cod" && selected.advancePaid > 0 && (
-                <div className="mt-2 space-y-1 rounded-xl bg-white p-3">
+                <div className="mt-2 space-y-1 rounded-xl bg-night-card p-3">
                   <div className="flex justify-between">
                     <dt className="font-medium text-charcoal">Pay now (advance)</dt>
                     <dd className="font-bold text-plum">{inr(selected.advancePaid)}</dd>
@@ -379,11 +379,11 @@ function PaymentOption({
       onClick={onSelect}
       disabled={disabled}
       className={`flex items-start gap-3 rounded-xl border p-4 text-left transition ${
-        selected ? "border-plum bg-plum/5 ring-1 ring-plum" : "border-line bg-white hover:border-plum/40"
+        selected ? "border-coral bg-coral/10 ring-1 ring-coral" : "border-line bg-sand hover:border-coral/40"
       } ${disabled ? "cursor-not-allowed opacity-60" : ""}`}
     >
       <span className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 ${selected ? "border-plum" : "border-line"}`}>
-        {selected && <span className="h-2.5 w-2.5 rounded-full bg-plum" />}
+        {selected && <span className="h-2.5 w-2.5 rounded-full bg-coral" />}
       </span>
       <span>
         <span className="block font-semibold text-charcoal">{title}</span>

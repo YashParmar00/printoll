@@ -10,7 +10,7 @@ export async function proxy(req: NextRequest) {
   if (req.nextUrl.pathname === "/admin/login") return NextResponse.next();
   const expectedUser = process.env.ADMIN_USER ?? "";
   const expectedPass = process.env.ADMIN_PASSWORD ?? "";
-  const session = req.cookies.get("auraamarts_admin")?.value ?? "";
+  const session = req.cookies.get("pairwear_admin")?.value ?? "";
   const sessionValue = btoa(`${expectedUser}:${expectedPass}`);
 
   if (expectedUser && expectedPass && session === sessionValue) return NextResponse.next();

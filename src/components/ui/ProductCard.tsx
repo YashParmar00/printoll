@@ -1,77 +1,90 @@
 import Link from "next/link";
-import type { Product } from "@/lib/products";
+import Image from "next/image";
+import { FALLBACK_PRODUCT_IMAGE, type Product } from "@/lib/products";
 import { inr, savingsPct } from "@/lib/format";
-import { StarIcon, SparkleIcon, RupeeIcon } from "@/components/ui/icons";
+import { StarIcon } from "@/components/ui/icons";
 
 /**
- * Product card — strike-through anchor pricing + "Personalizable" tag +
- * COD badge (RESEARCH.md §B4, §B7). The gradient panel is a placeholder for
- * the real Qikink mockup / phone photo added from M3/M6 (see IMAGES phase).
+ * Product card — badge tag + rating + price, with a coral "Choose your pair"
+ * CTA. The gradient panel behind the image is the fallback for products that
+ * don't have a real Qikink mockup uploaded from /admin/products yet.
  */
+
+/** Tag colour is driven by the badge text so the palette stays consistent. */
+function tagClass(badge: string): string {
+  const key = badge.toLowerCase();
+  if (key.includes("new")) return "bg-sage text-white";
+  if (key.includes("gift") || key.includes("favourite") || key.includes("favorite"))
+    return "bg-blush text-white";
+  return "bg-white/12 text-white backdrop-blur";
+}
+
 export default function ProductCard({ product }: { product: Product }) {
   const save = savingsPct(product.price, product.compareAtPrice);
-  const personalizable = product.personalization !== "none";
+  // Products without their own photo fall back to a shared stock shot.
+  const image = product.imageUrls?.[0] ?? product.imageUrl ?? FALLBACK_PRODUCT_IMAGE;
 
   return (
     <Link
       href={`/product/${product.slug}`}
-      className="group flex flex-col overflow-hidden rounded-2xl border border-line bg-white shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-plum focus-visible:ring-offset-2"
+      className="group flex flex-col overflow-hidden rounded-2xl border border-line bg-sand transition-all duration-200 hover:-translate-y-1 hover:border-coral/35 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coral focus-visible:ring-offset-2 focus-visible:ring-offset-paper"
     >
       <div
-        className="relative aspect-square w-full"
+        className="relative aspect-square w-full overflow-hidden"
         style={{ background: `linear-gradient(135deg, ${product.accent[0]}, ${product.accent[1]})` }}
       >
-        {(product.imageUrls?.[0] ?? product.imageUrl) && <img src={product.imageUrls?.[0] ?? product.imageUrl} alt={product.name} className="absolute inset-0 h-full w-full object-cover" />}
-        {/* placeholder monogram + watermark */}
-        <span className="absolute inset-0 flex items-center justify-center font-[family-name:var(--font-heading)] text-[5.5rem] font-semibold text-white/25">
-          {product.name.charAt(0)}
-        </span>
-        <span className="absolute bottom-3 left-0 right-0 text-center text-[10px] font-medium uppercase tracking-[0.25em] text-white/60">
-          AuraaMarts
-        </span>
+        <Image
+          src={image}
+          alt={product.name}
+          fill
+          sizes="(min-width: 1024px) 33vw, 50vw"
+          className="object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+        />
 
-        {personalizable && (
-          <span className="pill absolute left-3 top-3 bg-white/95 text-plum">
-            <SparkleIcon className="h-3.5 w-3.5" /> Personalizable
+        {/* Badge tag — Bestseller / New print / Gift favourite (set per product) */}
+        {product.badge && (
+          <span className={`tag absolute left-3 top-3 ${tagClass(product.badge)}`}>
+            {product.badge}
           </span>
         )}
         {save > 0 && (
-          <span className="pill absolute right-3 top-3 bg-gold text-charcoal">Save {save}%</span>
+          <span className="tag absolute right-3 top-3 bg-coral text-white">Save {save}%</span>
         )}
       </div>
 
       {/* Body */}
-      <div className="flex flex-1 flex-col p-4">
-        <h3 className="text-base font-semibold leading-snug text-charcoal group-hover:text-plum">
-          {product.name}
-        </h3>
-        <p className="mt-1 line-clamp-2 text-sm text-ink">{product.tagline}</p>
-
-        <div className="mt-2 flex items-center gap-1.5 text-xs text-ink">
-          {product.reviews > 0 ? (
-            <>
-              <StarIcon className="h-4 w-4 text-gold" />
-              <span className="font-semibold text-charcoal">{product.rating.toFixed(1)}</span>
-              <span>({product.reviews})</span>
-            </>
-          ) : (
-            <span className="pill bg-cream-dark px-2 py-0.5 text-[11px] text-plum">New arrival</span>
-          )}
-        </div>
-
-        <div className="mt-3 flex items-end justify-between">
-          <div className="flex items-baseline gap-2">
-            <span className="text-lg font-bold text-plum">{inr(product.price)}</span>
-            <span className="strike text-sm text-ink">{inr(product.compareAtPrice)}</span>
-          </div>
-          <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-plum">
-            <RupeeIcon className="h-3.5 w-3.5" /> COD
+      <div className="flex flex-1 flex-col p-4 sm:p-5">
+        <div className="flex items-start justify-between gap-3">
+          <h3 className="text-base font-bold leading-snug text-white group-hover:text-coral sm:text-lg">
+            {product.name}
+          </h3>
+          <span className="shrink-0 text-base font-bold text-white sm:text-lg">
+            {inr(product.price)}
           </span>
         </div>
 
-        <span className="btn-primary mt-4 w-full py-2.5 text-sm">
-          {personalizable ? "View & Personalize" : "View Details"}
-        </span>
+        <div className="mt-1.5 flex items-baseline justify-between gap-3 text-sm text-ink">
+          <p className="line-clamp-1">{product.tagline}</p>
+          <span className="strike shrink-0 text-xs">{inr(product.compareAtPrice)}</span>
+        </div>
+
+        {/* Rating — only shown once real reviews exist; we never invent counts. */}
+        <div className="mt-3 flex items-center gap-1.5 text-xs text-ink">
+          {product.reviews > 0 ? (
+            <>
+              <span className="flex gap-0.5 text-star" aria-hidden>
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <StarIcon key={i} className="h-4 w-4" />
+                ))}
+              </span>
+              <span>({product.reviews})</span>
+            </>
+          ) : (
+            <span>2 tees per set · COD available</span>
+          )}
+        </div>
+
+        <span className="btn-primary mt-5 w-full py-3 text-sm sm:mt-6">Choose your pair</span>
       </div>
     </Link>
   );

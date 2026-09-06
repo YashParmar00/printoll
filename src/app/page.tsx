@@ -1,4 +1,5 @@
 import Hero from "@/components/home/Hero";
+import ValueStrip from "@/components/home/ValueStrip";
 import FeaturedProducts from "@/components/home/FeaturedProducts";
 import HowItWorks from "@/components/home/HowItWorks";
 import Occasions from "@/components/home/Occasions";
@@ -9,6 +10,7 @@ export default function Home() {
   return (
     <>
       <Hero />
+      <ValueStrip />
       <FeaturedProducts />
       <HowItWorks />
       <Occasions />

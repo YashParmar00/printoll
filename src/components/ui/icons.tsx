@@ -126,6 +126,27 @@ export const PlusIcon = (p: IconProps) => (
   </svg>
 );
 
+export const HeartIcon = (p: IconProps) => (
+  <svg {...base({ fill: "currentColor", stroke: "none", ...p })}>
+    <path d="M12 20.5C6.8 17.4 3.5 14.2 3.5 10.4A4.9 4.9 0 0 1 12 7.1a4.9 4.9 0 0 1 8.5 3.3c0 3.8-3.3 7-8.5 10.1Z" />
+  </svg>
+);
+
+export const ShirtIcon = (p: IconProps) => (
+  <svg {...base(p)}>
+    <path d="M8 3.5 12 5l4-1.5 4 2.5-1.6 4L18 9.4V20H6V9.4l-2.4.6L2 6z" />
+  </svg>
+);
+
+export const PaletteIcon = (p: IconProps) => (
+  <svg {...base(p)}>
+    <path d="M12 3a9 9 0 0 0 0 18c1.4 0 2-1 2-2s-.6-2 0-2.5c.5-.5 1.4-.5 2.5-.5A4.5 4.5 0 0 0 21 11.5C21 6.8 16.9 3 12 3Z" />
+    <circle cx="7.5" cy="12" r="1" fill="currentColor" />
+    <circle cx="10" cy="8" r="1" fill="currentColor" />
+    <circle cx="15" cy="8.5" r="1" fill="currentColor" />
+  </svg>
+);
+
 export const MinusIcon = (p: IconProps) => (
   <svg {...base(p)}>
     <path d="M5 12h14" />

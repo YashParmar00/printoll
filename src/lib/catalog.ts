@@ -1,6 +1,27 @@
 import { Prisma, type Product as DbProduct } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
-import type { Product, ProductFaq } from "@/lib/products";
+import { products as seedCatalogue, type Product, type ProductFaq } from "@/lib/products";
+
+/**
+ * Where the *storefront* reads its catalogue from.
+ *
+ *   CATALOG_SOURCE=db      → Postgres (normal operation, admin-editable)
+ *   CATALOG_SOURCE=static  → src/lib/products.ts  (default until this brand has
+ *                            its own Supabase project seeded)
+ *
+ * Pairwear was branched from AuraaMarts and inherited its DATABASE_URL, so
+ * reading products from the DB would show that store's catalogue — and seeding
+ * over it would destroy the live AuraaMarts store. Until a fresh Supabase
+ * project is created and seeded, the shop serves the static catalogue instead.
+ * Admin screens always read the DB so they never misreport what is stored.
+ */
+const usingStaticCatalogue = (process.env.CATALOG_SOURCE ?? "static") !== "db";
+
+function staticCatalogue(): Product[] {
+  return seedCatalogue
+    .filter((product) => product.active !== false)
+    .map((product, index) => ({ ...product, sortOrder: product.sortOrder ?? index, active: true }));
+}
 
 function strings(value: unknown): string[] {
   return Array.isArray(value) ? value.filter((item): item is string => typeof item === "string") : [];
@@ -8,7 +29,7 @@ function strings(value: unknown): string[] {
 
 function accent(value: unknown): [string, string] {
   const colors = strings(value);
-  return [colors[0] ?? "#5b2a5e", colors[1] ?? "#d4a947"];
+  return [colors[0] ?? "#141414", colors[1] ?? "#d2603f"];
 }
 
 function faqs(value: unknown): ProductFaq[] {
@@ -48,6 +69,7 @@ export function toCatalogProduct(row: DbProduct): Product {
 }
 
 export async function listCatalogProducts(includeInactive = false): Promise<Product[]> {
+  if (usingStaticCatalogue && !includeInactive) return staticCatalogue();
   const rows = await prisma.product.findMany({
     where: includeInactive ? undefined : { active: true },
     orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],
@@ -56,11 +78,17 @@ export async function listCatalogProducts(includeInactive = false): Promise<Prod
 }
 
 export async function findCatalogProduct(slug: string, includeInactive = false): Promise<Product | undefined> {
+  if (usingStaticCatalogue && !includeInactive) {
+    return staticCatalogue().find((product) => product.slug === slug);
+  }
   const row = await prisma.product.findFirst({ where: { slug, ...(includeInactive ? {} : { active: true }) } });
   return row ? toCatalogProduct(row) : undefined;
 }
 
 export async function relatedCatalogProducts(slug: string, limit = 3): Promise<Product[]> {
+  if (usingStaticCatalogue) {
+    return staticCatalogue().filter((product) => product.slug !== slug).slice(0, limit);
+  }
   const rows = await prisma.product.findMany({
     where: { active: true, slug: { not: slug } },
     orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],

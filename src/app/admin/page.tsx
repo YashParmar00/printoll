@@ -14,7 +14,7 @@ const STATUS_STYLES: Record<OrderStatus, string> = {
   pending: "bg-amber-100 text-amber-800",
   awaiting_payment: "bg-amber-100 text-amber-800",
   paid: "bg-emerald-100 text-emerald-800",
-  confirmed: "bg-plum/10 text-plum",
+  confirmed: "bg-jet/10 text-plum",
   pushed_to_supplier: "bg-blue-100 text-blue-800",
   shipped: "bg-blue-100 text-blue-800",
   delivered: "bg-emerald-100 text-emerald-800",
@@ -34,7 +34,7 @@ function StatusButton({
 }) {
   const cls =
     tone === "primary"
-      ? "border-plum text-plum hover:bg-plum hover:text-white"
+      ? "border-plum text-plum hover:bg-jet hover:text-white"
       : tone === "danger"
         ? "border-red-300 text-red-600 hover:bg-red-600 hover:text-white"
         : "border-line text-ink hover:bg-cream";
@@ -67,7 +67,7 @@ export default async function AdminPage() {
   return (
     <div className="container-page py-10">
       <div className="flex flex-wrap items-end justify-between gap-4">
-        <div><p className="eyebrow">AuraaMarts admin</p><h1 className="mt-1 text-3xl">Orders</h1></div>
+        <div><p className="eyebrow">Pairwear admin</p><h1 className="mt-1 text-3xl">Orders</h1></div>
         <Link href="/admin/products" className="btn-secondary px-5 py-2.5 text-sm">Manage products</Link>
       </div>
 
@@ -79,7 +79,7 @@ export default async function AdminPage() {
 
       <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
         {stats.map((s) => (
-          <div key={s.label} className="rounded-2xl border border-line bg-white p-4">
+          <div key={s.label} className="rounded-2xl border border-line bg-night-card p-4">
             <div className="text-2xl font-bold text-plum">{s.value}</div>
             <div className="text-xs text-ink">{s.label}</div>
           </div>
@@ -87,7 +87,7 @@ export default async function AdminPage() {
       </div>
 
       {orders.length === 0 ? (
-        <p className="mt-10 rounded-2xl border border-line bg-white p-10 text-center text-ink">No orders yet.</p>
+        <p className="mt-10 rounded-2xl border border-line bg-night-card p-10 text-center text-ink">No orders yet.</p>
       ) : (
         <div className="mt-6 overflow-x-auto rounded-2xl border border-line">
           <table className="w-full min-w-[860px] text-sm">
