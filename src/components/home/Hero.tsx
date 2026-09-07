@@ -52,25 +52,25 @@ export default async function Hero() {
         </div>
       )}
 
-      <div className="container-page relative pb-20 pt-36 text-center sm:pb-24 sm:pt-40">
-        <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.06] px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-coral backdrop-blur">
+      <div className="container-page relative pb-14 pt-28 text-center sm:pb-20 sm:pt-32 md:pb-24 md:pt-36">
+        <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.06] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-coral backdrop-blur sm:px-3.5 sm:py-1.5 sm:text-[11px]">
           <HeartIcon className="h-3.5 w-3.5" />
           The together collection
         </span>
 
-        <h1 className="mx-auto mt-7 max-w-4xl text-[2.75rem] leading-[1.03] text-white sm:text-6xl lg:text-7xl">
+        <h1 className="mx-auto mt-5 max-w-4xl text-4xl leading-[1.05] text-white sm:mt-6 sm:text-5xl md:text-6xl lg:text-7xl">
           Wear your favourite person.
         </h1>
 
-        <p className="mx-auto mt-5 max-w-xl text-lg text-night-ink">
+        <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-night-ink sm:text-base md:text-lg">
           Matching couple tees — two shirts, one print, your names on both. From ₹999 a set,
           delivered across India.
         </p>
 
         <HeroTeeAnimation />
 
-        <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
-          <Link href={`/product/${slug}`} className="btn-primary">
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-2.5 sm:mt-10 sm:gap-3">
+          <Link href={`/product/${slug}`} className="btn-primary px-4 py-2.5 text-sm sm:px-6 sm:py-3 sm:text-base">
             Shop matching sets
             <ArrowRightIcon className="h-5 w-5" />
           </Link>
@@ -78,7 +78,7 @@ export default async function Hero() {
             href={whatsappLink(`Hi ${site.name}, I'd like help picking a couple set.`)}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/[0.06] px-6 py-3 text-base font-semibold text-white backdrop-blur transition hover:bg-white/[0.12]"
+            className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/[0.06] px-4 py-2.5 text-sm font-semibold text-white backdrop-blur transition hover:bg-white/[0.12] sm:px-6 sm:py-3 sm:text-base"
           >
             <WhatsAppIcon className="h-5 w-5 text-[#25D366]" />
             Chat on WhatsApp
@@ -96,22 +96,22 @@ export default async function Hero() {
               />
             ))}
           </ul>
-          <p className="text-sm text-night-ink">
+          <p className="text-xs text-night-ink sm:text-sm">
             <span className="font-semibold text-white">{site.couplesServed} couples</span> have found
             their pair
           </p>
         </div>
 
-        <ul className="mt-10 flex flex-wrap items-center justify-center gap-x-7 gap-y-3">
+        <ul className="mt-8 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 sm:mt-10 sm:gap-x-7 sm:gap-y-3">
           {promises.map(({ Icon, label }) => (
-            <li key={label} className="flex items-center gap-2 text-sm font-medium text-night-ink">
-              <Icon className="h-5 w-5 shrink-0 text-coral" />
+            <li key={label} className="flex items-center gap-1.5 text-[11px] font-medium text-night-ink sm:gap-2 sm:text-sm">
+              <Icon className="h-4 w-4 shrink-0 text-coral sm:h-5 sm:w-5" />
               {label}
             </li>
           ))}
         </ul>
 
-        <p className="mt-8 text-sm text-night-ink">
+        <p className="mt-6 text-xs text-night-ink sm:mt-8 sm:text-sm">
           Prefer to talk it through?{" "}
           <Link href="/contact" className="font-semibold text-coral hover:underline">
             Message us on WhatsApp
