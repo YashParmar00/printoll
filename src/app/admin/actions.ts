@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { isAdminSession } from "@/lib/admin-auth";
 import { updateOrder, type OrderStatus } from "@/lib/orders";
 import { saveCatalogProduct } from "@/lib/catalog";
+import { deleteHomeCollection, saveHomeCollection } from "@/lib/home-collections";
 
 // Statuses a founder can set by hand from the admin table.
 const MANUAL_STATUSES: OrderStatus[] = ["pending", "confirmed", "shipped", "delivered", "cancelled"];
@@ -56,4 +57,35 @@ export async function saveProductAction(formData: FormData) {
     active: formData.get("active") === "on", sortOrder: integer(formData, "sortOrder"),
   });
   revalidatePath("/"); revalidatePath("/category"); revalidatePath(`/product/${slug}`); revalidatePath("/sitemap.xml"); revalidatePath("/admin/products");
+}
+
+export async function saveHomeCollectionAction(formData: FormData) {
+  await requireAdmin();
+  const id = text(formData, "id", 80) || undefined;
+  const title = text(formData, "title", 80);
+  const requestedHref = text(formData, "href", 300);
+  if (!title) throw new Error("A collection title is required.");
+  // Homepage cards should only navigate within this storefront. This keeps the
+  // admin-entered value safe to pass to Next's Link component.
+  const href = requestedHref.startsWith("/") ? requestedHref : "/category";
+  await saveHomeCollection(id, {
+    title,
+    description: text(formData, "description", 240),
+    imageUrl: text(formData, "imageUrl", 1000) || undefined,
+    href,
+    active: formData.get("active") === "on",
+    sortOrder: integer(formData, "sortOrder"),
+  });
+  revalidatePath("/");
+  revalidatePath("/admin");
+  revalidatePath("/admin/collections");
+}
+
+export async function deleteHomeCollectionAction(formData: FormData) {
+  await requireAdmin();
+  const id = text(formData, "id", 80);
+  if (!id) return;
+  await deleteHomeCollection(id);
+  revalidatePath("/");
+  revalidatePath("/admin/collections");
 }

@@ -8,7 +8,7 @@ import { WhatsAppIcon } from "@/components/ui/icons";
 export default function WhatsAppFab() {
   return (
     <a
-      href={whatsappLink(`Hi ${site.name}, I'd like help picking a couple set.`)}
+      href={whatsappLink(`Hi ${site.name}, I'd like help picking a printed item.`)}
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Chat with us on WhatsApp"

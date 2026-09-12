@@ -40,6 +40,21 @@ model Product {
   reviews         Review[]
 }
 
+// Cards shown in the homepage "Made to match" carousel. They deliberately
+// live separately from Product: a collection can point to any shop URL and is
+// managed as marketing content rather than inventory.
+model HomeCollection {
+  id          String   @id @default(cuid())
+  title       String
+  description String   @default("")
+  imageUrl    String?
+  href        String   @default("/category")
+  active      Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
 model Review {
   id          String   @id @default(cuid())
   product     Product  @relation(fields: [productSlug], references: [slug], onDelete: Cascade)

@@ -78,11 +78,11 @@ export const HERO_IMAGE = pexels(29219966, 1200);
 const setFaqs: ProductFaq[] = [
   {
     q: "What exactly comes in a set?",
-    a: "Two T-shirts — one for each of you — printed with the same design and personalized with whatever you type on this page. You pick both sizes at checkout, and they can be different.",
+    a: "Two T-shirts, one for each of you, printed with the same design and personalized with whatever you type on this page. You pick both sizes at checkout, and they can be different.",
   },
   {
     q: "How do sizes work?",
-    a: "Unisex fit, XS to XXL. Choose a size for each tee in the box on this page. If you're between sizes, size up — or message us on WhatsApp and we'll help.",
+    a: "Unisex fit, XS to XXL. Choose a size for each tee in the box on this page. If you're between sizes, size up or message us on WhatsApp and we'll help.",
   },
   {
     q: "When will it arrive?",
@@ -95,10 +95,10 @@ const setFaqs: ProductFaq[] = [
 ];
 
 const setHighlights = (line: string): string[] => [
-  "Two tees per set — one for each of you",
+  "Two tees per set, one for each of you",
   line,
   "180 GSM soft-washed cotton, unisex fit (XS–XXL, pick a size for each)",
-  "Long-lasting print — wash inside out, cold water",
+  "Long-lasting print. Wash inside out in cold water",
   "Order with a ₹99 advance, pay the rest on delivery",
 ];
 
@@ -118,7 +118,7 @@ export const products: Product[] = [
     rating: 4.8,
     reviews: 0,
     description: [
-      "Crowns on the chest, your names underneath. It's the couple tee everyone recognises — and the one that actually gets worn, on trips, on date nights, on lazy Sundays at home.",
+      "Crowns on the chest, your names underneath. It's the couple tee everyone recognises and actually wears on trips, date nights and lazy Sundays at home.",
       "We print both tees to order with the names you type here, so it stops being a generic set the second it arrives. Two tees, one box, ready to wear together.",
     ],
     highlights: setHighlights("Crown print with your two names, printed exactly as you type them"),
@@ -143,7 +143,7 @@ export const products: Product[] = [
     reviews: 0,
     description: [
       "The honeymoon-suitcase set. Clean type, your shared surname under it, and enough restraint that you'll still wear them long after the wedding photos are printed.",
-      "Add your surname and your wedding date and we print both tees to match — the kind of gift that lands well at a shagun, a bridal shower, or the morning after the reception.",
+      "Add your surname and your wedding date and we print both tees to match. It makes a thoughtful gift for a shagun, bridal shower or the morning after the reception.",
     ],
     highlights: setHighlights("Mr & Mrs type with your surname and wedding date"),
     faqs: setFaqs,
@@ -153,7 +153,7 @@ export const products: Product[] = [
   },
   {
     slug: "since-date-couple-tee-set",
-    name: "Since — Couple Tee Set",
+    name: "Since Couple Tee Set",
     tagline: "Your date, worn like a badge.",
     price: 999,
     compareAtPrice: 1599,
@@ -166,7 +166,7 @@ export const products: Product[] = [
     rating: 4.8,
     reviews: 0,
     description: [
-      "One date, big and bold across the chest — the day you met, the day you said yes, the day it stopped being casual. Nobody else needs to know what it means.",
+      "One date, big and bold across the chest. The day you met, the day you said yes, or the day it stopped being casual. Nobody else needs to know what it means.",
       "Type the date exactly how you want it read and we print it on both tees. Quiet, specific, and far more personal than a slogan anyone can buy.",
     ],
     highlights: setHighlights("Your date printed large on both tees, in your own format"),
@@ -190,7 +190,7 @@ export const products: Product[] = [
     reviews: 0,
     description: [
       "Two letters, small, left chest. This is the set for couples who want the matching thing without announcing it to the entire metro compartment.",
-      "Send us your initials — A & D, S ♥ R, whatever you both answer to — and we print them small and clean on each tee. Understated, and easily the most worn set we make.",
+      "Send us your initials: A & D, S ♥ R, or whatever you both answer to. We print them small and clean on each tee. Understated and easily the most worn set we make.",
     ],
     highlights: setHighlights("Your initials printed small on the left chest of each tee"),
     faqs: setFaqs,
@@ -213,7 +213,7 @@ export const products: Product[] = [
     rating: 4.8,
     reviews: 0,
     description: [
-      "Two halves of one line — \"Her One\" on his, \"His Only\" on hers — so the set only really works when you're standing next to each other. That's the whole point.",
+      "Two halves of one line: \"Her One\" on his and \"His Only\" on hers. The set only works when you're standing next to each other. That's the whole point.",
       "We add your names underneath and print both tees to order. It's the set people gift when they want a reaction, not a polite thank-you.",
     ],
     highlights: setHighlights("Two-halves print that completes when you stand together, with your names"),
@@ -221,6 +221,37 @@ export const products: Product[] = [
     accent: ["#b0472a", "#141414"],
     badge: "Gift favourite",
     imageUrls: [pexels(26797752), pexels(9294979), pexels(13640700)],
+  },
+  {
+    slug: "womens-heart-bloom-tee",
+    name: "Bloom Heart Women’s Tee",
+    tagline: "A little romance, made for every day.",
+    price: 699,
+    compareAtPrice: 999,
+    category: "womens",
+    personalization: "none",
+    shape: "tee",
+    supplierSku: "PW-WOMEN-BLOOM", // TODO(Yash): replace with the supplier style code
+    requiresAdvance: false,
+    occasions: ["Date Night", "Birthday", "Valentine's Day"],
+    rating: 0,
+    reviews: 0,
+    description: [
+      "An easy ivory tee with a fine coral heart-and-flower print: romantic enough for a date, simple enough for your regular rotation.",
+      "The relaxed silhouette works with denim, cargos or a matching layer. It is a finished printed tee, ready to wear as it is.",
+    ],
+    highlights: [
+      "Soft ivory base with a minimal coral heart-and-flower artwork",
+      "Relaxed everyday fit that styles easily with denim",
+      "Ready-made print with no customisation needed",
+    ],
+    faqs: [
+      { q: "Is this one T-shirt or a set?", a: "This is one ready-to-wear women’s printed T-shirt." },
+      { q: "How should I wash it?", a: "Wash inside out in cold water and avoid ironing directly over the print." },
+    ],
+    accent: ["#f5eadf", "#d2603f"],
+    badge: "New arrival",
+    imageUrls: ["/uploads/products/womens-heart-bloom-tee.png"],
   },
 ];
 

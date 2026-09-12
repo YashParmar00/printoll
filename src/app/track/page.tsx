@@ -19,10 +19,10 @@ interface TrackedOrder {
 }
 
 const STATUS_LABEL: Record<string, string> = {
-  pending: "Order placed — being confirmed",
+  pending: "Order placed. Being confirmed",
   awaiting_payment: "Awaiting payment",
   paid: "Payment received",
-  confirmed: "Confirmed — being made",
+  confirmed: "Confirmed. Being made",
   pushed_to_supplier: "In production",
   shipped: "Shipped",
   delivered: "Delivered",
@@ -123,7 +123,7 @@ export default function TrackOrderPage() {
       )}
 
       <p className="mt-6 text-sm text-ink">
-        Can&apos;t find your order number? It&apos;s in your confirmation — or{" "}
+        Can&apos;t find your order number? It&apos;s in your confirmation, or{" "}
         <Link href="/contact" className="text-plum underline">contact us</Link>.
       </p>
     </div>

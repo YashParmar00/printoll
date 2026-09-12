@@ -30,7 +30,7 @@ export const metadata: Metadata = {
   },
   description: site.description,
   openGraph: {
-    title: `${site.name} — Matching Couple Tees, Made in India`,
+    title: `${site.name} — Custom Prints Made Personal`,
     description: site.description,
     url: site.url,
     siteName: site.name,
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: `${site.name} — Matching Couple Tees, Made in India`,
+    title: `${site.name} — Custom Prints Made Personal`,
     description: site.description,
   },
 };

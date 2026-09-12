@@ -27,7 +27,7 @@ export default function Occasions() {
             <span className="pill bg-white/10 text-white">Couple season</span>
             <h3 className="mt-3 text-2xl text-white">{site.occasionName}</h3>
             <p className="mt-1 text-sm text-night-ink">
-              Order early — every set is printed to order, so give us the 5–7 days.
+              Order early. Every set is printed to order, so give us 5–7 days.
             </p>
             <div className="mt-4 text-white">
               <Countdown target={site.occasionDate} label={site.occasionName} />

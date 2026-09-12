@@ -31,7 +31,6 @@ const promises = [
 export default async function Hero() {
   // First set doubles as the hero CTA target and the dimmed background photo.
   const [first] = await listCatalogProducts();
-  const slug = first?.slug ?? "king-queen-couple-tee-set";
 
   return (
     <section className="relative overflow-hidden bg-night">
@@ -55,32 +54,32 @@ export default async function Hero() {
       <div className="container-page relative pb-14 pt-28 text-center sm:pb-20 sm:pt-32 md:pb-24 md:pt-36">
         <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.06] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-coral backdrop-blur sm:px-3.5 sm:py-1.5 sm:text-[11px]">
           <HeartIcon className="h-3.5 w-3.5" />
-          The together collection
+          Prints for every story
         </span>
 
         <h1 className="mx-auto mt-5 max-w-4xl text-4xl leading-[1.05] text-white sm:mt-6 sm:text-5xl md:text-6xl lg:text-7xl">
-          Wear your favourite person.
+          Printed for your story.
         </h1>
 
         <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-night-ink sm:text-base md:text-lg">
-          Matching couple tees — two shirts, one print, your names on both. From ₹999 a set,
+          Custom tees, matching styles and thoughtful gifts. Made for every kind of connection,
           delivered across India.
         </p>
 
         <HeroTeeAnimation />
 
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-2.5 sm:mt-10 sm:gap-3">
-          <Link href={`/product/${slug}`} className="btn-primary px-4 py-2.5 text-sm sm:px-6 sm:py-3 sm:text-base">
-            Shop matching sets
-            <ArrowRightIcon className="h-5 w-5" />
+        <div className="mt-8 grid grid-cols-2 items-stretch gap-2.5 sm:mt-10 sm:flex sm:justify-center sm:gap-3">
+          <Link href="/category" className="btn-primary w-full whitespace-nowrap px-2.5 py-2.5 text-[11px] sm:w-auto sm:px-6 sm:py-3 sm:text-base">
+            Shop prints
+            <ArrowRightIcon className="h-4 w-4 sm:h-5 sm:w-5" />
           </Link>
           <a
-            href={whatsappLink(`Hi ${site.name}, I'd like help picking a couple set.`)}
+            href={whatsappLink(`Hi ${site.name}, I'd like help picking a printed item.`)}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/[0.06] px-4 py-2.5 text-sm font-semibold text-white backdrop-blur transition hover:bg-white/[0.12] sm:px-6 sm:py-3 sm:text-base"
+            className="inline-flex w-full items-center justify-center gap-1.5 whitespace-nowrap rounded-xl border border-white/15 bg-white/[0.06] px-2.5 py-2.5 text-[11px] font-semibold text-white backdrop-blur transition hover:bg-white/[0.12] sm:w-auto sm:gap-2 sm:px-6 sm:py-3 sm:text-base"
           >
-            <WhatsAppIcon className="h-5 w-5 text-[#25D366]" />
+            <WhatsAppIcon className="h-4 w-4 text-[#25D366] sm:h-5 sm:w-5" />
             Chat on WhatsApp
           </a>
         </div>
@@ -97,8 +96,8 @@ export default async function Hero() {
             ))}
           </ul>
           <p className="text-xs text-night-ink sm:text-sm">
-            <span className="font-semibold text-white">{site.couplesServed} couples</span> have found
-            their pair
+            <span className="font-semibold text-white">{site.couplesServed} customers</span> have found
+            something they love
           </p>
         </div>
 

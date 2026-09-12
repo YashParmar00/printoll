@@ -270,7 +270,7 @@ export default function CheckoutPage() {
                 <PaymentOption
                   selected={paymentMethod === "prepaid"}
                   onSelect={() => setPaymentMethod("prepaid")}
-                  title={`Pay fully online — save ${inr(site.prepaidDiscount)}`}
+                  title={`Pay fully online and save ${inr(site.prepaidDiscount)}`}
                   subtitle="UPI, cards & netbanking via Razorpay. Ships a little faster."
                 />
               )}
@@ -335,7 +335,7 @@ export default function CheckoutPage() {
           {paymentMethod === "advance_cod" && selected && selected.advancePaid > 0 && (
             <div className="mt-3 rounded-xl border border-gold/40 bg-gold/10 p-3">
               <p className="text-sm leading-relaxed text-charcoal">
-                {`Why we ask for ₹${selected.advancePaid} upfront: Your ${advanceItemNames.join(" and ")} is made just for you — personalized only after you order — so we can't resell it if it's returned. This small advance covers that cost. You pay the rest (₹${selected.codDue}) in cash when it's delivered to your door.`}
+                {`Why we ask for ₹${selected.advancePaid} upfront: Your ${advanceItemNames.join(" and ")} is made just for you and personalized only after you order, so we can't resell it if it's returned. This small advance covers that cost. You pay the rest (₹${selected.codDue}) in cash when it's delivered to your door.`}
               </p>
               <p className="mt-2 text-xs font-medium text-ink">
                 {`🔒 Secure payment via Razorpay · 🎁 Fully refunded if we're ever unable to deliver your order`}

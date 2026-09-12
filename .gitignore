@@ -37,6 +37,9 @@ yarn-error.log*
 # local order store (M4 — file-backed until a real DB lands)
 /.data
 
+# scratch tools (e.g. video review / ffmpeg) — local only
+/tmp
+
 # local Claude Code settings (personal, not shared)
 .claude/settings.local.json
 

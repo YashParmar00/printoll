@@ -3,15 +3,15 @@
  * touching components lives here. TODOs mark real values Yash must fill in.
  */
 export const site = {
-  name: "Pairwear",
-  legalName: "Pairwear",
-  tagline: "Matching Couple Tees, Made in India",
+  name: "Printoll",
+  legalName: "Printoll",
+  tagline: "Custom Prints Made Personal",
   description:
-    "Matching couple T-shirt sets, personalized with your names, initials or your date. Two tees per set from ₹999 — COD available, delivered in 5–7 days across India.",
+    "Custom printed tees, matching styles and thoughtful gifts made personal for every story. COD available and delivered across India.",
   url: "https://pairwear.in",
 
   // Customer-facing signature / support persona — brand name, never a personal name.
-  founder: "Team Pairwear",
+  founder: "Team Printoll",
   // Public support email shown to customers.
   // TODO(Yash): before launch, set up FREE forwarding (Cloudflare Email Routing
   // or ImprovMX) hello@pairwear.in -> ownerEmail, or customer mail will bounce.

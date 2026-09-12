@@ -67,8 +67,8 @@ export default async function AdminPage() {
   return (
     <div className="container-page py-10">
       <div className="flex flex-wrap items-end justify-between gap-4">
-        <div><p className="eyebrow">Pairwear admin</p><h1 className="mt-1 text-3xl">Orders</h1></div>
-        <Link href="/admin/products" className="btn-secondary px-5 py-2.5 text-sm">Manage products</Link>
+        <div><p className="eyebrow">Printoll admin</p><h1 className="mt-1 text-3xl">Orders</h1></div>
+        <div className="flex flex-wrap gap-2"><Link href="/admin/collections" className="btn-secondary px-5 py-2.5 text-sm">Manage homepage collections</Link><Link href="/admin/products" className="btn-secondary px-5 py-2.5 text-sm">Manage products</Link></div>
       </div>
 
       <p className="mt-4 rounded-xl border border-line bg-cream px-4 py-3 text-sm text-ink">

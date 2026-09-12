@@ -7,7 +7,7 @@ import { WhatsAppIcon } from "@/components/ui/icons";
 import CartBadge from "@/components/site/CartBadge";
 
 const nav = [
-  { label: "Shop sets", href: "/category" },
+  { label: "Shop", href: "/category" },
   { label: "How it works", href: "/#how" },
   { label: "Our story", href: "/about" },
   { label: "Track Order", href: "/track" },
@@ -44,7 +44,7 @@ function DarkHeader() {
 
           <div className="flex items-center gap-2">
             <Link href="/category" className="btn-primary px-5 py-2.5 text-sm">
-              Shop sets
+              Shop now
             </Link>
             <CartBadge tone="dark" />
           </div>
@@ -60,7 +60,7 @@ function LightHeader() {
       {/* Announcement bar */}
       <div className="bg-jet text-white/75">
         <p className="container-page py-2 text-center text-xs font-medium tracking-wide sm:text-[13px]">
-          Free shipping on every set · COD available · ₹{site.prepaidDiscount} off on prepaid
+          Free shipping across India · COD available · ₹{site.prepaidDiscount} off on prepaid
         </p>
       </div>
 
@@ -83,7 +83,7 @@ function LightHeader() {
 
           <div className="flex items-center gap-1.5">
             <a
-              href={whatsappLink(`Hi ${site.name}, I have a question about a couple set.`)}
+              href={whatsappLink(`Hi ${site.name}, I have a question about a printed item.`)}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 rounded-full border border-line px-3 py-2 text-sm font-medium text-noir transition-colors hover:border-[#25D366] hover:text-[#1ebe5a]"
@@ -106,8 +106,8 @@ function Logo({ tone }: { tone: "light" | "dark" }) {
       className="text-2xl font-bold tracking-tight"
       aria-label={`${site.name} home`}
     >
-      <span className={`font-display ${tone === "dark" ? "text-white" : "text-noir"}`}>Pair</span>
-      <span className="font-display text-coral">wear</span>
+      <span className={`font-display ${tone === "dark" ? "text-white" : "text-noir"}`}>Prin</span>
+      <span className="font-display text-coral">toll</span>
     </Link>
   );
 }

@@ -5,7 +5,7 @@ const items = [
   {
     Icon: PaletteIcon,
     title: "Your little language",
-    text: "Pick a print, add your names, initials or a date — it's yours, not a marketplace slogan.",
+    text: "Pick a print, add your names, initials or a date. It's yours, not a marketplace slogan.",
   },
   {
     Icon: ShirtIcon,
@@ -15,7 +15,7 @@ const items = [
   {
     Icon: GiftIcon,
     title: "Gift-ready, always",
-    text: "Both tees arrive folded in one box — ready to hand over, no wrapping shop needed.",
+    text: "Both tees arrive folded in one box, ready to hand over with no wrapping shop needed.",
   },
 ];
 

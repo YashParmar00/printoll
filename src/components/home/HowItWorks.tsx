@@ -15,7 +15,7 @@ const steps = [
   {
     n: 3,
     title: "Add your personal detail",
-    text: "Names, initials or a date — printed on both tees exactly as you type it.",
+    text: "Names, initials or a date, printed on both tees exactly as you type it.",
   },
 ];
 
@@ -28,7 +28,7 @@ const cards = [
   {
     Icon: GiftIcon,
     title: "Gift-ready, always",
-    text: "Both tees arrive folded in one box — ready to hand over without a trip to the wrapping shop.",
+    text: "Both tees arrive folded in one box, ready to hand over without a trip to the wrapping shop.",
   },
   {
     Icon: ShirtIcon,
@@ -50,7 +50,7 @@ export default function HowItWorks() {
           </h2>
           <p className="mt-4 max-w-md leading-relaxed text-night-ink">
             Start with one of our prints, then choose the size each of you actually wears. Add your
-            names, a date, or a private joke — we print it on both tees.
+            names, a date, or a private joke. We print it on both tees.
           </p>
 
           <ol className="mt-8 space-y-5">

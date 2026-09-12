@@ -157,7 +157,7 @@ export default function PersonalizationStudio({ product }: { product: Product })
         </div>
 
         <div className="mt-5">{priceBlock}</div>
-        <p className="mt-1 text-sm text-ink">Price is for the full set — both tees, one box.</p>
+        <p className="mt-1 text-sm text-ink">Price is for the full set: both tees in one box.</p>
 
         {/* Delivery promise before add-to-cart (RESEARCH §B5) */}
         <p className="mt-3 inline-flex items-center gap-2 rounded-lg bg-blush px-3 py-2 text-sm font-medium text-noir">
@@ -172,7 +172,7 @@ export default function PersonalizationStudio({ product }: { product: Product })
         {/* Personalization + sizes */}
         <div className="mt-6 rounded-2xl border border-line bg-night-card p-4">
           <p className="flex items-center gap-2 text-sm font-semibold text-coral">
-            <SparkleIcon className="h-4 w-4" /> Make it yours — the preview updates live
+            <SparkleIcon className="h-4 w-4" /> Make it yours. The preview updates live.
           </p>
 
           {needsText && (
@@ -202,13 +202,13 @@ export default function PersonalizationStudio({ product }: { product: Product })
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
             <SizePicker
               id="sizeA"
-              label="Size — tee 1"
+              label="Size for tee 1"
               value={sizeA}
               onChange={(v) => { setSizeA(v); if (error) setError(""); }}
             />
             <SizePicker
               id="sizeB"
-              label="Size — tee 2"
+              label="Size for tee 2"
               value={sizeB}
               onChange={(v) => { setSizeB(v); if (error) setError(""); }}
             />

@@ -6,47 +6,46 @@ import { WhatsAppIcon } from "@/components/ui/icons";
 export const metadata: Metadata = {
   title: "About Us",
   description:
-    "Pairwear is a small India-based team printing matching couple T-shirt sets — two tees, one print, personalized with your names and delivered across India.",
+    "Printoll is a small India-based team creating custom printed tees, matching styles and thoughtful gifts, delivered across India.",
 };
 
 export default function AboutPage() {
   return (
     <PageShell
       eyebrow="Our story"
-      title="Made for two, by a small team in India"
-      intro="Pairwear started with one idea: matching couple tees shouldn't look cheap."
+      title="Made personal, by a small team in India"
+      intro="Printoll started with one idea: custom prints should feel personal, not generic."
     >
       <p>
-        We&apos;re a small, India-based team that prints matching couple T-shirt sets — two tees, one
-        print, personalized with your names, your initials, or the date only the two of you get.
+        We&apos;re a small, India-based team that creates custom printed tees, matching styles and gifts.
+        Add names, initials, a date or a design that makes the piece feel like yours.
       </p>
 
       <h2>Why we started {site.name}</h2>
       <p>
-        Most couple tees fall into one of two traps: a slogan you&apos;d never say out loud, or fabric
-        that goes stiff after two washes. Neither survives past the first photo. We wanted sets that
-        get worn on ordinary Tuesdays too — so we picked good cotton, kept the prints restrained, and
-        made the personal bit the point rather than an upsell.
+        Too many printed clothes feel disposable: a slogan you&apos;d never wear again or fabric that goes
+        stiff after two washes. We wanted pieces that work on ordinary Tuesdays too. So we picked good
+        cotton, kept the prints considered, and made the personal detail the point.
       </p>
 
       <h2>How we work</h2>
       <p>
-        Nothing sits in a warehouse. Every set is printed after you order — your names, your two
-        sizes — and delivered across India in about 5–7 days. We keep Cash on Delivery available
+        Nothing sits in a warehouse. Each piece is printed after you order with the design and details
+        you choose. It is delivered across India in about 5–7 days. We keep Cash on Delivery available
         because it&apos;s how most of India prefers to shop, and we&apos;re always a WhatsApp message
         away, {site.supportHours}.
       </p>
 
-      <h2>Printed in India, shipped as a pair</h2>
+      <h2>Printed in India, made for you</h2>
       <p>
-        Both tees arrive folded in one box, ready to hand over. We&apos;re just getting started —
-        thank you for being one of our early couples. Your trust is what lets us keep printing.
+        Every item is packed with care, ready to wear or hand over as a gift. We&apos;re just getting started.
+        Thank you for being one of our early customers. Your trust is what lets us keep printing.
       </p>
 
-      <p>— {site.founder}</p>
+      <p>{site.founder}</p>
 
       <a
-        href={whatsappLink(`Hi ${site.name}, I'd like help picking a couple set.`)}
+        href={whatsappLink(`Hi ${site.name}, I'd like help picking a printed item.`)}
         target="_blank"
         rel="noopener noreferrer"
         className="btn-whatsapp mt-4"

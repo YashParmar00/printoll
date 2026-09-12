@@ -26,7 +26,7 @@ export default function ProductReviews({ product }: { product: Product }) {
           <div className="mt-4 rounded-2xl border border-line bg-night-card p-6 text-center">
             <p className="font-semibold text-charcoal">No reviews yet</p>
             <p className="mx-auto mt-1 max-w-md text-sm text-ink">
-              Be one of our first couples — real photo reviews from verified buyers will appear here.
+              Be one of our first couples. Real photo reviews from verified buyers will appear here.
               We never post fake ratings.
             </p>
             <a

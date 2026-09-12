@@ -21,7 +21,7 @@ export default function ShippingPolicyPage() {
 
       <h2>Shipping charges</h2>
       <p>
-        Shipping is <strong>free</strong> on every set across India — no minimum. Both tees in a set
+        Shipping is <strong>free</strong> on every set across India with no minimum. Both tees in a set
         ship together in one box.
       </p>
 
@@ -46,12 +46,12 @@ export default function ShippingPolicyPage() {
 
       <h2>Questions?</h2>
       <p>
-        Message us on WhatsApp or email <a href={`mailto:${site.email}`}>{site.email}</a> — we reply
+        Message us on WhatsApp or email <a href={`mailto:${site.email}`}>{site.email}</a>. We reply
         within 2 hours, {site.supportHours}.
       </p>
 
       <p className="text-sm">
-        <em>This policy is a starting template for Pairwear and should be reviewed for your final
+        <em>This policy is a starting template for Printoll and should be reviewed for your final
         launch details.</em>
       </p>
     </PageShell>

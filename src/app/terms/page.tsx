@@ -30,14 +30,14 @@ export default function TermsPage() {
       <h2>Personalization and sizes are your responsibility</h2>
       <p>
         We print sets exactly as you provide them. Please check the spelling of every name and the
-        format of any date, and pick each size carefully, before ordering — we can&apos;t replace a set
+        format of any date, and pick each size carefully before ordering. We can&apos;t replace a set
         for errors in the details you supplied or for a size you chose incorrectly (see our Return
         &amp; Refund Policy).
       </p>
 
       <h2>Intellectual property</h2>
       <p>
-        Site content, print designs and branding belong to Pairwear. By submitting names, a date or
+        Site content, print designs and branding belong to Printoll. By submitting names, a date or
         any artwork, you confirm you have the right to use it on your printed set.
       </p>
 

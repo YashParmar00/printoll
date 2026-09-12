@@ -1,5 +1,6 @@
 import { Prisma, PrismaClient } from "@prisma/client";
 import { products } from "../src/lib/products";
+import { defaultHomeCollections } from "../src/lib/home-collections";
 
 const prisma = new PrismaClient();
 
@@ -35,6 +36,16 @@ async function main() {
       create: { slug: p.slug, ...data },
     });
     console.log(`  upserted ${p.slug}`);
+  }
+  for (const collection of defaultHomeCollections) {
+    await prisma.homeCollection.upsert({
+      where: { id: collection.id },
+      update: {
+        title: collection.title, description: collection.description, imageUrl: collection.imageUrl,
+        href: collection.href, active: collection.active, sortOrder: collection.sortOrder,
+      },
+      create: collection,
+    });
   }
   const count = await prisma.product.count();
   console.log(`Seed complete. Products in DB: ${count}`);

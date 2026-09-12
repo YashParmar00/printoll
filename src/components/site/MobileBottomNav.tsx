@@ -10,8 +10,8 @@ export default function MobileBottomNav() {
   const dark = usePathname() === "/";
   const items = [
     { label: "Home", href: "/", Icon: HomeIcon, external: false },
-    { label: "Sets", href: "/category", Icon: BagIcon, external: false },
-    { label: "Occasions", href: "/#occasions", Icon: CalendarHeartIcon, external: false },
+    { label: "Shop", href: "/category", Icon: BagIcon, external: false },
+    { label: "Collections", href: "/#collections", Icon: CalendarHeartIcon, external: false },
   ];
 
   return (
@@ -37,7 +37,7 @@ export default function MobileBottomNav() {
         ))}
         <li>
           <a
-            href={whatsappLink(`Hi ${site.name}, I have a question about a couple set.`)}
+            href={whatsappLink(`Hi ${site.name}, I have a question about a printed item.`)}
             target="_blank"
             rel="noopener noreferrer"
             className="flex flex-col items-center gap-1 py-2.5 text-[11px] font-medium text-[#1ebe5a]"

@@ -36,9 +36,9 @@ export default async function ThankYouPage({
             {order.paymentMethod === "cod"
               ? " We'll confirm the details with you on WhatsApp shortly."
               : order.paymentMethod === "advance_cod"
-                ? ` Your ${inr(order.advancePaid)} advance is received — pay the remaining ${inr(order.codDue)} in cash on delivery.`
+                ? ` Your ${inr(order.advancePaid)} advance is received. Pay the remaining ${inr(order.codDue)} in cash on delivery.`
                 : order.status === "paid"
-                  ? " Payment received — we're on it."
+                  ? " Payment received. We're on it."
                   : " We'll confirm shortly."}
           </p>
         ) : (

@@ -8,7 +8,7 @@ export default function PrivacyPolicyPage() {
   return (
     <PageShell eyebrow="Policies" title="Privacy Policy" updated="26 July 2026">
       <p>
-        Pairwear respects your privacy. This policy explains what we collect, why, and how we protect
+        Printoll respects your privacy. This policy explains what we collect, why, and how we protect
         it.
       </p>
 
@@ -33,7 +33,7 @@ export default function PrivacyPolicyPage() {
 
       <h2>Sharing</h2>
       <p>
-        We share only what&apos;s needed to fulfil your order — for example your delivery address with our
+        We share only what&apos;s needed to fulfil your order, for example your delivery address with our
         courier and fulfilment partner. We do not sell your personal data.
       </p>
 

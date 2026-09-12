@@ -9,7 +9,7 @@ export default function ReturnPolicyPage() {
     <PageShell eyebrow="Policies" title="Return & Refund Policy" updated="6 September 2026">
       <p>
         We want you to love your set. Because every set is printed with your names and made just for
-        you, our policy is built around that — please read it before ordering.
+        you, our policy is built around that. Please read it before ordering.
       </p>
 
       <h2>Printed couple sets</h2>
@@ -23,7 +23,7 @@ export default function ReturnPolicyPage() {
       <ul>
         <li>Report it within <strong>7 days</strong> of delivery on WhatsApp with a clear photo.</li>
         <li>
-          Please check your spelling and date format carefully before ordering — we print exactly
+          Please check your spelling and date format carefully before ordering. We print exactly
           what you provide, so errors in your own input aren&apos;t covered.
         </li>
       </ul>
@@ -33,7 +33,7 @@ export default function ReturnPolicyPage() {
         You choose a size for each of the two tees before ordering, and the size chart sits right on
         the product page. Because the set is printed after you choose, we{" "}
         <strong>can&apos;t exchange a set for a different size</strong>. If you&apos;re unsure,
-        message us on WhatsApp before you order — we&apos;d much rather help you pick than send you a
+        message us on WhatsApp before you order. We&apos;d much rather help you pick than send you a
         set that doesn&apos;t fit.
       </p>
 

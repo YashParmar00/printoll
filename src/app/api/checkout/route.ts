@@ -48,7 +48,7 @@ export async function POST(req: Request) {
   if ((paymentMethod === "prepaid" || paymentMethod === "advance_cod") && !razorpayReady) {
     return NextResponse.json(
       {
-        error: "Online payment isn't enabled yet — please choose Cash on Delivery.",
+        error: "Online payment isn't enabled yet. Please choose Cash on Delivery.",
         code: "RAZORPAY_NOT_CONFIGURED",
       },
       { status: 503 },
