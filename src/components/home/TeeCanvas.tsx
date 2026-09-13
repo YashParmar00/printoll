@@ -116,8 +116,19 @@ export default function TeeCanvas({ variants, index, onReady }: Props) {
       disposables.push(geo, fabric);
 
       const texLoader = new THREE.TextureLoader();
-      variants.forEach((v, i) => {
+      const prints = variants.map(async (v, i) => {
+        const tex = await texLoader.loadAsync(v.print);
+        tex.colorSpace = THREE.SRGBColorSpace;
+        tex.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy());
+        const img = tex.image as HTMLImageElement;
+        const decalGeo = new DecalGeometry(
+          shirt,
+          new THREE.Vector3(0, v.printY, 0.15),
+          new THREE.Euler(),
+          new THREE.Vector3(v.printWidth, (v.printWidth * img.height) / img.width, 0.3),
+        );
         const mat = new THREE.MeshStandardMaterial({
+          map: tex,
           transparent: true,
           opacity: i === indexRef.current ? 1 : 0,
           depthWrite: false,
@@ -127,29 +138,20 @@ export default function TeeCanvas({ variants, index, onReady }: Props) {
         });
         addBreeze(mat, uniforms);
         decals[i] = mat;
-        disposables.push(mat);
-
-        texLoader.load(v.print, (tex) => {
-          if (disposed) return;
-          tex.colorSpace = THREE.SRGBColorSpace;
-          tex.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy());
-          const img = tex.image as HTMLImageElement;
-          const h = (v.printWidth * img.height) / img.width;
-          const decalGeo = new DecalGeometry(
-            shirt,
-            new THREE.Vector3(0, v.printY, 0.15),
-            new THREE.Euler(),
-            new THREE.Vector3(v.printWidth, h, 0.3),
-          );
-          mat.map = tex;
-          mat.needsUpdate = true;
-          pivot.add(new THREE.Mesh(decalGeo, mat));
-          disposables.push(tex, decalGeo);
-        });
+        pivot.add(new THREE.Mesh(decalGeo, mat));
+        disposables.push(tex, decalGeo, mat);
       });
 
-      // show the model one frame after it has actually rendered
-      requestAnimationFrame(() => !disposed && readyRef.current());
+      // Reveal only once every print is on the shirt and all shaders are
+      // compiled — otherwise the bare model pops in and hitches on first frame.
+      Promise.all(prints)
+        .then(() => renderer.compileAsync(scene, camera))
+        .then(() => {
+          if (disposed) return;
+          renderer.render(scene, camera);
+          requestAnimationFrame(() => !disposed && readyRef.current());
+        })
+        .catch(() => !disposed && readyRef.current());
     });
 
     // ── drag / swipe to spin ────────────────────────────────────────────

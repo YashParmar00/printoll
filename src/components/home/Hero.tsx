@@ -1,7 +1,5 @@
 import Link from "next/link";
-import Image from "next/image";
 import { site, whatsappLink } from "@/lib/site";
-import { listCatalogProducts } from "@/lib/catalog";
 import HeroShowcase from "@/components/home/HeroShowcase";
 import {
   HeartIcon,
@@ -28,28 +26,11 @@ const promises = [
   { Icon: ShieldIcon, label: "7-day damage replacement" },
 ];
 
-export default async function Hero() {
-  // First set doubles as the hero CTA target and the dimmed background photo.
-  const [first] = await listCatalogProducts();
-
+export default function Hero() {
   return (
     <section className="relative overflow-hidden bg-night">
       {/* coral bloom behind the headline */}
       <div aria-hidden className="glow pointer-events-none absolute inset-0" />
-      {/* hero photo, dimmed into the background */}
-      {first?.imageUrls?.[0] && (
-        <div aria-hidden className="pointer-events-none absolute inset-0">
-          <Image
-            src={first.imageUrls[0]}
-            alt=""
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover opacity-[0.14]"
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-night/60 via-night/85 to-night" />
-        </div>
-      )}
 
       <div className="container-page relative pb-14 pt-28 text-center sm:pb-20 sm:pt-32 md:pb-24 md:pt-36">
         <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.06] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-coral backdrop-blur sm:px-3.5 sm:py-1.5 sm:text-[11px]">
