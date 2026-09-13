@@ -1,0 +1,1 @@
+export default function LoadingProduct() { return <div className="container-page min-h-[900px] py-10" aria-busy="true"><div className="grid gap-10 lg:grid-cols-2"><div className="aspect-square rounded-2xl bg-sand"/><div className="rounded-2xl bg-sand p-8">Loading product details…</div></div></div>; }

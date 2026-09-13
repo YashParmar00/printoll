@@ -1,0 +1,1 @@
+export default function LoadingCategory() { return <div className="container-page min-h-[900px] py-10" aria-busy="true"><h1 className="text-3xl">Shop</h1><p className="mt-8">Loading the collection…</p></div>; }

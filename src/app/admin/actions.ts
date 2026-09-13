@@ -1,8 +1,9 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import { isAdminSession } from "@/lib/admin-auth";
-import { updateOrder, type OrderStatus } from "@/lib/orders";
+import { type OrderStatus } from "@/lib/orders";
+import { prisma } from "@/lib/prisma";
 import { saveCatalogProduct } from "@/lib/catalog";
 import { deleteHomeCollection, saveHomeCollection } from "@/lib/home-collections";
 
@@ -18,7 +19,12 @@ export async function updateStatusAction(formData: FormData) {
   const orderNumber = String(formData.get("orderNumber") ?? "");
   const status = String(formData.get("status") ?? "") as OrderStatus;
   if (orderNumber && MANUAL_STATUSES.includes(status)) {
-    await updateOrder(orderNumber, { status });
+    const order = await prisma.order.findUniqueOrThrow({ where: { orderNumber }, select: { status: true, paymentMethod: true, paymentStatus: true } });
+    const transitions: Record<string, string[]> = { pending: ["confirmed", "cancelled"], awaiting_payment: ["cancelled"], paid: ["confirmed", "shipped", "cancelled"], confirmed: ["shipped", "cancelled"], pushed_to_supplier: ["shipped", "cancelled"], shipped: ["delivered"], delivered: [], cancelled: [] };
+    if (order.status === status) return;
+    if (!transitions[order.status]?.includes(status) || (status !== "cancelled" && order.paymentMethod !== "cod" && order.paymentStatus !== "captured")) throw new Error("This order cannot move to that status. Verify payment first.");
+    const changed = await prisma.order.updateMany({ where: { orderNumber, status: order.status, paymentStatus: order.paymentStatus }, data: { status } });
+    if (changed.count !== 1) throw new Error("Order changed concurrently. Refresh and try again.");
     revalidatePath("/admin");
   }
 }
@@ -56,6 +62,7 @@ export async function saveProductAction(formData: FormData) {
     imageUrls: formData.getAll("imageUrls").map((value) => String(value).trim()).filter(Boolean).slice(0, 5),
     active: formData.get("active") === "on", sortOrder: integer(formData, "sortOrder"),
   });
+  updateTag("catalog");
   revalidatePath("/"); revalidatePath("/category"); revalidatePath(`/product/${slug}`); revalidatePath("/sitemap.xml"); revalidatePath("/admin/products");
 }
 
@@ -67,7 +74,7 @@ export async function saveHomeCollectionAction(formData: FormData) {
   if (!title) throw new Error("A collection title is required.");
   // Homepage cards should only navigate within this storefront. This keeps the
   // admin-entered value safe to pass to Next's Link component.
-  const href = requestedHref.startsWith("/") ? requestedHref : "/category";
+  const href = requestedHref.startsWith("/") && !requestedHref.startsWith("//") && !requestedHref.includes("\\") ? requestedHref : "/category";
   await saveHomeCollection(id, {
     title,
     description: text(formData, "description", 240),
@@ -76,6 +83,8 @@ export async function saveHomeCollectionAction(formData: FormData) {
     active: formData.get("active") === "on",
     sortOrder: integer(formData, "sortOrder"),
   });
+  updateTag("collections");
+  revalidatePath("/category");
   revalidatePath("/");
   revalidatePath("/admin");
   revalidatePath("/admin/collections");
@@ -86,6 +95,8 @@ export async function deleteHomeCollectionAction(formData: FormData) {
   const id = text(formData, "id", 80);
   if (!id) return;
   await deleteHomeCollection(id);
+  updateTag("collections");
+  revalidatePath("/category");
   revalidatePath("/");
   revalidatePath("/admin/collections");
 }

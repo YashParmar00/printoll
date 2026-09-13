@@ -1,16 +1,17 @@
+import type { CatalogCard as Product } from "@/lib/catalog-card";
 import Link from "next/link";
 import Image from "next/image";
-import { FALLBACK_PRODUCT_IMAGE, type Product } from "@/lib/products";
+import { FALLBACK_PRODUCT_IMAGE } from "@/lib/products";
 import { inr, savingsPct } from "@/lib/format";
 import { StarIcon } from "@/components/ui/icons";
 
 /**
- * Product card — badge tag + rating + price, with a coral "Choose your pair"
+ * Product card — badge tag + rating + price, with a coral "Choose options"
  * CTA. The gradient panel behind the image is the fallback for products that
  * don't have a real Qikink mockup uploaded from /admin/products yet.
  */
 
-export default function ProductCard({ product }: { product: Product }) {
+export default function ProductCard({ product, sizes = "(min-width: 1280px) 384px, (min-width: 1024px) 31vw, 46vw" }: { product: Product; sizes?: string }) {
   const save = savingsPct(product.price, product.compareAtPrice);
   // Products without their own photo fall back to a shared stock shot.
   const image = product.imageUrls?.[0] ?? product.imageUrl ?? FALLBACK_PRODUCT_IMAGE;
@@ -28,7 +29,7 @@ export default function ProductCard({ product }: { product: Product }) {
           src={image}
           alt={product.name}
           fill
-          sizes="(min-width: 1024px) 25vw, 50vw"
+          sizes={sizes}
           className="object-cover transition-transform duration-300 group-hover:scale-[1.03]"
         />
 
@@ -63,7 +64,7 @@ export default function ProductCard({ product }: { product: Product }) {
               <span>({product.reviews})</span>
             </>
           ) : (
-            <span>2 tees per set · COD available</span>
+            <span>{["couple-sets", "matching"].includes(product.category) ? "2 tees per set" : "Single garment"} · COD available</span>
           )}
         </div>
 

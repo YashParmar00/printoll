@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useCart } from "@/lib/cart";
-import { getProduct } from "@/lib/products";
 import { inr } from "@/lib/format";
 import { site } from "@/lib/site";
 import { BagIcon, PlusIcon, MinusIcon, ArrowRightIcon } from "@/components/ui/icons";
@@ -11,12 +10,12 @@ export default function CartPage() {
   const { items, updateQty, removeItem, subtotal, count, hydrated } = useCart();
 
   if (!hydrated) {
-    return <div className="container-page py-20 text-center text-ink">Loading your cart…</div>;
+    return <div className="container-page min-h-[900px] py-10 text-ink" aria-busy="true">Loading your cart…</div>;
   }
 
   if (count === 0) {
     return (
-      <div className="container-page flex flex-col items-center py-20 text-center">
+      <div className="container-page min-h-[900px] flex flex-col items-center py-20 text-center">
         <div className="flex h-16 w-16 items-center justify-center rounded-full bg-cream text-plum">
           <BagIcon className="h-8 w-8" />
         </div>
@@ -28,15 +27,14 @@ export default function CartPage() {
   }
 
   return (
-    <div className="container-page py-10">
+    <div className="container-page min-h-[900px] py-10">
       <h1 className="text-3xl sm:text-4xl">Your cart</h1>
 
       <div className="mt-8 grid gap-8 lg:grid-cols-[1.6fr_1fr]">
         {/* Items */}
         <ul className="divide-y divide-line rounded-2xl border border-line">
           {items.map((item) => {
-            const product = getProduct(item.slug);
-            const accent = product?.accent ?? ["#5b2a5e", "#7c4b7f"];
+            const accent = ["#5b2a5e", "#7c4b7f"];
             return (
               <li key={item.key} className="flex gap-4 p-4">
                 <div

@@ -1,49 +1,30 @@
-import { NextResponse } from "next/server";
-import { verifyPaymentSignature } from "@/lib/razorpay";
-import { getOrder, updateOrder } from "@/lib/orders";
+import { fetchRazorpayPayment, verifyPaymentSignature } from "@/lib/razorpay";
+import { prisma } from "@/lib/prisma";
+import { paymentSelect, settlePayment } from "@/lib/payment-settlement";
+import { boundedText, privateJson } from "@/lib/private-response";
+import { rateLimit } from "@/lib/rate-limit";
+import { reportServerError } from "@/lib/server-error";
 
 export const runtime = "nodejs";
 
-interface VerifyBody {
-  orderNumber?: string;
-  razorpay_order_id?: string;
-  razorpay_payment_id?: string;
-  razorpay_signature?: string;
-}
-
 export async function POST(req: Request) {
-  const body = (await req.json().catch(() => ({}))) as VerifyBody;
-  const { orderNumber, razorpay_order_id, razorpay_payment_id, razorpay_signature } = body;
-
-  if (!orderNumber || !razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
-    return NextResponse.json({ error: "Missing payment details." }, { status: 400 });
+  let body;
+  try { body = JSON.parse(await boundedText(req, 4096)); }
+  catch { return privateJson({ error: "Invalid request." }, 400); }
+  if (!body || [body.orderNumber, body.razorpay_order_id, body.razorpay_payment_id, body.razorpay_signature].some(value => typeof value !== "string" || value.length > 128)) {
+    return privateJson({ error: "Missing payment details." }, 400);
   }
-
-  const order = await getOrder(orderNumber);
-  if (!order) return NextResponse.json({ error: "Order not found." }, { status: 404 });
-
-  // Defense-in-depth: the paid Razorpay order must match the one we created.
-  if (order.razorpay?.orderId && order.razorpay.orderId !== razorpay_order_id) {
-    return NextResponse.json({ error: "Order mismatch." }, { status: 400 });
+  try {
+    if (!await rateLimit(req.headers, "verify", 30)) return privateJson({ error: "Please wait before retrying." }, 429);
+    const order = await prisma.order.findUnique({ where: { orderNumber: body.orderNumber }, select: paymentSelect });
+    if (!order?.razorpayOrderId || order.razorpayOrderId !== body.razorpay_order_id || !verifyPaymentSignature({ orderId: order.razorpayOrderId, paymentId: body.razorpay_payment_id, signature: body.razorpay_signature })) {
+      return privateJson({ error: "Payment verification failed." }, 400);
+    }
+    const result = await settlePayment(await fetchRazorpayPayment(body.razorpay_payment_id));
+    if (result !== "settled") return privateJson({ error: "Payment is not captured for the expected amount. Please retry verification shortly." }, 409);
+    return privateJson({ ok: true, orderNumber: order.orderNumber });
+  } catch (error) {
+    reportServerError("payment-verification-unavailable", error);
+    return privateJson({ error: "Payment verification is temporarily unavailable. Please retry; your order has not been cancelled." }, 503);
   }
-
-  const valid = verifyPaymentSignature({
-    orderId: razorpay_order_id,
-    paymentId: razorpay_payment_id,
-    signature: razorpay_signature,
-  });
-
-  if (!valid) {
-    await updateOrder(orderNumber, { status: "cancelled" });
-    return NextResponse.json({ error: "Payment verification failed." }, { status: 400 });
-  }
-
-  // Full prepaid → "paid". Advance + COD → advance secured, so "confirmed"
-  // (the COD balance is still collected on delivery).
-  const newStatus = order.paymentMethod === "advance_cod" ? "confirmed" : "paid";
-  await updateOrder(orderNumber, {
-    status: newStatus,
-    razorpay: { orderId: razorpay_order_id, paymentId: razorpay_payment_id },
-  });
-  return NextResponse.json({ ok: true, orderNumber });
 }

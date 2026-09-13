@@ -49,8 +49,10 @@ function StatusButton({
   );
 }
 
-export default async function AdminPage() {
-  const orders = await listOrders();
+export default async function AdminPage({ searchParams }: { searchParams: Promise<{ cursor?: string }> }) {
+  const { cursor } = await searchParams;
+  const batch = await listOrders(typeof cursor === "string" && cursor.length <= 64 ? cursor : undefined);
+  const orders = batch.slice(0, 50);
   const todayStr = new Date().toDateString();
   const active = orders.filter((o) => o.status !== "cancelled");
   const revenue = active.reduce((s, o) => s + o.total, 0);
@@ -58,10 +60,10 @@ export default async function AdminPage() {
   const needsAction = orders.filter((o) => o.status === "pending" || o.status === "awaiting_payment").length;
 
   const stats: { label: string; value: string | number }[] = [
-    { label: "Orders today", value: todayCount },
-    { label: "Total orders", value: orders.length },
-    { label: "Revenue (active)", value: inr(revenue) },
-    { label: "Needs action", value: needsAction },
+    { label: "Orders today (this page)", value: todayCount },
+    { label: "Orders on this page", value: orders.length },
+    { label: "Active value (this page)", value: inr(revenue) },
+    { label: "Needs action (this page)", value: needsAction },
   ];
 
   return (
@@ -161,6 +163,7 @@ export default async function AdminPage() {
           </table>
         </div>
       )}
+      <nav className="mt-6 flex gap-6" aria-label="Order pages"><Link href="/admin">Newest orders</Link>{batch.length > 50 && <Link href={`/admin?cursor=${encodeURIComponent(orders[49].orderNumber)}`}>Older orders</Link>}</nav>
     </div>
   );
 }

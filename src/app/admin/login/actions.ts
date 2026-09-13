@@ -1,10 +1,12 @@
 "use server";
 
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
+import { rateLimit } from "@/lib/rate-limit";
 import { redirect } from "next/navigation";
 import { ADMIN_SESSION_COOKIE, sessionValue } from "@/lib/admin-auth";
 
 export async function loginAction(formData: FormData) {
+  if (!await rateLimit(await headers(), "admin-login", 5, 300)) redirect("/admin/login?error=limited");
   const username = String(formData.get("username") ?? "");
   const password = String(formData.get("password") ?? "");
   const expectedUser = process.env.ADMIN_USER ?? "";

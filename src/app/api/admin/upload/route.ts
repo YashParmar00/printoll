@@ -2,30 +2,39 @@ import { randomUUID } from "node:crypto";
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { NextResponse, type NextRequest } from "next/server";
-import { ADMIN_SESSION_COOKIE, sessionValue } from "@/lib/admin-auth";
+import { isAdminSession } from "@/lib/admin-auth";
+import sharp from "sharp";
+import { boundedBytes } from "@/lib/private-response";
 
 export const runtime = "nodejs";
 
 const fileTypes: Record<string, string> = { "image/jpeg": ".jpg", "image/png": ".png", "image/webp": ".webp" };
 const STORAGE_BUCKET = "product-images";
 
-function authorized(request: NextRequest) {
-  const user = process.env.ADMIN_USER ?? "";
-  const pass = process.env.ADMIN_PASSWORD ?? "";
-  if (!user || !pass) return false;
-  return request.cookies.get(ADMIN_SESSION_COOKIE)?.value === sessionValue(user, pass);
-}
-
 export async function POST(request: NextRequest) {
-  if (!authorized(request)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  const formData = await request.formData();
+  if (!await isAdminSession()) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const origin = request.headers.get("origin");
+  if (origin) {
+    try {
+      const parsed = new URL(origin);
+      if (!["http:", "https:"].includes(parsed.protocol) || parsed.host !== request.headers.get("host")) return NextResponse.json({ error: "Invalid origin." }, { status: 403 });
+    } catch { return NextResponse.json({ error: "Invalid origin." }, { status: 403 }); }
+  }
+  if (Number(request.headers.get("content-length")) > 4_000_000) return NextResponse.json({ error: "Image must be 3 MB or smaller." }, { status: 413 });
+  let formData;
+  try { const body = await boundedBytes(request, 4_000_000); formData = await new Response(new Uint8Array(body), { headers: { "Content-Type": request.headers.get("content-type") ?? "" } }).formData(); } catch { return NextResponse.json({ error: "Invalid or oversized multipart request." }, { status: 400 }); }
   const file = formData.get("image");
   if (!(file instanceof File) || file.size === 0) return NextResponse.json({ error: "Select an image first." }, { status: 400 });
   const extension = fileTypes[file.type];
   if (!extension) return NextResponse.json({ error: "Only JPG, PNG and WebP images are supported." }, { status: 400 });
-  if (file.size > 5 * 1024 * 1024) return NextResponse.json({ error: "Image must be 5 MB or smaller." }, { status: 400 });
+  if (file.size > 3_000_000) return NextResponse.json({ error: "Image must be 3 MB or smaller." }, { status: 400 });
   const filename = `${randomUUID()}${extension}`;
   const bytes = Buffer.from(await file.arrayBuffer());
+  try {
+    const metadata = await sharp(bytes, { limitInputPixels: 40_000_000 }).metadata();
+    const mime = ({ jpeg: "image/jpeg", png: "image/png", webp: "image/webp" } as Record<string, string>)[metadata.format ?? ""];
+    if (mime !== file.type || !metadata.width || !metadata.height || (metadata.pages ?? 1) > 1) throw new Error("Unsupported image.");
+  } catch { return NextResponse.json({ error: "The file is not a supported image." }, { status: 400 }); }
   const supabaseUrl = process.env.SUPABASE_URL?.replace(/\/$/, "");
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
@@ -36,8 +45,9 @@ export async function POST(request: NextRequest) {
       method: "POST",
       headers: { Authorization: `Bearer ${serviceRoleKey}`, apikey: serviceRoleKey, "Content-Type": file.type, "x-upsert": "false" },
       body: bytes,
-    });
-    if (!response.ok) {
+      signal: AbortSignal.timeout(15_000),
+    }).catch(() => null);
+    if (!response?.ok) {
       return NextResponse.json({ error: "Image storage upload failed. Check the Supabase bucket and server key." }, { status: 502 });
     }
     return NextResponse.json({ url: `${supabaseUrl}/storage/v1/object/public/${STORAGE_BUCKET}/${objectPath}` });

@@ -2,7 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useVisibleRotation } from "@/lib/use-visible-rotation";
+import { useRef, useState } from "react";
 import type { HomeCollection } from "@/lib/home-collections";
 import { FALLBACK_PRODUCT_IMAGE } from "@/lib/products";
 import { ArrowRightIcon } from "@/components/ui/icons";
@@ -19,11 +20,7 @@ export default function ProductBannerCarousel({ collections }: Props) {
     setActive((index + count) % count);
   }
 
-  useEffect(() => {
-    if (count < 2) return;
-    const timer = window.setInterval(() => setActive((current) => (current + 1) % count), 5000);
-    return () => window.clearInterval(timer);
-  }, [count]);
+  const sectionRef = useVisibleRotation(() => setActive(current => (current + 1) % count), 5000, count > 1);
 
   if (!count) return null;
   // Render precisely three slots, rather than scrolling a wider track. This
@@ -43,7 +40,7 @@ export default function ProductBannerCarousel({ collections }: Props) {
   }
 
   return (
-    <section id="collections" aria-label="Featured collections" className="scroll-mt-28 overflow-hidden bg-night py-8 sm:py-10">
+    <section ref={sectionRef} id="collections" aria-label="Featured collections" className="scroll-mt-28 overflow-hidden bg-night py-8 sm:py-10">
       <div className="container-page">
         <div className="mb-5 grid grid-cols-3 items-center gap-2 sm:gap-4">
           <div className="col-span-2">
@@ -62,11 +59,11 @@ export default function ProductBannerCarousel({ collections }: Props) {
           onTouchStart={(event) => startSwipe(event.touches[0]?.clientX ?? 0)}
           onTouchEnd={(event) => finishSwipe(event.changedTouches[0]?.clientX ?? 0)}
         >
-        {visibleProducts.map((collection, index) => {
+        {visibleProducts.map((collection) => {
           const image = collection.imageUrl ?? FALLBACK_PRODUCT_IMAGE;
           return (
             <article key={`${active}-${collection.id}`} className="relative h-[195px] min-w-0 overflow-hidden rounded-xl border border-white/10 bg-night-card sm:h-[300px] sm:rounded-2xl lg:h-[340px]">
-              <Image src={image} alt={collection.title} fill sizes="(min-width: 1024px) 384px, 33vw" className="object-cover transition duration-500" priority={index < 3} />
+              <Image src={image} alt={collection.title} fill sizes="(min-width: 1024px) 384px, 33vw" className="object-cover transition duration-500" />
               <div aria-hidden className="absolute inset-0 bg-gradient-to-r from-night via-night/65 to-transparent" />
               <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-night/55 via-transparent to-transparent" />
               <div className="relative flex h-full max-w-none flex-col justify-end p-3 sm:max-w-[78%] sm:justify-center sm:p-5 lg:p-7">

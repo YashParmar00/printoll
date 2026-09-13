@@ -35,6 +35,7 @@ type Props = {
   index: number;
   /** Fired once the model is on screen, so the poster can fade out. */
   onReady: () => void;
+  onError: () => void;
 };
 
 const MODEL_SRC = "/uploads/hero/tshirt.glb";
@@ -42,28 +43,36 @@ const MODEL_SRC = "/uploads/hero/tshirt.glb";
 const CENTER_Y = -0.045;
 const CAMERA_Z = 1.65;
 
-export default function TeeCanvas({ variants, index, onReady }: Props) {
+export default function TeeCanvas({ variants, index, onReady, onError }: Props) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const indexRef = useRef(index);
   const spinRef = useRef<() => void>(() => {});
   const readyRef = useRef(onReady);
+  const errorRef = useRef(onError);
+  useEffect(() => { errorRef.current = onError; }, [onError]);
 
   useEffect(() => {
     readyRef.current = onReady;
   }, [onReady]);
 
   useEffect(() => {
-    if (indexRef.current !== index) spinRef.current();
+    const changed = indexRef.current !== index;
     indexRef.current = index;
+    if (changed) spinRef.current();
   }, [index]);
 
   useEffect(() => {
     const wrap = wrapRef.current;
     if (!wrap) return;
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let reduced = motion.matches;
+    let raf = 0;
+    let onScreen = true;
+    const wake = () => { if (!disposed && onScreen && !document.hidden && !raf) raf = requestAnimationFrame(tick); };
     let disposed = false;
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
+    let renderer: THREE.WebGLRenderer;
+    try { renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" }); } catch { errorRef.current(); return; }
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.75));
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -71,6 +80,8 @@ export default function TeeCanvas({ variants, index, onReady }: Props) {
     el.style.touchAction = "pan-y";
     el.className = "h-full w-full cursor-grab active:cursor-grabbing";
     wrap.appendChild(el);
+    const contextLost = (event: Event) => { event.preventDefault(); errorRef.current(); };
+    el.addEventListener("webglcontextlost", contextLost);
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(30, 1, 0.01, 20);
@@ -96,10 +107,23 @@ export default function TeeCanvas({ variants, index, onReady }: Props) {
 
     const loader = new GLTFLoader();
     loader.setMeshoptDecoder(MeshoptDecoder);
+    let ensurePrint: (index: number) => Promise<void> = async () => {};
+    performance.mark("hero-glb-start");
     loader.load(MODEL_SRC, (gltf) => {
-      if (disposed) return;
+      performance.mark("hero-glb-complete");
+      const originals = new Set<{ dispose(): void }>();
+      gltf.scene.traverse(object => {
+        if (!(object instanceof THREE.Mesh)) return;
+        originals.add(object.geometry);
+        for (const material of Array.isArray(object.material) ? object.material : [object.material]) {
+          originals.add(material);
+          for (const value of Object.values(material)) if (value instanceof THREE.Texture) originals.add(value);
+        }
+      });
+      if (disposed) { originals.forEach(value => value.dispose()); return; }
+      disposables.push(...originals);
       const src = gltf.scene.getObjectByProperty("type", "Mesh") as THREE.Mesh | undefined;
-      if (!src) return;
+      if (!src) { errorRef.current(); return; }
 
       // Bake the node transform and undo mesh quantization so the decal
       // projector and the breeze shader both work in plain model units.
@@ -116,8 +140,11 @@ export default function TeeCanvas({ variants, index, onReady }: Props) {
       disposables.push(geo, fabric);
 
       const texLoader = new THREE.TextureLoader();
-      const prints = variants.map(async (v, i) => {
+      const loading = new Map<number, Promise<void>>();
+      const loadPrint = async (i: number) => {
+        const v = variants[i];
         const tex = await texLoader.loadAsync(v.print);
+        if (disposed) { tex.dispose(); return; }
         tex.colorSpace = THREE.SRGBColorSpace;
         tex.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy());
         const img = tex.image as HTMLImageElement;
@@ -140,19 +167,25 @@ export default function TeeCanvas({ variants, index, onReady }: Props) {
         decals[i] = mat;
         pivot.add(new THREE.Mesh(decalGeo, mat));
         disposables.push(tex, decalGeo, mat);
-      });
+        performance.mark(`hero-print-${i}-ready`);
+        wake();
+      };
+      ensurePrint = (i: number) => {
+        if (!loading.has(i)) loading.set(i, loadPrint(i));
+        return loading.get(i)!;
+      };
 
       // Reveal only once every print is on the shirt and all shaders are
       // compiled — otherwise the bare model pops in and hitches on first frame.
-      Promise.all(prints)
-        .then(() => renderer.compileAsync(scene, camera))
+      ensurePrint(indexRef.current)
+        .then(() => { if (!disposed) return renderer.compileAsync(scene, camera); })
         .then(() => {
           if (disposed) return;
           renderer.render(scene, camera);
           requestAnimationFrame(() => !disposed && readyRef.current());
         })
-        .catch(() => !disposed && readyRef.current());
-    });
+        .catch(() => !disposed && errorRef.current());
+    }, undefined, () => { if (!disposed) errorRef.current(); });
 
     // ── drag / swipe to spin ────────────────────────────────────────────
     let rotY = -0.5;
@@ -167,6 +200,8 @@ export default function TeeCanvas({ variants, index, onReady }: Props) {
       // a flick of rotation makes the variant swap feel physical
       if (!reduced) velY += 0.16;
       targetColor.set(variants[indexRef.current].color);
+      void ensurePrint(indexRef.current).catch(() => !disposed && errorRef.current());
+      wake();
     };
 
     const onDown = (e: PointerEvent) => {
@@ -186,6 +221,7 @@ export default function TeeCanvas({ variants, index, onReady }: Props) {
       lastX = e.clientX;
       lastY = e.clientY;
       lastInput = performance.now();
+      wake();
     };
     const onUp = (e: PointerEvent) => {
       dragging = false;
@@ -204,20 +240,19 @@ export default function TeeCanvas({ variants, index, onReady }: Props) {
       camera.aspect = w / h;
       camera.position.z = w / h < 1 ? CAMERA_Z / Math.max(w / h, 0.6) : CAMERA_Z;
       camera.updateProjectionMatrix();
+      wake();
     };
     const ro = new ResizeObserver(resize);
     ro.observe(wrap);
     resize();
 
-    let onScreen = true;
-    const io = new IntersectionObserver(([entry]) => (onScreen = entry.isIntersecting));
+    const io = new IntersectionObserver(([entry]) => { onScreen = entry.isIntersecting; if (!onScreen) { cancelAnimationFrame(raf); raf = 0; } else wake(); });
     io.observe(wrap);
 
     // ── loop ────────────────────────────────────────────────────────────
     const clock = new THREE.Clock();
-    let raf = 0;
-    const tick = () => {
-      raf = requestAnimationFrame(tick);
+    function tick() {
+      raf = 0;
       const dt = Math.min(clock.getDelta(), 0.05);
       if (!onScreen || document.hidden) return;
 
@@ -241,12 +276,20 @@ export default function TeeCanvas({ variants, index, onReady }: Props) {
       pivot.rotation.set(rotX, rotY, 0);
       pivot.position.y = -CENTER_Y + (reduced ? 0 : Math.sin(uniforms.uTime.value * 1.1) * 0.008);
       renderer.render(scene, camera);
-    };
-    tick();
+      if (!reduced) wake();
+    }
+    const visibility = () => { if (document.hidden) { cancelAnimationFrame(raf); raf = 0; } else wake(); };
+    const motionChanged = () => { reduced = motion.matches; wake(); };
+    document.addEventListener("visibilitychange", visibility);
+    motion.addEventListener("change", motionChanged);
+    wake();
 
     return () => {
       disposed = true;
       cancelAnimationFrame(raf);
+      document.removeEventListener("visibilitychange", visibility);
+      motion.removeEventListener("change", motionChanged);
+      el.removeEventListener("webglcontextlost", contextLost);
       ro.disconnect();
       io.disconnect();
       el.removeEventListener("pointerdown", onDown);

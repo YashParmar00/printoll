@@ -21,6 +21,7 @@ export interface CheckoutLineInput {
   qty: number;
   personalizationText?: string;
   personalizationPhotoName?: string;
+  sizes?: string[];
 }
 
 export interface OrderLine {
@@ -48,7 +49,7 @@ export interface OrderTotals {
 
 export class CheckoutError extends Error {}
 
-const MAX_QTY = 10;
+export const MAX_QTY = 10;
 
 export function clampQty(n: unknown): number {
   const q = Math.floor(Number(n));
@@ -135,8 +136,13 @@ export function validatePincode(v: string): boolean {
 }
 
 /** Returns an error message, or null if the customer is valid. */
-export function validateCustomer(c: Partial<CustomerInput> | undefined): string | null {
-  if (!c) return "Missing delivery details.";
+export function validateCustomer(value: unknown): string | null {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return "Missing delivery details.";
+  const c = value as Partial<CustomerInput>;
+  for (const [key, max] of Object.entries({ name: 100, phone: 10, email: 254, address: 500, city: 100, state: 100, pincode: 6 })) {
+    const field = c[key as keyof CustomerInput];
+    if (field !== undefined && (typeof field !== "string" || field.length > max)) return "Invalid or oversized delivery details.";
+  }
   if (!c.name || c.name.trim().length < 2) return "Please enter your full name.";
   if (!validatePhone(c.phone ?? "")) return "Enter a valid 10-digit mobile number.";
   if (c.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(c.email)) return "Enter a valid email, or leave it blank.";

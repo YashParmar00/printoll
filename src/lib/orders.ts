@@ -6,6 +6,7 @@
  * `await`. Replaces the previous `.data/orders.json` file store.
  */
 import crypto from "node:crypto";
+import { Prisma } from "@prisma/client";
 import type { Order as DbOrder, OrderItem as DbOrderItem } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import type { OrderLine, PaymentMethod } from "@/lib/checkout";
@@ -44,6 +45,10 @@ export interface Order {
   advancePaid: number;
   codDue: number;
   currency: string;
+  onlineAmount?: number;
+  paymentStatus?: string;
+  checkoutKey?: string;
+  requestHash?: string;
   razorpay?: { orderId?: string; paymentId?: string };
   trackingUrl?: string;
 }
@@ -51,7 +56,7 @@ export interface Order {
 export function generateOrderNumber(): string {
   const d = new Date();
   const ymd = `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, "0")}${String(d.getDate()).padStart(2, "0")}`;
-  const rand = crypto.randomBytes(2).toString("hex").toUpperCase();
+  const rand = crypto.randomBytes(8).toString("hex").toUpperCase();
   return `AM-${ymd}-${rand}`;
 }
 
@@ -88,6 +93,10 @@ function toOrder(row: DbOrder & { items: DbOrderItem[] }): Order {
     advancePaid: row.advancePaid,
     codDue: row.codDue,
     currency: row.currency,
+    onlineAmount: row.onlineAmount,
+    paymentStatus: row.paymentStatus,
+    checkoutKey: row.checkoutKey ?? undefined,
+    requestHash: row.requestHash ?? undefined,
     razorpay:
       row.razorpayOrderId || row.razorpayPaymentId
         ? { orderId: row.razorpayOrderId ?? undefined, paymentId: row.razorpayPaymentId ?? undefined }
@@ -116,6 +125,10 @@ export async function createOrder(input: Omit<Order, "orderNumber" | "createdAt"
       advancePaid: input.advancePaid,
       codDue: input.codDue,
       currency: input.currency,
+      onlineAmount: input.onlineAmount ?? 0,
+      paymentStatus: "unpaid",
+      checkoutKey: input.checkoutKey,
+      requestHash: input.requestHash,
       razorpayOrderId: input.razorpay?.orderId ?? null,
       razorpayPaymentId: input.razorpay?.paymentId ?? null,
       trackingUrl: input.trackingUrl ?? null,
@@ -169,15 +182,18 @@ export async function updateOrder(orderNumber: string, patch: Partial<Order>): P
       include: { items: true },
     });
     return toOrder(row);
-  } catch {
-    return undefined; // order not found
+  } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2025") return undefined;
+    throw error;
   }
 }
 
-export async function listOrders(): Promise<Order[]> {
+export async function listOrders(cursor?: string): Promise<Order[]> {
   const rows = await prisma.order.findMany({
     include: { items: true },
-    orderBy: { createdAt: "desc" },
+    orderBy: [{ createdAt: "desc" }, { orderNumber: "desc" }],
+    take: 51,
+    ...(cursor ? { cursor: { orderNumber: cursor }, skip: 1 } : {}),
   });
   return rows.map(toOrder);
 }

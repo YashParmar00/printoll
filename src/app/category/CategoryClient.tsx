@@ -1,8 +1,8 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { HomeCollection } from "@/lib/home-collections";
-import type { Product } from "@/lib/products";
+import type { CatalogCard as Product } from "@/lib/catalog-card";
 import ProductCard from "@/components/ui/ProductCard";
 
 type Sort = "featured" | "low" | "high";
@@ -37,6 +37,11 @@ export default function CategoryClient({
   const requestedCategory = categoryKey(initialCategory ?? "");
   const validInitialCategory = categories.some((item) => item.key === requestedCategory) ? requestedCategory : "all";
   const [category, setCategory] = useState(validInitialCategory);
+  useEffect(() => {
+    const onBack = () => { const key = categoryKey(new URLSearchParams(location.search).get("category") ?? ""); setCategory(categories.some(item => item.key === key) ? key : "all"); };
+    window.addEventListener("popstate", onBack);
+    return () => window.removeEventListener("popstate", onBack);
+  }, [categories]);
   const [sort, setSort] = useState<Sort>("featured");
 
   const list = useMemo(() => {

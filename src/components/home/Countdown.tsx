@@ -23,7 +23,6 @@ export default function Countdown({ target, label }: { target: string; label: st
   const [parts, setParts] = useState<Parts | null>(null);
 
   useEffect(() => {
-    setParts(partsUntil(targetMs));
     const id = setInterval(() => setParts(partsUntil(targetMs)), 1000);
     return () => clearInterval(id);
   }, [targetMs]);

@@ -1,3 +1,6 @@
+import { cache } from "react";
+import { unstable_cache } from "next/cache";
+import type { CatalogCard } from "@/lib/catalog-card";
 import { Prisma, type Product as DbProduct } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { products as seedCatalogue, type Product, type ProductFaq } from "@/lib/products";
@@ -68,16 +71,17 @@ export function toCatalogProduct(row: DbProduct): Product {
   };
 }
 
-export async function listCatalogProducts(includeInactive = false): Promise<Product[]> {
-  if (usingStaticCatalogue && !includeInactive) return staticCatalogue();
+async function readCatalogProducts(includeInactive = false, limit?: number): Promise<Product[]> {
+  if (usingStaticCatalogue && !includeInactive) return staticCatalogue().slice(0, limit);
   const rows = await prisma.product.findMany({
     where: includeInactive ? undefined : { active: true },
+    take: limit,
     orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],
   });
   return rows.map(toCatalogProduct);
 }
 
-export async function findCatalogProduct(slug: string, includeInactive = false): Promise<Product | undefined> {
+async function readCatalogProduct(slug: string, includeInactive = false): Promise<Product | undefined> {
   if (usingStaticCatalogue && !includeInactive) {
     return staticCatalogue().find((product) => product.slug === slug);
   }
@@ -85,7 +89,7 @@ export async function findCatalogProduct(slug: string, includeInactive = false):
   return row ? toCatalogProduct(row) : undefined;
 }
 
-export async function relatedCatalogProducts(slug: string, limit = 3): Promise<Product[]> {
+async function readRelatedCatalogProducts(slug: string, limit = 3): Promise<CatalogCard[]> {
   if (usingStaticCatalogue) {
     return staticCatalogue().filter((product) => product.slug !== slug).slice(0, limit);
   }
@@ -93,11 +97,25 @@ export async function relatedCatalogProducts(slug: string, limit = 3): Promise<P
     where: { active: true, slug: { not: slug } },
     orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],
     take: limit,
+    select: cardSelect,
   });
-  return rows.map(toCatalogProduct);
+  return rows.map(row => ({ ...row, shape: row.shape as Product["shape"], reviews: row.reviewsCount, accent: accent(row.accent), imageUrl: row.imageUrl ?? undefined }));
 }
 
+const cardSelect = { slug: true, name: true, tagline: true, price: true, compareAtPrice: true, category: true, shape: true, reviewsCount: true, accent: true, imageUrl: true, imageUrls: true } as const;
+export const listCatalogCards = unstable_cache(async (limit?: number): Promise<CatalogCard[]> => {
+  if (usingStaticCatalogue) return staticCatalogue().slice(0, limit).map(({ slug, name, tagline, price, compareAtPrice, category, shape, reviews, accent, imageUrl, imageUrls }) => ({ slug, name, tagline, price, compareAtPrice, category, shape, reviews, accent, imageUrl, imageUrls }));
+  const rows = await prisma.product.findMany({ where: { active: true }, orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }], take: limit, select: cardSelect });
+  return rows.map(row => ({ ...row, shape: row.shape as Product["shape"], reviews: row.reviewsCount, accent: accent(row.accent), imageUrl: row.imageUrl ?? undefined }));
+}, ["catalog-cards-v1", String(usingStaticCatalogue)], { tags: ["catalog"], revalidate: 300 });
+
 export type CatalogInput = Omit<Product, "slug"> & { slug: string; active: boolean; sortOrder: number };
+
+/** Deliberately uncached: authoritative checkout snapshot of requested products only. */
+export async function checkoutProducts(slugs: string[]) {
+  if (usingStaticCatalogue) return staticCatalogue().filter(product => slugs.includes(product.slug));
+  return prisma.product.findMany({ where: { active: true, slug: { in: slugs } }, select: { slug: true, name: true, price: true, requiresAdvance: true, personalization: true, category: true, shape: true } });
+}
 
 export async function saveCatalogProduct(input: CatalogInput) {
   const data = {
@@ -110,3 +128,9 @@ export async function saveCatalogProduct(input: CatalogInput) {
   };
   return prisma.product.upsert({ where: { slug: input.slug }, update: data, create: { slug: input.slug, ...data } });
 }
+
+const cachedList = unstable_cache((limit?: number) => readCatalogProducts(false, limit), ["catalog-list-v2", String(usingStaticCatalogue)], { tags: ["catalog"], revalidate: 300 });
+const cachedProduct = unstable_cache((slug: string) => readCatalogProduct(slug), ["catalog-product-v2", String(usingStaticCatalogue)], { tags: ["catalog"], revalidate: 300 });
+export const findCatalogProduct = cache((slug: string, includeInactive = false) => includeInactive ? readCatalogProduct(slug, true) : cachedProduct(slug));
+export const listCatalogProducts = (includeInactive = false, limit?: number) => includeInactive ? readCatalogProducts(true, limit) : cachedList(limit);
+export const relatedCatalogProducts = unstable_cache(readRelatedCatalogProducts, ["catalog-related-v2", String(usingStaticCatalogue)], { tags: ["catalog"], revalidate: 300 });

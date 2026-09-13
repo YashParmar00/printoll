@@ -1,10 +1,10 @@
 import Link from "next/link";
-import { listCatalogProducts } from "@/lib/catalog";
+import { listCatalogCards } from "@/lib/catalog";
 import ProductCard from "@/components/ui/ProductCard";
 import { ArrowRightIcon } from "@/components/ui/icons";
 
 export default async function FeaturedProducts() {
-  const featuredProducts = (await listCatalogProducts()).slice(0, 16);
+  const featuredProducts = await listCatalogCards(16);
   return (
     <section id="featured" className="scroll-mt-28 bg-night py-12 sm:py-16">
       <div className="container-page">
@@ -25,7 +25,7 @@ export default async function FeaturedProducts() {
         </div>
         <div className="grid grid-cols-2 gap-4 sm:gap-5 md:grid-cols-3 md:gap-6 lg:grid-cols-4">
           {featuredProducts.map((product) => (
-            <ProductCard key={product.slug} product={product} />
+            <ProductCard key={product.slug} product={product} sizes="(min-width: 1280px) 282px, (min-width: 1024px) 23vw, (min-width: 768px) 30vw, 46vw" />
           ))}
         </div>
       </div>

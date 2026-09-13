@@ -7,6 +7,7 @@ import Header from "@/components/site/Header";
 import Footer from "@/components/site/Footer";
 import MobileBottomNav from "@/components/site/MobileBottomNav";
 import WhatsAppFab from "@/components/site/WhatsAppFab";
+import PerformanceVitals from "@/components/site/PerformanceVitals";
 
 // Bold, rounded display face for headlines (variable font — all weights available).
 const baloo = Baloo_2({
@@ -51,6 +52,7 @@ export default function RootLayout({
     <html lang="en" className={`${baloo.variable} ${inter.variable} h-full`}>
       <body className="flex min-h-full flex-col bg-paper pb-16 text-noir antialiased lg:pb-0">
         <CartProvider>
+          <PerformanceVitals />
           <Header />
           <main className="flex-1">{children}</main>
           <Footer />

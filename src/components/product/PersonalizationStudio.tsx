@@ -1,7 +1,9 @@
 "use client";
 
-import { useEffect, useState, type ChangeEvent } from "react";
+import { useEffect, useState, useSyncExternalStore, type ChangeEvent } from "react";
 import Link from "next/link";
+import Image from "next/image";
+import { garmentCount } from "@/lib/checkout-input";
 import type { Product } from "@/lib/products";
 import { inr, savingsPct, deliveryBy } from "@/lib/format";
 import { site, whatsappLink } from "@/lib/site";
@@ -30,6 +32,7 @@ export default function PersonalizationStudio({ product }: { product: Product })
 
   const needsText = product.personalization === "text" || product.personalization === "both";
   const needsPhoto = product.personalization === "photo" || product.personalization === "both";
+  const sizeCount = garmentCount(product);
   const save = savingsPct(product.price, product.compareAtPrice);
 
   const [text, setText] = useState("");
@@ -43,11 +46,10 @@ export default function PersonalizationStudio({ product }: { product: Product })
   const [qty, setQty] = useState(1);
   const [error, setError] = useState("");
   const [added, setAdded] = useState(false);
-  const [deliveryDate, setDeliveryDate] = useState<string | null>(null);
+  const deliveryDate = useSyncExternalStore(subscribeToDate, () => deliveryBy(site.deliveryDays), () => null);
   const gallery = product.imageUrls?.length ? product.imageUrls : product.imageUrl ? [product.imageUrl] : [];
   const [selectedImage, setSelectedImage] = useState(0);
 
-  useEffect(() => setDeliveryDate(deliveryBy(site.deliveryDays)), []);
   // Free the object URL when it changes or on unmount.
   useEffect(() => () => { if (photoUrl) URL.revokeObjectURL(photoUrl); }, [photoUrl]);
 
@@ -74,12 +76,13 @@ export default function PersonalizationStudio({ product }: { product: Product })
   }
 
   function handleAdd() {
+    if (needsPhoto) { setError("Photo previews are available, but photo orders need secure upload delivery before checkout. Please contact us."); return; }
     if (needsText && !text.trim()) {
       setError("Please type the names, initials or date to print.");
       return;
     }
-    if (!sizeA || !sizeB) {
-      setError("Please pick a size for each tee in the set.");
+    if ((sizeCount > 0 && !sizeA) || (sizeCount === 2 && !sizeB)) {
+      setError("Please pick the required garment sizes.");
       return;
     }
     if (needsPhoto && !photoUrl) {
@@ -87,15 +90,14 @@ export default function PersonalizationStudio({ product }: { product: Product })
       return;
     }
     setError("");
-    const detail = [needsText ? text.trim() : null, `Sizes: ${sizeA} + ${sizeB}`]
-      .filter(Boolean)
-      .join(" · ");
+    const detail = needsText ? text.trim() : undefined;
     addItem(
       {
         slug: product.slug,
         name: product.name,
         price: product.price,
         personalizationText: detail,
+        sizes: sizeCount === 2 ? [sizeA, sizeB] : sizeCount === 1 ? [sizeA] : [],
         personalizationPhotoName: needsPhoto ? photoName ?? undefined : undefined,
       },
       qty,
@@ -121,11 +123,10 @@ export default function PersonalizationStudio({ product }: { product: Product })
       <div>
         {gallery[selectedImage] && !photoUrl ? (
           <div className="relative aspect-square overflow-hidden rounded-2xl" style={{ background: `linear-gradient(135deg, ${product.accent[0]}, ${product.accent[1]})` }}>
-            {/* eslint-disable-next-line @next/next/no-img-element -- admin-uploaded URL */}
-            <img src={gallery[selectedImage]} alt={`${product.name} — photo ${selectedImage + 1}`} className="h-full w-full object-cover" />
+            <Image src={gallery[selectedImage]} alt={`${product.name} — photo ${selectedImage + 1}`} className="h-full w-full object-cover"  fill sizes="(min-width: 1280px) 576px, (min-width: 1024px) 46vw, 94vw" loading="eager" fetchPriority="high" />
           </div>
         ) : <ProductMockup shape={product.shape} accent={product.accent} text={needsText ? text : undefined} photoUrl={needsPhoto ? photoUrl : undefined} />}
-        {gallery.length > 1 && <div className="mt-3 grid grid-cols-5 gap-3">{gallery.map((url, index) => <button key={url} type="button" onClick={() => setSelectedImage(index)} aria-label={`View product photo ${index + 1}`} className={`relative aspect-square overflow-hidden rounded-xl border bg-sand ${selectedImage === index ? "border-coral ring-2 ring-coral ring-offset-2" : "border-line hover:border-coral"}`}>{/* eslint-disable-next-line @next/next/no-img-element */}<img src={url} alt="" className="h-full w-full object-cover" /><span className="sr-only">{index === 0 ? "Main photo" : `Photo ${index + 1}`}</span></button>)}</div>}
+        {gallery.length > 1 && <div className="mt-3 grid grid-cols-5 gap-3">{gallery.map((url, index) => <button key={url} type="button" onClick={() => setSelectedImage(index)} aria-label={`View product photo ${index + 1}`} className={`relative aspect-square overflow-hidden rounded-xl border bg-sand ${selectedImage === index ? "border-coral ring-2 ring-coral ring-offset-2" : "border-line hover:border-coral"}`}><Image src={url} alt="" fill sizes="(min-width: 1024px) 108px, 18vw" className="object-cover" /><span className="sr-only">{index === 0 ? "Main photo" : `Photo ${index + 1}`}</span></button>)}</div>}
         <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-sm text-ink">
           <span className="inline-flex items-center gap-1.5"><ShieldIcon className="h-4 w-4 text-coral" /> 7-day damage replacement</span>
           <span className="inline-flex items-center gap-1.5"><TruckIcon className="h-4 w-4 text-coral" /> Free shipping across India</span>
@@ -137,7 +138,7 @@ export default function PersonalizationStudio({ product }: { product: Product })
         <div className="flex items-center gap-2">
           {product.badge && <span className="tag bg-blush text-noir">{product.badge}</span>}
           <span className="text-xs font-medium uppercase tracking-wider text-ink">
-            Couple set · 2 tees
+            {sizeCount === 2 ? "Couple set · 2 tees" : "Single garment"}
           </span>
         </div>
 
@@ -157,7 +158,7 @@ export default function PersonalizationStudio({ product }: { product: Product })
         </div>
 
         <div className="mt-5">{priceBlock}</div>
-        <p className="mt-1 text-sm text-ink">Price is for the full set: both tees in one box.</p>
+        <p className="mt-1 text-sm text-ink">{sizeCount === 2 ? "Price is for the full set: both tees in one box." : "Price is for one garment."}</p>
 
         {/* Delivery promise before add-to-cart (RESEARCH §B5) */}
         <p className="mt-3 inline-flex items-center gap-2 rounded-lg bg-blush px-3 py-2 text-sm font-medium text-noir">
@@ -192,27 +193,27 @@ export default function PersonalizationStudio({ product }: { product: Product })
                 }}
               />
               <div className="mt-1 flex justify-between text-xs text-ink">
-                <span>Printed on both tees, exactly as you type it.</span>
+                <span>{sizeCount === 2 ? "Printed on both tees, exactly as you type it." : "Printed exactly as you type it."}</span>
                 <span>{text.length}/{PRINT_MAX}</span>
               </div>
             </div>
           )}
 
           {/* Two garments, two sizes */}
-          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+          {sizeCount > 0 && <div className="mt-4 grid gap-3 sm:grid-cols-2">
             <SizePicker
               id="sizeA"
               label="Size for tee 1"
               value={sizeA}
               onChange={(v) => { setSizeA(v); if (error) setError(""); }}
             />
-            <SizePicker
+            {sizeCount === 2 && <SizePicker
               id="sizeB"
               label="Size for tee 2"
               value={sizeB}
               onChange={(v) => { setSizeB(v); if (error) setError(""); }}
-            />
-          </div>
+            />}
+          </div>}
           <p className="mt-1.5 text-xs text-ink">
             Unisex fit. Between sizes? Size up, or ask us on WhatsApp.
           </p>
@@ -277,7 +278,7 @@ export default function PersonalizationStudio({ product }: { product: Product })
         {error && <p className="mt-4 text-sm font-medium text-red-600">{error}</p>}
 
         <button type="button" onClick={handleAdd} className="btn-dark mt-4 w-full">
-          Choose your pair · {inr(product.price * qty)}
+          Add to cart · {inr(product.price * qty)}
         </button>
 
         {added && (
@@ -309,7 +310,7 @@ export default function PersonalizationStudio({ product }: { product: Product })
           <div className="strike text-xs text-ink">{inr(product.compareAtPrice * qty)}</div>
         </div>
         <button type="button" onClick={handleAdd} className="btn-dark flex-1 py-3">
-          Choose your pair
+          Add to cart
         </button>
       </div>
     </div>
@@ -350,3 +351,5 @@ function SizePicker({
     </div>
   );
 }
+
+function subscribeToDate(notify: () => void) { const timer = setInterval(notify, 60_000); return () => clearInterval(timer); }

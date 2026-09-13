@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useVisibleRotation } from "@/lib/use-visible-rotation";
+import { useRef, useState } from "react";
 import { StarIcon } from "@/components/ui/icons";
 
 /* These remain intentionally marked as placeholders until genuine customer reviews arrive. */
@@ -42,10 +43,7 @@ export default function Testimonials() {
 
   const goTo = (index: number) => setActive((index + count) % count);
 
-  useEffect(() => {
-    const timer = window.setInterval(() => setActive((current) => (current + 1) % count), 6000);
-    return () => window.clearInterval(timer);
-  }, [count]);
+  const sectionRef = useVisibleRotation(() => setActive(current => (current + 1) % count), 6000, count > 1);
 
   function startSwipe(clientX: number) { touchStart.current = clientX; }
   function finishSwipe(clientX: number) {
@@ -62,7 +60,7 @@ export default function Testimonials() {
   );
 
   return (
-    <section className="relative py-14 sm:py-16 md:py-20" aria-labelledby="testimonial-heading">
+    <section ref={sectionRef} className="relative py-14 sm:py-16 md:py-20" aria-labelledby="testimonial-heading">
       <div className="container-page relative">
         <div className="grid items-end gap-5 sm:grid-cols-[1fr_auto]">
           <div className="max-w-2xl">

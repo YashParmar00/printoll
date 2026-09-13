@@ -1,13 +1,9 @@
 "use client";
-
 import { useEffect } from "react";
 import { useCart } from "@/lib/cart";
 
-/** Empties the cart once the order is placed (mounted on the thank-you page). */
-export default function ClearCart() {
-  const { clear } = useCart();
-  useEffect(() => {
-    clear();
-  }, [clear]);
+export default function ClearCart({ orderNumber }: { orderNumber: string }) {
+  const { hydrated, clearSubmitted } = useCart();
+  useEffect(() => { if (hydrated) clearSubmitted(orderNumber); }, [hydrated, clearSubmitted, orderNumber]);
   return null;
 }

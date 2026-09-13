@@ -1,3 +1,4 @@
+import { unstable_cache } from "next/cache";
 import { Prisma, type HomeCollection as DbHomeCollection } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 
@@ -65,27 +66,16 @@ function toHomeCollection(row: DbHomeCollection): HomeCollection {
   };
 }
 
-export async function listHomeCollections(includeInactive = false): Promise<HomeCollection[]> {
-  try {
-    const rows = await prisma.homeCollection.findMany({
-      where: includeInactive ? undefined : { active: true },
-      orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],
-    });
-    return rows.length ? rows.map(toHomeCollection) : defaultHomeCollections.filter((item) => includeInactive || item.active);
-  } catch {
-    // Existing deployments can render safely until `db:push` creates this
-    // table. The admin area clearly prompts the owner to run the migration.
-    return defaultHomeCollections.filter((item) => includeInactive || item.active);
-  }
+async function readHomeCollections(includeInactive = false): Promise<HomeCollection[]> {
+  if (!includeInactive && (process.env.CATALOG_SOURCE ?? "static") !== "db") return defaultHomeCollections;
+  const rows = await prisma.homeCollection.findMany({ where: includeInactive ? undefined : { active: true }, orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }] });
+  return rows.map(toHomeCollection);
 }
-
-export async function findHomeCollection(id: string): Promise<HomeCollection | undefined> {
-  try {
-    const row = await prisma.homeCollection.findUnique({ where: { id } });
-    return row ? toHomeCollection(row) : defaultHomeCollections.find((item) => item.id === id);
-  } catch {
-    return defaultHomeCollections.find((item) => item.id === id);
-  }
+const cachedCollections = unstable_cache(() => readHomeCollections(), ["collections-v2", process.env.CATALOG_SOURCE ?? "static"], { tags: ["collections"], revalidate: 300 });
+export const listHomeCollections = (includeInactive = false) => includeInactive ? readHomeCollections(true) : cachedCollections();
+export async function findHomeCollection(id: string) {
+  const row = await prisma.homeCollection.findUnique({ where: { id } });
+  return row ? toHomeCollection(row) : undefined;
 }
 
 export type HomeCollectionInput = Omit<HomeCollection, "id">;

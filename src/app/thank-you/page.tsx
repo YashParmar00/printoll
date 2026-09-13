@@ -5,9 +5,10 @@ import { inr } from "@/lib/format";
 import { site, whatsappLink } from "@/lib/site";
 import { CheckIcon, WhatsAppIcon, TruckIcon } from "@/components/ui/icons";
 import ClearCart from "@/components/cart/ClearCart";
+import { hasReceipt } from "@/lib/receipt";
 
 export const dynamic = "force-dynamic";
-export const metadata: Metadata = { title: "Order confirmed" };
+export const metadata: Metadata = { title: "Order receipt", robots: { index: false, follow: false }, referrer: "no-referrer" };
 
 export default async function ThankYouPage({
   searchParams,
@@ -15,7 +16,8 @@ export default async function ThankYouPage({
   searchParams: Promise<{ order?: string }>;
 }) {
   const { order: orderNumber } = await searchParams;
-  const order = orderNumber ? await getOrder(orderNumber) : undefined;
+  const order = orderNumber && await hasReceipt(orderNumber) ? await getOrder(orderNumber) : undefined;
+  const accepted = !!order && order.status !== "cancelled" && (order.paymentMethod === "cod" || order.paymentStatus === "captured");
 
   const waMessage = order
     ? `Hi ${site.name}, I just placed order ${order.orderNumber} (${order.paymentMethod === "cod" ? "Cash on Delivery" : "Paid online"}). Please confirm.`
@@ -23,7 +25,7 @@ export default async function ThankYouPage({
 
   return (
     <div className="container-page max-w-2xl py-14">
-      <ClearCart />
+      {accepted && <ClearCart orderNumber={order.orderNumber} />}
 
       <div className="text-center">
         <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-coral text-white">
@@ -35,14 +37,14 @@ export default async function ThankYouPage({
             Your order <strong className="text-charcoal">{order.orderNumber}</strong> is placed.
             {order.paymentMethod === "cod"
               ? " We'll confirm the details with you on WhatsApp shortly."
-              : order.paymentMethod === "advance_cod"
+              : order.paymentMethod === "advance_cod" && order.paymentStatus === "captured"
                 ? ` Your ${inr(order.advancePaid)} advance is received. Pay the remaining ${inr(order.codDue)} in cash on delivery.`
-                : order.status === "paid"
+                : order.paymentStatus === "captured"
                   ? " Payment received. We're on it."
-                  : " We'll confirm shortly."}
+                  : " Payment is pending verification. Your cart has been kept."}
           </p>
         ) : (
-          <p className="mt-2 text-ink">Your order is placed. We&apos;ll be in touch on WhatsApp shortly.</p>
+          <p className="mt-2 text-ink">A valid receipt in this browser is required to view an order. Use order tracking with your order number and phone to recover its status.</p>
         )}
       </div>
 

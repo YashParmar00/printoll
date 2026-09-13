@@ -9,7 +9,7 @@ export default function Breadcrumbs({ name }: { name: string }) {
         </li>
         <li aria-hidden>/</li>
         <li>
-          <Link href="/#featured" className="hover:text-coral">Couple Sets</Link>
+          <Link href="/category" className="hover:text-coral">Shop</Link>
         </li>
         <li aria-hidden>/</li>
         <li className="font-medium text-charcoal" aria-current="page">{name}</li>

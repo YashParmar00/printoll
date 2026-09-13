@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { findCatalogProduct, relatedCatalogProducts } from "@/lib/catalog";
@@ -10,7 +11,8 @@ import ProductReviews from "@/components/product/ProductReviews";
 import RelatedProducts from "@/components/product/RelatedProducts";
 import { CheckIcon } from "@/components/ui/icons";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 300;
+export function generateStaticParams() { return []; }
 
 export async function generateMetadata({
   params,
@@ -36,7 +38,7 @@ export default async function ProductPage({
   const product = await findCatalogProduct(slug);
   if (!product) notFound();
 
-  const related = await relatedCatalogProducts(product.slug, 3);
+
 
   // Product structured data. No aggregateRating — we never fabricate reviews.
   const jsonLd = {
@@ -49,14 +51,13 @@ export default async function ProductPage({
       "@type": "Offer",
       priceCurrency: "INR",
       price: product.price,
-      availability: "https://schema.org/InStock",
       url: `${site.url}/product/${product.slug}`,
     },
   };
 
   return (
     <div className="pb-24 lg:pb-0">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
       <div className="container-page pt-6">
         <Breadcrumbs name={product.name} />
       </div>
@@ -95,7 +96,9 @@ export default async function ProductPage({
         <ProductReviews product={product} />
       </div>
 
-      <RelatedProducts products={related} />
+      <Suspense fallback={<div className="container-page min-h-80 py-10">More designs...</div>}><RelatedSection slug={product.slug} /></Suspense>
     </div>
   );
 }
+
+async function RelatedSection({ slug }: { slug: string }) { return <RelatedProducts products={await relatedCatalogProducts(slug, 3)} />; }

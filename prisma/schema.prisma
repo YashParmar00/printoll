@@ -88,6 +88,10 @@ model Order {
   advancePaid       Int         @default(0)
   codDue            Int         @default(0)
   currency          String      @default("INR")
+  onlineAmount      Int         @default(0)
+  paymentStatus     String      @default("unpaid")
+  checkoutKey       String?     @unique
+  requestHash       String?
   razorpayOrderId   String?
   razorpayPaymentId String?
   trackingUrl       String?
@@ -96,6 +100,13 @@ model Order {
   items             OrderItem[]
 
   @@index([customerPhone])
+  @@index([razorpayOrderId])
+}
+
+model RequestLimit {
+  key       String   @id
+  count     Int
+  resetAt   DateTime
 }
 
 model OrderItem {

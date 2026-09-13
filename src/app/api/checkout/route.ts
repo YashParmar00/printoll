@@ -1,129 +1,68 @@
-import { NextResponse } from "next/server";
-import {
-  validateCustomer,
-  CheckoutError,
-  type CheckoutLineInput,
-  type CustomerInput,
-  type PaymentMethod,
-} from "@/lib/checkout";
-import { catalogItemsRequireAdvance, computeDatabaseTotals } from "@/lib/checkout-server";
-import { createOrder, updateOrder } from "@/lib/orders";
-import { isRazorpayConfigured, createRazorpayOrder, publicKeyId } from "@/lib/razorpay";
-import { site } from "@/lib/site";
+import { createHash } from "node:crypto";
+import { Prisma } from "@prisma/client";
+import { validateCustomer, CheckoutError, type CustomerInput, type PaymentMethod } from "@/lib/checkout";
+import { checkoutSnapshot } from "@/lib/checkout-server";
+import { validateItems } from "@/lib/checkout-input";
+import { createOrder, getOrder, updateOrder, type Order } from "@/lib/orders";
+import { createRazorpayOrder, publicKeyId } from "@/lib/razorpay";
+import { prisma } from "@/lib/prisma";
+import { boundedText, privateJson } from "@/lib/private-response";
+import { withReceipt } from "@/lib/receipt";
+import { rateLimit } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
 
-interface CheckoutRequestBody {
-  items?: CheckoutLineInput[];
-  customer?: CustomerInput;
-  paymentMethod?: string;
+function orderResponse(order: Order) {
+  if (order.status === "cancelled") return privateJson({ error: "This order was cancelled. Please contact us before retrying." }, 409);
+  if (order.paymentMethod !== "cod" && !order.razorpay?.orderId) return privateJson({ error: `Payment preparation is pending for ${order.orderNumber}. Please contact us if this persists; do not place another order.` }, 409);
+  return withReceipt(privateJson({ orderNumber: order.orderNumber, paymentMethod: order.paymentMethod, total: order.total, advancePaid: order.onlineAmount, codDue: order.total - (order.onlineAmount ?? 0), settled: order.paymentStatus === "captured",
+    razorpay: order.razorpay?.orderId ? { orderId: order.razorpay.orderId, amount: (order.onlineAmount ?? 0) * 100, keyId: publicKeyId() } : undefined }), order.orderNumber);
 }
 
-function normalizeMethod(v: unknown): PaymentMethod {
-  return v === "prepaid" ? "prepaid" : v === "advance_cod" ? "advance_cod" : "cod";
-}
-
-export async function POST(req: Request) {
-  let body: CheckoutRequestBody;
+export async function POST(request: Request) {
   try {
-    body = (await req.json()) as CheckoutRequestBody;
-  } catch {
-    return NextResponse.json({ error: "Invalid request." }, { status: 400 });
-  }
-
-  const items = body.items ?? [];
-  let paymentMethod = normalizeMethod(body.paymentMethod);
-
-  const customerError = validateCustomer(body.customer);
-  if (customerError) return NextResponse.json({ error: customerError }, { status: 400 });
-  const customer = body.customer as CustomerInput;
-
-  const requiresAdvance = await catalogItemsRequireAdvance(items);
-  const razorpayReady = isRazorpayConfigured();
-
-  // If advance was requested but nothing in the cart needs it, treat as full COD.
-  if (paymentMethod === "advance_cod" && !requiresAdvance) paymentMethod = "cod";
-
-  // Online-collecting methods need Razorpay configured.
-  if ((paymentMethod === "prepaid" || paymentMethod === "advance_cod") && !razorpayReady) {
-    return NextResponse.json(
-      {
-        error: "Online payment isn't enabled yet. Please choose Cash on Delivery.",
-        code: "RAZORPAY_NOT_CONFIGURED",
-      },
-      { status: 503 },
-    );
-  }
-
-  // Once online is live, personalized carts must pay the advance (no full COD).
-  if (paymentMethod === "cod" && requiresAdvance && razorpayReady) {
-    return NextResponse.json(
-      {
-        error: `Personalized items need a ₹${site.advanceAmount} advance. Please choose the advance option.`,
-        code: "ADVANCE_REQUIRED",
-      },
-      { status: 400 },
-    );
-  }
-
-  // Server-side price validation — recomputed from the catalogue, client total ignored.
-  let totals;
-  try {
-    totals = await computeDatabaseTotals(items, paymentMethod);
-  } catch (e) {
-    if (e instanceof CheckoutError) return NextResponse.json({ error: e.message }, { status: 400 });
-    throw e;
-  }
-
-  const order = await createOrder({
-    status: paymentMethod === "cod" ? "pending" : "awaiting_payment",
-    paymentMethod,
-    customer: {
-      name: customer.name.trim(),
-      phone: customer.phone.trim(),
-      email: customer.email?.trim() || undefined,
-      address: customer.address.trim(),
-      city: customer.city.trim(),
-      state: customer.state.trim(),
-      pincode: customer.pincode.trim(),
-    },
-    items: totals.lineItems,
-    subtotal: totals.subtotal,
-    discount: totals.discount,
-    shipping: totals.shipping,
-    total: totals.total,
-    advancePaid: totals.advancePaid,
-    codDue: totals.codDue,
-    currency: totals.currency,
-  });
-
-  // Collect the online portion (full amount for prepaid, the advance for advance_cod).
-  if (paymentMethod === "prepaid" || paymentMethod === "advance_cod") {
-    try {
-      const rzp = await createRazorpayOrder(totals.advancePaid * 100, order.orderNumber);
-      await updateOrder(order.orderNumber, { razorpay: { orderId: rzp.id } });
-      return NextResponse.json({
-        orderNumber: order.orderNumber,
-        paymentMethod,
-        total: totals.total,
-        advancePaid: totals.advancePaid,
-        codDue: totals.codDue,
-        razorpay: { orderId: rzp.id, amount: rzp.amount, keyId: publicKeyId() },
-      });
-    } catch {
-      await updateOrder(order.orderNumber, { status: "cancelled" });
-      return NextResponse.json(
-        { error: "Could not start online payment. Please try again." },
-        { status: 502 },
-      );
+    let body;
+    try { body = JSON.parse(await boundedText(request)); } catch { return privateJson({ error: "Invalid request." }, 400); }
+    const customerError = validateCustomer(body?.customer);
+    if (customerError) return privateJson({ error: customerError }, 400);
+    const items = validateItems(body.items);
+    const method = body.paymentMethod as PaymentMethod;
+    if (!["cod", "advance_cod", "prepaid"].includes(method)) return privateJson({ error: "Invalid payment method." }, 400);
+    const key = request.headers.get("idempotency-key");
+    if (!key || !/^[a-f0-9-]{36}$/.test(key)) return privateJson({ error: "Missing checkout retry key. Please refresh checkout." }, 400);
+    const customer = Object.fromEntries(Object.entries(body.customer as CustomerInput).filter(([key]) => ["name", "phone", "email", "address", "city", "state", "pincode"].includes(key)).map(([key, value]) => [key, value.trim()])) as unknown as CustomerInput;
+    const requestHash = createHash("sha256").update(JSON.stringify({ items, customer: [customer.name, customer.phone, customer.email ?? "", customer.address, customer.city, customer.state, customer.pincode], method, expectedTotal: body.expectedTotal })).digest("hex");
+    if (!await rateLimit(request.headers, "checkout", 12)) return privateJson({ error: "Please wait before trying again." }, 429);
+    const existing = await prisma.order.findUnique({ where: { checkoutKey: key }, select: { orderNumber: true, requestHash: true } });
+    if (existing) {
+      if (existing.requestHash !== requestHash) return privateJson({ error: "Checkout details changed. Refresh your quote before submitting." }, 409);
+      return orderResponse((await getOrder(existing.orderNumber))!);
     }
+    const snapshot = await checkoutSnapshot(items);
+    if (!snapshot.methods.includes(method)) return privateJson({ error: "This payment method is unavailable. Please refresh checkout." }, 400);
+    const totals = snapshot.totals[method];
+    if (body.expectedTotal !== totals.total) return privateJson({ error: "Prices changed. Refresh your quote and review the new total.", code: "PRICE_CHANGED" }, 409);
+    let order: Order;
+    try {
+      order = await createOrder({ status: method === "cod" ? "pending" : "awaiting_payment", paymentMethod: method, customer, items: totals.lineItems, subtotal: totals.subtotal, discount: totals.discount, shipping: totals.shipping, total: totals.total, advancePaid: 0, codDue: totals.total, onlineAmount: totals.advancePaid, currency: totals.currency, checkoutKey: key, requestHash });
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") return privateJson({ error: "Checkout is already processing. Retry with the same details shortly." }, 409);
+      throw error;
+    }
+    if (method !== "cod") {
+      // Only the request that inserted the unique checkout key may create a
+      // provider order. An uncertain provider response requires reconciliation,
+      // never an automatic second provider charge/order.
+      try {
+        const provider = await createRazorpayOrder(totals.advancePaid * 100, order.orderNumber);
+        if (!provider.id || provider.amount !== totals.advancePaid * 100 || provider.currency !== "INR") throw new Error("Unexpected provider order.");
+        const updated = await updateOrder(order.orderNumber, { razorpay: { orderId: provider.id } });
+        if (!updated) throw new Error("Order persistence failed.");
+        order = updated;
+      } catch { return privateJson({ error: `Payment preparation needs verification for ${order.orderNumber}. Retry with the same details or contact us.` }, 503); }
+    }
+    return orderResponse(order);
+  } catch (error) {
+    return privateJson({ error: error instanceof CheckoutError ? error.message : "Checkout is temporarily unavailable. Retry with the same details." }, error instanceof CheckoutError ? 400 : 503);
   }
-
-  return NextResponse.json({
-    orderNumber: order.orderNumber,
-    paymentMethod: "cod",
-    total: totals.total,
-    advancePaid: 0,
-    codDue: totals.codDue,
-  });
 }

@@ -1,4 +1,4 @@
-import type { Product } from "@/lib/products";
+import type { CatalogCard as Product } from "@/lib/catalog-card";
 import ProductCard from "@/components/ui/ProductCard";
 
 export default function RelatedProducts({ products }: { products: Product[] }) {
