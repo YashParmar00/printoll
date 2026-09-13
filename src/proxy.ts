@@ -12,8 +12,15 @@ export async function proxy(req: NextRequest) {
   const expectedUser = process.env.ADMIN_USER ?? "";
   const expectedPass = process.env.ADMIN_PASSWORD ?? "";
   const session = req.cookies.get("pairwear_admin")?.value ?? "";
-  if (expectedUser && expectedPass && verifyToken(session, "admin", adminSubject(expectedUser, expectedPass))) return NextResponse.next();
+  let configured = Boolean(expectedUser && expectedPass);
+  try {
+    if (configured && verifyToken(session, "admin", adminSubject(expectedUser, expectedPass))) return NextResponse.next();
+  } catch {
+    // adminSubject throws when SESSION_SECRET is missing or too short. Send the
+    // admin to a readable config message instead of a bare 500.
+    configured = false;
+  }
 
   if (req.nextUrl.pathname.startsWith("/api/")) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  return NextResponse.redirect(new URL("/admin/login", req.url));
+  return NextResponse.redirect(new URL(configured ? "/admin/login" : "/admin/login?error=config", req.url));
 }

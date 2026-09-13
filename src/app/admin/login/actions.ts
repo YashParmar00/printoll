@@ -12,7 +12,13 @@ export async function loginAction(formData: FormData) {
   if (!expectedUser || !expectedPassword || username !== expectedUser || password !== expectedPassword) {
     redirect("/admin/login?error=invalid");
   }
-  (await cookies()).set(ADMIN_SESSION_COOKIE, sessionValue(expectedUser, expectedPassword), {
+  let token: string;
+  try {
+    token = sessionValue(expectedUser, expectedPassword);
+  } catch {
+    redirect("/admin/login?error=config"); // SESSION_SECRET missing or too short
+  }
+  (await cookies()).set(ADMIN_SESSION_COOKIE, token, {
     httpOnly: true, sameSite: "lax", secure: process.env.NODE_ENV === "production", path: "/", maxAge: 60 * 60 * 12,
   });
   redirect("/admin");
