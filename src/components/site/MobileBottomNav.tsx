@@ -1,13 +1,18 @@
-"use client";
-
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { whatsappLink, site } from "@/lib/site";
 import { HomeIcon, BagIcon, CalendarHeartIcon, WhatsAppIcon } from "@/components/ui/icons";
 
-/** Mobile bottom nav (RESEARCH.md §B3). Dark on home, cream elsewhere. */
+/** Mobile bottom nav (RESEARCH.md §B3). Dark on home, cream elsewhere (see Header). */
 export default function MobileBottomNav() {
-  const dark = usePathname() === "/";
+  return (
+    <>
+      <div className="chrome-home"><BottomNav dark /></div>
+      <div className="chrome-shop"><BottomNav dark={false} /></div>
+    </>
+  );
+}
+
+function BottomNav({ dark }: { dark: boolean }) {
   const items = [
     { label: "Home", href: "/", Icon: HomeIcon, external: false },
     { label: "Shop", href: "/category", Icon: BagIcon, external: false },

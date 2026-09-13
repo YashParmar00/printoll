@@ -73,6 +73,14 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+/* Site chrome (header, footer, bottom nav) ships both looks in the HTML. The
+   home page renders a [data-home-theme] marker and CSS picks the look before
+   any JS runs, so a cached page can never flash the wrong navbar. */
+.chrome-home { display: none; }
+.chrome-shop { display: contents; }
+body:has([data-home-theme]) .chrome-home { display: contents; }
+body:has([data-home-theme]) .chrome-shop { display: none; }
+
 @layer base {
   h1,
   h2,

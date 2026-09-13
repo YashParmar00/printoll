@@ -1,7 +1,4 @@
-"use client";
-
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { site, whatsappLink } from "@/lib/site";
 import { InstagramIcon, RupeeIcon, ShieldIcon, WhatsAppIcon } from "@/components/ui/icons";
 
@@ -26,9 +23,17 @@ const socialLinks = [
   { label: "Instagram", href: site.social.instagram, Icon: InstagramIcon },
 ];
 
-/** Matches the header: dark on the home route, warm cream everywhere else. */
+/** Matches the header: dark on the home route, warm cream everywhere else (see Header). */
 export default function Footer() {
-  const dark = usePathname() === "/";
+  return (
+    <>
+      <div className="chrome-home"><FooterView dark /></div>
+      <div className="chrome-shop"><FooterView dark={false} /></div>
+    </>
+  );
+}
+
+function FooterView({ dark }: { dark: boolean }) {
 
   const shell = dark ? "border-night-line bg-night-soft" : "border-line bg-sand";
   const heading = dark ? "text-white" : "text-noir";

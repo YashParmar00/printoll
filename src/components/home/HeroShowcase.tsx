@@ -1,11 +1,13 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { preload } from "react-dom";
 import TeePoster from "@/components/home/TeePoster";
 import type { TeeVariant } from "@/components/home/TeeCanvas";
+import { TEE_MODEL_SRC } from "@/components/home/tee-assets";
 
-// three.js stays out of the initial bundle — fetched once the hero nears the viewport.
+// three.js stays out of the initial bundle; its chunk is requested on hydration.
 const TeeCanvas = dynamic(() => import("@/components/home/TeeCanvas"), { ssr: false });
 
 const SLIDES: (TeeVariant & { title: string })[] = [
@@ -40,20 +42,23 @@ const SLIDES: (TeeVariant & { title: string })[] = [
  * Dragging / swiping spins the tee, so variants change via arrows and dots.
  */
 export default function HeroShowcase() {
+  // Emitted as <link rel="preload"> in the server HTML, so the model and first
+  // print download in parallel with the three.js chunk instead of after it.
+  // crossOrigin matches GLTFLoader's fetch and TextureLoader's image requests.
+  preload(TEE_MODEL_SRC, { as: "fetch", crossOrigin: "anonymous" });
+  preload(SLIDES[0].print, { as: "image", crossOrigin: "anonymous" });
+
   const [index, setIndex] = useState(0);
-  const [load3d, setLoad3d] = useState(false);
   const [ready, setReady] = useState(false);
   const [failed, setFailed] = useState(false);
-  const [attempt, setAttempt] = useState(0);
-  const stageRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!load3d || ready || failed) return;
-    const timeout = window.setTimeout(() => { setFailed(true); setLoad3d(false); }, 30_000);
+    if (ready || failed) return;
+    const timeout = window.setTimeout(() => setFailed(true), 30_000);
     return () => window.clearTimeout(timeout);
-  }, [load3d, ready, failed]);
-  const handleError = useCallback(() => { setFailed(true); setReady(false); setLoad3d(false); }, []);
-  function start3d() { setFailed(false); setReady(false); setAttempt(value => value + 1); setLoad3d(true); performance.mark("hero-3d-requested"); }
+  }, [ready, failed]);
+  // No WebGL, lost context or a failed download: show the static design instead.
+  const handleError = useCallback(() => { setFailed(true); setReady(false); }, []);
 
   const handleReady = useCallback(() => { setReady(true); performance.mark("hero-3d-ready"); }, []);
   const go = (next: number) => setIndex((next + SLIDES.length) % SLIDES.length);
@@ -77,28 +82,30 @@ export default function HeroShowcase() {
       />
 
       <div
-        ref={stageRef}
         className="relative aspect-square sm:aspect-5/4"
         role="img"
         aria-label={`3D ${slide.title} tee. Drag or swipe to rotate.`}
       >
-        {/* quiet placeholder while the 3D model loads */}
-        <div
-          aria-hidden
-          className={`pointer-events-none absolute inset-0 flex items-center justify-center transition-opacity duration-500 ${ready ? "opacity-0" : "opacity-100"}`}
-        >
-          <TeePoster variant={slide} />
-        </div>
+        {/* quiet loader while the 3D model loads */}
+        {!ready && !failed && (
+          <div aria-hidden className="pointer-events-none absolute inset-0 flex items-center justify-center">
+            <span className="h-9 w-9 animate-spin rounded-full border-2 border-white/10 border-t-coral" />
+          </div>
+        )}
 
-        <div className={`absolute inset-0 transition-opacity duration-700 ${ready ? "opacity-100" : "opacity-0"}`}>
-          {load3d && <TeeCanvas key={attempt} variants={SLIDES} index={index} onReady={handleReady} onError={handleError} />}
-        </div>
+        {failed ? (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <TeePoster variant={slide} />
+          </div>
+        ) : (
+          <div className={`absolute inset-0 transition-opacity duration-700 ${ready ? "opacity-100" : "opacity-0"}`}>
+            <TeeCanvas variants={SLIDES} index={index} onReady={handleReady} onError={handleError} />
+          </div>
+        )}
 
         <ArrowButton side="left" onClick={() => go(index - 1)} />
         <ArrowButton side="right" onClick={() => go(index + 1)} />
       </div>
-
-      {!ready && <div className="relative z-10 text-center"><button type="button" onClick={start3d} disabled={load3d} className="rounded-full border border-white/25 px-5 py-2 text-sm text-white disabled:opacity-60">{load3d ? "Opening interactive preview..." : failed ? "Retry 3D preview" : "Explore in 3D"}</button>{failed && <p role="status" className="mt-2 text-sm text-night-ink">3D is unavailable. The design preview is still available.</p>}</div>}
 
       <div className="mt-1 flex items-center justify-center gap-3">
         <div className="flex gap-2">

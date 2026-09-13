@@ -1,10 +1,15 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import * as THREE from "three";
+import {
+  ACESFilmicToneMapping, BufferAttribute, Clock, Color, DirectionalLight, Euler, Group, HemisphereLight,
+  MathUtils, Mesh, MeshStandardMaterial, PerspectiveCamera, SRGBColorSpace, Scene, Texture, TextureLoader,
+  Vector3, WebGLRenderer, type BufferGeometry, type Material,
+} from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry.js";
 import { MeshoptDecoder } from "three/examples/jsm/libs/meshopt_decoder.module.js";
+import { TEE_MODEL_SRC } from "@/components/home/tee-assets";
 
 /**
  * One WebGL canvas for every hero tee. The sculpted model (knit normal map +
@@ -15,7 +20,7 @@ import { MeshoptDecoder } from "three/examples/jsm/libs/meshopt_decoder.module.j
  * auto-rotates and the hem/sleeves ripple in a light breeze. Rendering pauses
  * while the canvas is off-screen or the tab is hidden.
  *
- * Model: public/uploads/hero/versioned/tshirt.def20e2fe4e54626.glb — MIT, see tshirt.LICENSE.txt.
+ * Model: see TEE_MODEL_SRC in tee-assets.ts.
  */
 
 export type TeeVariant = {
@@ -33,12 +38,11 @@ export type TeeVariant = {
 type Props = {
   variants: TeeVariant[];
   index: number;
-  /** Fired once the model is on screen, so the poster can fade out. */
+  /** Fired once the model is on screen, so the loader can fade out. */
   onReady: () => void;
   onError: () => void;
 };
 
-const MODEL_SRC = "/uploads/hero/versioned/tshirt.def20e2fe4e54626.glb";
 // Model bounds after dequantizing: y -0.352 … 0.261, chest surface near z 0.144.
 const CENTER_Y = -0.045;
 const CAMERA_Z = 1.65;
@@ -71,11 +75,15 @@ export default function TeeCanvas({ variants, index, onReady, onError }: Props) 
     const wake = () => { if (!disposed && onScreen && !document.hidden && !raf) raf = requestAnimationFrame(tick); };
     let disposed = false;
 
-    let renderer: THREE.WebGLRenderer;
-    try { renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" }); } catch { errorRef.current(); return; }
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.75));
-    renderer.outputColorSpace = THREE.SRGBColorSpace;
-    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    let renderer: WebGLRenderer;
+    // Dense phone screens already hide jaggies, so skip MSAA there and cap the
+    // backing buffer lower on touch devices — the biggest per-frame GPU cost.
+    const dpr = window.devicePixelRatio || 1;
+    const touch = window.matchMedia("(pointer: coarse)").matches;
+    try { renderer = new WebGLRenderer({ antialias: dpr < 2, alpha: true, powerPreference: touch ? "default" : "high-performance" }); } catch { errorRef.current(); return; }
+    renderer.setPixelRatio(Math.min(dpr, touch ? 1.5 : 1.75));
+    renderer.outputColorSpace = SRGBColorSpace;
+    renderer.toneMapping = ACESFilmicToneMapping;
     const el = renderer.domElement;
     el.style.touchAction = "pan-y";
     el.className = "h-full w-full cursor-grab active:cursor-grabbing";
@@ -83,46 +91,46 @@ export default function TeeCanvas({ variants, index, onReady, onError }: Props) 
     const contextLost = (event: Event) => { event.preventDefault(); errorRef.current(); };
     el.addEventListener("webglcontextlost", contextLost);
 
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(30, 1, 0.01, 20);
+    const scene = new Scene();
+    const camera = new PerspectiveCamera(30, 1, 0.01, 20);
     camera.position.set(0, 0, CAMERA_Z);
 
-    scene.add(new THREE.HemisphereLight(0xfff4ea, 0x2a1a15, 1.4));
-    const key = new THREE.DirectionalLight(0xffffff, 2.6);
+    scene.add(new HemisphereLight(0xfff4ea, 0x2a1a15, 1.4));
+    const key = new DirectionalLight(0xffffff, 2.6);
     key.position.set(0.8, 1.2, 1.6);
     scene.add(key);
-    const rim = new THREE.DirectionalLight(0xd2603f, 2);
+    const rim = new DirectionalLight(0xd2603f, 2);
     rim.position.set(-1.5, 0.5, -1.2);
     scene.add(rim);
 
     const uniforms = { uTime: { value: 0 } };
-    const pivot = new THREE.Group();
+    const pivot = new Group();
     pivot.position.y = -CENTER_Y;
     scene.add(pivot);
 
     const disposables: { dispose(): void }[] = [];
-    let fabric: THREE.MeshStandardMaterial | null = null;
-    const decals: THREE.MeshStandardMaterial[] = [];
-    const targetColor = new THREE.Color(variants[indexRef.current].color);
+    let fabric: MeshStandardMaterial | null = null;
+    const decals: MeshStandardMaterial[] = [];
+    const targetColor = new Color(variants[indexRef.current].color);
 
     const loader = new GLTFLoader();
     loader.setMeshoptDecoder(MeshoptDecoder);
     let ensurePrint: (index: number) => Promise<void> = async () => {};
     performance.mark("hero-glb-start");
-    loader.load(MODEL_SRC, (gltf) => {
+    loader.load(TEE_MODEL_SRC, (gltf) => {
       performance.mark("hero-glb-complete");
       const originals = new Set<{ dispose(): void }>();
       gltf.scene.traverse(object => {
-        if (!(object instanceof THREE.Mesh)) return;
+        if (!(object instanceof Mesh)) return;
         originals.add(object.geometry);
         for (const material of Array.isArray(object.material) ? object.material : [object.material]) {
           originals.add(material);
-          for (const value of Object.values(material)) if (value instanceof THREE.Texture) originals.add(value);
+          for (const value of Object.values(material)) if (value instanceof Texture) originals.add(value);
         }
       });
       if (disposed) { originals.forEach(value => value.dispose()); return; }
       disposables.push(...originals);
-      const src = gltf.scene.getObjectByProperty("type", "Mesh") as THREE.Mesh | undefined;
+      const src = gltf.scene.getObjectByProperty("type", "Mesh") as Mesh | undefined;
       if (!src) { errorRef.current(); return; }
 
       // Bake the node transform and undo mesh quantization so the decal
@@ -131,30 +139,30 @@ export default function TeeCanvas({ variants, index, onReady, onError }: Props) 
       const geo = dequantize(src.geometry);
       geo.applyMatrix4(src.matrixWorld);
 
-      fabric = (src.material as THREE.MeshStandardMaterial).clone();
+      fabric = (src.material as MeshStandardMaterial).clone();
       fabric.color.copy(targetColor);
       fabric.roughness = 0.9;
       addBreeze(fabric, uniforms);
-      const shirt = new THREE.Mesh(geo, fabric);
+      const shirt = new Mesh(geo, fabric);
       pivot.add(shirt);
       disposables.push(geo, fabric);
 
-      const texLoader = new THREE.TextureLoader();
+      const texLoader = new TextureLoader();
       const loading = new Map<number, Promise<void>>();
       const loadPrint = async (i: number) => {
         const v = variants[i];
         const tex = await texLoader.loadAsync(v.print);
         if (disposed) { tex.dispose(); return; }
-        tex.colorSpace = THREE.SRGBColorSpace;
+        tex.colorSpace = SRGBColorSpace;
         tex.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy());
         const img = tex.image as HTMLImageElement;
         const decalGeo = new DecalGeometry(
           shirt,
-          new THREE.Vector3(0, v.printY, 0.15),
-          new THREE.Euler(),
-          new THREE.Vector3(v.printWidth, (v.printWidth * img.height) / img.width, 0.3),
+          new Vector3(0, v.printY, 0.15),
+          new Euler(),
+          new Vector3(v.printWidth, (v.printWidth * img.height) / img.width, 0.3),
         );
-        const mat = new THREE.MeshStandardMaterial({
+        const mat = new MeshStandardMaterial({
           map: tex,
           transparent: true,
           opacity: i === indexRef.current ? 1 : 0,
@@ -165,7 +173,7 @@ export default function TeeCanvas({ variants, index, onReady, onError }: Props) 
         });
         addBreeze(mat, uniforms);
         decals[i] = mat;
-        pivot.add(new THREE.Mesh(decalGeo, mat));
+        pivot.add(new Mesh(decalGeo, mat));
         disposables.push(tex, decalGeo, mat);
         performance.mark(`hero-print-${i}-ready`);
         wake();
@@ -183,6 +191,10 @@ export default function TeeCanvas({ variants, index, onReady, onError }: Props) 
           if (disposed) return;
           renderer.render(scene, camera);
           requestAnimationFrame(() => !disposed && readyRef.current());
+          // Warm the other prints while idle so the arrows switch instantly.
+          const warm = () => variants.forEach((_, i) => { if (!disposed) void ensurePrint(i).catch(() => {}); });
+          if ("requestIdleCallback" in window) window.requestIdleCallback(warm, { timeout: 3000 });
+          else setTimeout(warm, 1200);
         })
         .catch(() => !disposed && errorRef.current());
     }, undefined, () => { if (!disposed) errorRef.current(); });
@@ -216,7 +228,7 @@ export default function TeeCanvas({ variants, index, onReady, onError }: Props) 
       velY = (e.clientX - lastX) * 0.011;
       rotY += velY;
       if (e.pointerType === "mouse") {
-        rotX = THREE.MathUtils.clamp(rotX + (e.clientY - lastY) * 0.006, -0.4, 0.4);
+        rotX = MathUtils.clamp(rotX + (e.clientY - lastY) * 0.006, -0.4, 0.4);
       }
       lastX = e.clientX;
       lastY = e.clientY;
@@ -250,7 +262,7 @@ export default function TeeCanvas({ variants, index, onReady, onError }: Props) 
     io.observe(wrap);
 
     // ── loop ────────────────────────────────────────────────────────────
-    const clock = new THREE.Clock();
+    const clock = new Clock();
     function tick() {
       raf = 0;
       const dt = Math.min(clock.getDelta(), 0.05);
@@ -306,22 +318,22 @@ export default function TeeCanvas({ variants, index, onReady, onError }: Props) 
 }
 
 /** Copy every quantized (normalized integer) attribute into plain floats. */
-function dequantize(source: THREE.BufferGeometry) {
+function dequantize(source: BufferGeometry) {
   const geo = source.clone();
   for (const [name, attr] of Object.entries(geo.attributes)) {
-    const plain = attr instanceof THREE.BufferAttribute && !attr.normalized && attr.array instanceof Float32Array;
+    const plain = attr instanceof BufferAttribute && !attr.normalized && attr.array instanceof Float32Array;
     if (plain) continue;
     const out = new Float32Array(attr.count * attr.itemSize);
     for (let i = 0; i < attr.count; i++) {
       for (let k = 0; k < attr.itemSize; k++) out[i * attr.itemSize + k] = attr.getComponent(i, k);
     }
-    geo.setAttribute(name, new THREE.BufferAttribute(out, attr.itemSize));
+    geo.setAttribute(name, new BufferAttribute(out, attr.itemSize));
   }
   return geo;
 }
 
 /** Soft breeze: the hem and sleeves ripple, shoulders stay put. Shared by shirt and prints. */
-function addBreeze(mat: THREE.Material, uniforms: { uTime: { value: number } }) {
+function addBreeze(mat: Material, uniforms: { uTime: { value: number } }) {
   mat.onBeforeCompile = (shader) => {
     shader.uniforms.uTime = uniforms.uTime;
     shader.vertexShader = shader.vertexShader

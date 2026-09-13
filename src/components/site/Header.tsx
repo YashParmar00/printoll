@@ -1,7 +1,4 @@
-"use client";
-
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { site, whatsappLink } from "@/lib/site";
 import { WhatsAppIcon } from "@/components/ui/icons";
 import CartBadge from "@/components/site/CartBadge";
@@ -16,11 +13,16 @@ const nav = [
 /**
  * Two looks, one header. The home route runs the dark theme, so there the
  * header becomes a floating translucent pill over the hero; everywhere else
- * it's the warm cream bar that matches the shop.
+ * it's the warm cream bar that matches the shop. Both are rendered; globals.css
+ * shows the right one from the page's [data-home-theme] marker.
  */
 export default function Header() {
-  const dark = usePathname() === "/";
-  return dark ? <DarkHeader /> : <LightHeader />;
+  return (
+    <>
+      <div className="chrome-home"><DarkHeader /></div>
+      <div className="chrome-shop"><LightHeader /></div>
+    </>
+  );
 }
 
 function DarkHeader() {

@@ -13,6 +13,8 @@ export default async function Home() {
 
   return (
     <>
+      {/* Switches the site chrome to its dark look (globals.css). */}
+      <span data-home-theme hidden />
       <Hero />
       <ProductBannerCarousel collections={collections} />
       <FeaturedProducts />
