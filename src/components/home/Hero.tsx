@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { site, whatsappLink } from "@/lib/site";
 import { listCatalogProducts } from "@/lib/catalog";
-import HeroTeeAnimation from "@/components/home/HeroTeeAnimation";
+import HeroShowcase from "@/components/home/HeroShowcase";
 import {
   HeartIcon,
   RupeeIcon,
@@ -66,7 +66,7 @@ export default async function Hero() {
           delivered across India.
         </p>
 
-        <HeroTeeAnimation />
+        <HeroShowcase />
 
         <div className="mt-8 grid grid-cols-2 items-stretch gap-2.5 sm:mt-10 sm:flex sm:justify-center sm:gap-3">
           <Link href="/category" className="btn-primary w-full whitespace-nowrap px-2.5 py-2.5 text-[11px] sm:w-auto sm:px-6 sm:py-3 sm:text-base">
