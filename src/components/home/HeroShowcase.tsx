@@ -1,15 +1,13 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { TeeVariant } from "@/components/home/TeeCanvas";
 
-// three.js stays out of the initial bundle — fetched only once the hero is in
-// view and the browser is idle. The poster photo covers the gap.
+// three.js stays out of the initial bundle — fetched once the hero nears the viewport.
 const TeeCanvas = dynamic(() => import("@/components/home/TeeCanvas"), { ssr: false });
 
-const SLIDES: (TeeVariant & { title: string; poster: string })[] = [
+const SLIDES: (TeeVariant & { title: string })[] = [
   {
     id: "ivory",
     title: "Ivory floral",
@@ -17,7 +15,6 @@ const SLIDES: (TeeVariant & { title: string; poster: string })[] = [
     print: "/uploads/hero/heart-print.webp",
     printWidth: 0.25,
     printY: 0.04,
-    poster: "/uploads/hero/ivory-poster.webp",
   },
   {
     id: "noir",
@@ -26,7 +23,6 @@ const SLIDES: (TeeVariant & { title: string; poster: string })[] = [
     print: "/uploads/hero/constellation-print.webp",
     printWidth: 0.23,
     printY: 0.01,
-    poster: "/uploads/hero/noir-poster.webp",
   },
   {
     id: "terracotta",
@@ -35,13 +31,8 @@ const SLIDES: (TeeVariant & { title: string; poster: string })[] = [
     print: "/uploads/hero/eclipse-print.webp",
     printWidth: 0.11,
     printY: 0.09,
-    poster: "/uploads/hero/terracotta-poster.webp",
   },
 ];
-
-// Fades the stage edges into the hero background so the tee floats freely.
-const EDGE_FADE =
-  "radial-gradient(ellipse 50% 50% at 50% 50%, #000 62%, transparent 100%)";
 
 /**
  * Hero centrepiece: one interactive 3D tee that switches between prints.
@@ -53,26 +44,20 @@ export default function HeroShowcase() {
   const [ready, setReady] = useState(false);
   const stageRef = useRef<HTMLDivElement>(null);
 
-  // start fetching three.js once the stage is near the viewport and idle
+  // start fetching three.js as soon as the stage is near the viewport
   useEffect(() => {
     const stage = stageRef.current;
     if (!stage) return;
-    let idleId: number | undefined;
     const io = new IntersectionObserver(
       ([entry]) => {
         if (!entry.isIntersecting) return;
         io.disconnect();
-        const start = () => setLoad3d(true);
-        if ("requestIdleCallback" in window) idleId = window.requestIdleCallback(start, { timeout: 1500 });
-        else start();
+        setLoad3d(true);
       },
-      { rootMargin: "200px" },
+      { rootMargin: "300px" },
     );
     io.observe(stage);
-    return () => {
-      io.disconnect();
-      if (idleId !== undefined) window.cancelIdleCallback(idleId);
-    };
+    return () => io.disconnect();
   }, []);
 
   const handleReady = useCallback(() => setReady(true), []);
@@ -102,20 +87,12 @@ export default function HeroShowcase() {
         role="img"
         aria-label={`3D ${slide.title} tee. Drag or swipe to rotate.`}
       >
-        {/* instant poster while the 3D model loads */}
+        {/* quiet placeholder while the 3D model loads */}
         <div
           aria-hidden
-          className={`pointer-events-none absolute inset-0 transition-opacity duration-700 ${ready ? "opacity-0" : "opacity-100"}`}
-          style={{ maskImage: EDGE_FADE, WebkitMaskImage: EDGE_FADE }}
+          className={`pointer-events-none absolute inset-0 flex items-center justify-center transition-opacity duration-500 ${ready ? "opacity-0" : "opacity-100"}`}
         >
-          <Image
-            src={slide.poster}
-            alt=""
-            fill
-            priority
-            sizes="(min-width: 640px) 42rem, 100vw"
-            className="object-contain"
-          />
+          <span className="animate-pulse text-[11px] uppercase tracking-[0.3em] text-night-ink">Loading 3D…</span>
         </div>
 
         <div className={`absolute inset-0 transition-opacity duration-700 ${ready ? "opacity-100" : "opacity-0"}`}>
