@@ -41,14 +41,24 @@ export async function POST(request: NextRequest) {
   // Vercel's filesystem is read-only. Production uploads must use object storage.
   if (supabaseUrl && serviceRoleKey) {
     const objectPath = `products/${filename}`;
+    // Legacy service_role keys are JWTs and go in Authorization as well. New
+    // `sb_secret_` keys are not JWTs: Storage rejects them as a Bearer token.
+    const authHeaders: Record<string, string> = serviceRoleKey.startsWith("eyJ")
+      ? { Authorization: `Bearer ${serviceRoleKey}`, apikey: serviceRoleKey }
+      : { apikey: serviceRoleKey };
+    let failure = "";
     const response = await fetch(`${supabaseUrl}/storage/v1/object/${STORAGE_BUCKET}/${objectPath}`, {
       method: "POST",
-      headers: { Authorization: `Bearer ${serviceRoleKey}`, apikey: serviceRoleKey, "Content-Type": file.type, "x-upsert": "false" },
+      headers: { ...authHeaders, "Content-Type": file.type, "x-upsert": "false" },
       body: bytes,
       signal: AbortSignal.timeout(15_000),
-    }).catch(() => null);
+    }).catch((error: unknown) => { failure = error instanceof Error ? error.message : "network error"; return null; });
     if (!response?.ok) {
-      return NextResponse.json({ error: "Image storage upload failed. Check the Supabase bucket and server key." }, { status: 502 });
+      // Admin-only route: surface Supabase's reason (never the key) so setup
+      // problems like a wrong key or missing bucket are diagnosable.
+      if (response) failure = `${response.status} ${(await response.text().catch(() => "")).slice(0, 200)}`;
+      console.error("Supabase storage upload failed:", failure);
+      return NextResponse.json({ error: `Image storage upload failed (${failure}). Check the Supabase bucket and server key.` }, { status: 502 });
     }
     return NextResponse.json({ url: `${supabaseUrl}/storage/v1/object/public/${STORAGE_BUCKET}/${objectPath}` });
   }
