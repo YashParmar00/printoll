@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { findCatalogProduct, relatedCatalogProducts } from "@/lib/catalog";
+import { findCatalogProduct, listCatalogProducts, relatedCatalogProducts } from "@/lib/catalog";
 import { inr } from "@/lib/format";
 import { site } from "@/lib/site";
 import Breadcrumbs from "@/components/product/Breadcrumbs";
@@ -12,7 +12,16 @@ import RelatedProducts from "@/components/product/RelatedProducts";
 import { CheckIcon } from "@/components/ui/icons";
 
 export const revalidate = 300;
-export function generateStaticParams() { return []; }
+// Prebuild every product page at deploy time so the first visitor after a deploy
+// gets a cached page instead of a cold ~2s server render. New slugs still render
+// on demand; if the catalogue can't be read at build, fall back to that.
+export async function generateStaticParams() {
+  try {
+    return (await listCatalogProducts()).map(({ slug }) => ({ slug }));
+  } catch {
+    return [];
+  }
+}
 
 export async function generateMetadata({
   params,

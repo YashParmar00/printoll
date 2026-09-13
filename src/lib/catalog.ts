@@ -117,6 +117,11 @@ export async function checkoutProducts(slugs: string[]) {
   return prisma.product.findMany({ where: { active: true, slug: { in: slugs } }, select: { slug: true, name: true, price: true, requiresAdvance: true, personalization: true, category: true, shape: true } });
 }
 
+export async function listCatalogCategories() {
+  const rows = await prisma.product.findMany({ select: { category: true }, distinct: ["category"], orderBy: { category: "asc" } });
+  return Array.from(new Set(["couple-sets", ...rows.map(row => row.category)]));
+}
+
 export async function saveCatalogProduct(input: CatalogInput) {
   const data = {
     name: input.name, tagline: input.tagline, price: input.price, compareAtPrice: input.compareAtPrice,

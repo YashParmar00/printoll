@@ -15,7 +15,7 @@ import { MeshoptDecoder } from "three/examples/jsm/libs/meshopt_decoder.module.j
  * auto-rotates and the hem/sleeves ripple in a light breeze. Rendering pauses
  * while the canvas is off-screen or the tab is hidden.
  *
- * Model: public/uploads/hero/tshirt.glb — MIT, see tshirt.LICENSE.txt.
+ * Model: public/uploads/hero/versioned/tshirt.def20e2fe4e54626.glb — MIT, see tshirt.LICENSE.txt.
  */
 
 export type TeeVariant = {
@@ -38,7 +38,7 @@ type Props = {
   onError: () => void;
 };
 
-const MODEL_SRC = "/uploads/hero/tshirt.glb";
+const MODEL_SRC = "/uploads/hero/versioned/tshirt.def20e2fe4e54626.glb";
 // Model bounds after dequantizing: y -0.352 … 0.261, chest surface near z 0.144.
 const CENTER_Y = -0.045;
 const CAMERA_Z = 1.65;

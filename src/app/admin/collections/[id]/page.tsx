@@ -1,3 +1,4 @@
+import SubmitButton from "@/components/ui/SubmitButton";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { findHomeCollection } from "@/lib/home-collections";
@@ -26,7 +27,7 @@ export default async function CollectionEditor({ params }: { params: Promise<{ i
         <label className="field-label sm:col-span-2">Shop link<input name="href" defaultValue={collection.href} placeholder="/category?category=mens" className="field mt-1" /><span className="mt-1 block text-xs font-normal text-ink">Use an internal path, for example /category?category=mens.</span></label>
         <label className="flex items-center gap-2 text-sm font-semibold text-white sm:col-span-2"><input name="active" type="checkbox" defaultChecked={collection.active} /> Show this collection on the homepage</label>
       </section>
-      <button className="btn-primary" type="submit">Save collection</button>
+      <SubmitButton>Save collection</SubmitButton>
     </form>
   </div>;
 }

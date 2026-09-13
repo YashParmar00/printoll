@@ -251,7 +251,7 @@ export const products: Product[] = [
     ],
     accent: ["#f5eadf", "#d2603f"],
     badge: "New arrival",
-    imageUrls: ["/uploads/products/womens-heart-bloom-tee.png"],
+    imageUrls: ["/uploads/products/womens-heart-bloom-tee.webp"],
   },
 ];
 

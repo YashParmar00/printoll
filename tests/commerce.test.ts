@@ -11,6 +11,8 @@ import { checkoutSnapshot } from "../src/lib/checkout-server";
 import { POST as checkout } from "../src/app/api/checkout/route";
 import { POST as verify } from "../src/app/api/razorpay/verify/route";
 import { POST as webhook } from "../src/app/api/razorpay/webhook/route";
+import { createOrder } from "../src/lib/orders";
+import { settlePayment } from "../src/lib/payment-settlement";
 
 const database = new URL(process.env.DATABASE_URL!);
 assert.match(database.searchParams.get("schema") ?? "", /^audit_test_[a-f0-9]+$/, "Tests must use an isolated audit schema.");
@@ -28,6 +30,37 @@ test("signed receipts and admin tokens reject tampering, wrong scope, other orde
   const admin = issueToken("admin", adminSubject("u", "p"), 60);
   assert(!Buffer.from(admin.split(".")[0], "base64url").toString().includes('"p"'));
   assert(!verifyToken(admin, "admin", adminSubject("u", "rotated")));
+});
+
+test("advance COD capture races preserve one coherent state", async () => {
+  const providerId = `order_${randomUUID().replaceAll("-", "")}`;
+  const order = await createOrder({ status: "awaiting_payment", paymentMethod: "advance_cod", customer, items: [{ slug: "audit-advance", name: "Synthetic advance test", qty: 1, unitPrice: 699, lineTotal: 699, requiresAdvance: true }], subtotal: 699, discount: 0, shipping: 0, total: 699, advancePaid: 0, codDue: 699, onlineAmount: 99, currency: "INR", razorpay: { orderId: providerId }, checkoutKey: randomUUID() });
+  try {
+    const payment = { id: `pay_${randomUUID().replaceAll("-", "")}`, order_id: providerId, amount: 9900, currency: "INR", status: "captured", captured: true };
+    const race = await Promise.allSettled([settlePayment(payment), settlePayment(payment)]);
+    assert(race.some(result => result.status === "fulfilled" && result.value === "settled"));
+    assert.equal(await settlePayment(payment), "settled");
+    assert.equal(await settlePayment({ ...payment, amount: 1 }), "invalid");
+    assert.equal(await settlePayment({ ...payment, currency: "USD" }), "invalid");
+    assert.equal(await settlePayment({ ...payment, status: "authorized", captured: false }), "invalid");
+    assert.equal(await settlePayment({ ...payment, id: "pay_different" }), "invalid");
+    const stored = await prisma.order.findUniqueOrThrow({ where: { orderNumber: order.orderNumber } });
+    assert.equal(stored.status, "confirmed"); assert.equal(stored.advancePaid, 99); assert.equal(stored.codDue, 600);
+  } finally { await prisma.$disconnect(); }
+});
+
+test("simultaneous COD submissions create one order", async () => {
+  const items = [{ slug: "womens-heart-bloom-tee", qty: 1, sizes: ["M"] }];
+  const quote = await checkoutSnapshot(items);
+  const key = randomUUID();
+  const body = { items, customer, paymentMethod: "cod", expectedTotal: quote.totals.cod.total };
+  try {
+    const responses = await Promise.all([checkout(request("/api/checkout", body, { "idempotency-key": key })), checkout(request("/api/checkout", body, { "idempotency-key": key }))]);
+    assert(responses.some(response => response.status === 200));
+    assert(responses.every(response => response.status === 200 || response.status === 409));
+    assert.equal(await prisma.order.count({ where: { checkoutKey: key } }), 1);
+    assert.equal((await checkout(request("/api/checkout", body, { "idempotency-key": key }))).status, 200);
+  } finally { await prisma.$disconnect(); }
 });
 
 test("runtime input validation rejects malformed types and bounds", () => {
