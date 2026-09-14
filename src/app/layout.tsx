@@ -5,7 +5,6 @@ import { site } from "@/lib/site";
 import { CartProvider } from "@/lib/cart";
 import Header from "@/components/site/Header";
 import Footer from "@/components/site/Footer";
-import MobileBottomNav from "@/components/site/MobileBottomNav";
 import WhatsAppFab from "@/components/site/WhatsAppFab";
 import PerformanceVitals from "@/components/site/PerformanceVitals";
 
@@ -50,13 +49,12 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${baloo.variable} ${inter.variable} h-full`}>
-      <body className="flex min-h-full flex-col bg-paper pb-16 text-noir antialiased lg:pb-0">
+      <body className="flex min-h-full flex-col bg-paper text-noir antialiased">
         <CartProvider>
           <PerformanceVitals />
           <Header />
           <main className="flex-1">{children}</main>
           <Footer />
-          <MobileBottomNav />
           <WhatsAppFab />
         </CartProvider>
       </body>

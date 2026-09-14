@@ -102,12 +102,12 @@ async function readRelatedCatalogProducts(slug: string, limit = 3): Promise<Cata
   return rows.map(row => ({ ...row, shape: row.shape as Product["shape"], reviews: row.reviewsCount, accent: accent(row.accent), imageUrl: row.imageUrl ?? undefined }));
 }
 
-const cardSelect = { slug: true, name: true, tagline: true, price: true, compareAtPrice: true, category: true, shape: true, reviewsCount: true, accent: true, imageUrl: true, imageUrls: true } as const;
+const cardSelect = { badge: true, slug: true, name: true, tagline: true, price: true, compareAtPrice: true, category: true, shape: true, reviewsCount: true, accent: true, imageUrl: true, imageUrls: true } as const;
 export const listCatalogCards = unstable_cache(async (limit?: number): Promise<CatalogCard[]> => {
-  if (usingStaticCatalogue) return staticCatalogue().slice(0, limit).map(({ slug, name, tagline, price, compareAtPrice, category, shape, reviews, accent, imageUrl, imageUrls }) => ({ slug, name, tagline, price, compareAtPrice, category, shape, reviews, accent, imageUrl, imageUrls }));
+  if (usingStaticCatalogue) return staticCatalogue().slice(0, limit).map(({ slug, name, tagline, price, compareAtPrice, category, shape, reviews, accent, imageUrl, imageUrls, badge }) => ({ slug, name, tagline, price, compareAtPrice, category, shape, reviews, accent, imageUrl, imageUrls, badge }));
   const rows = await prisma.product.findMany({ where: { active: true }, orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }], take: limit, select: cardSelect });
   return rows.map(row => ({ ...row, shape: row.shape as Product["shape"], reviews: row.reviewsCount, accent: accent(row.accent), imageUrl: row.imageUrl ?? undefined }));
-}, ["catalog-cards-v1", String(usingStaticCatalogue)], { tags: ["catalog"], revalidate: 300 });
+}, ["catalog-cards-printed-v4", String(usingStaticCatalogue)], { tags: ["catalog"], revalidate: 300 });
 
 export type CatalogInput = Omit<Product, "slug"> & { slug: string; active: boolean; sortOrder: number };
 
@@ -134,8 +134,8 @@ export async function saveCatalogProduct(input: CatalogInput) {
   return prisma.product.upsert({ where: { slug: input.slug }, update: data, create: { slug: input.slug, ...data } });
 }
 
-const cachedList = unstable_cache((limit?: number) => readCatalogProducts(false, limit), ["catalog-list-v2", String(usingStaticCatalogue)], { tags: ["catalog"], revalidate: 300 });
-const cachedProduct = unstable_cache((slug: string) => readCatalogProduct(slug), ["catalog-product-v2", String(usingStaticCatalogue)], { tags: ["catalog"], revalidate: 300 });
+const cachedList = unstable_cache((limit?: number) => readCatalogProducts(false, limit), ["catalog-list-printed-v4", String(usingStaticCatalogue)], { tags: ["catalog"], revalidate: 300 });
+const cachedProduct = unstable_cache((slug: string) => readCatalogProduct(slug), ["catalog-product-printed-v4", String(usingStaticCatalogue)], { tags: ["catalog"], revalidate: 300 });
 export const findCatalogProduct = cache((slug: string, includeInactive = false) => includeInactive ? readCatalogProduct(slug, true) : cachedProduct(slug));
 export const listCatalogProducts = (includeInactive = false, limit?: number) => includeInactive ? readCatalogProducts(true, limit) : cachedList(limit);
-export const relatedCatalogProducts = unstable_cache(readRelatedCatalogProducts, ["catalog-related-v2", String(usingStaticCatalogue)], { tags: ["catalog"], revalidate: 300 });
+export const relatedCatalogProducts = unstable_cache(readRelatedCatalogProducts, ["catalog-related-printed-v4", String(usingStaticCatalogue)], { tags: ["catalog"], revalidate: 300 });

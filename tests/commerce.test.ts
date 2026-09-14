@@ -50,7 +50,7 @@ test("advance COD capture races preserve one coherent state", async () => {
 });
 
 test("simultaneous COD submissions create one order", async () => {
-  const items = [{ slug: "womens-heart-bloom-tee", qty: 1, sizes: ["M"] }];
+  const items = [{ slug: "women-cat-mom-tee", qty: 1, sizes: ["M"] }];
   const quote = await checkoutSnapshot(items);
   const key = randomUUID();
   const body = { items, customer, paymentMethod: "cod", expectedTotal: quote.totals.cod.total };

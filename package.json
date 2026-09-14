@@ -10,6 +10,7 @@
     "postinstall": "prisma generate",
     "db:push": "dotenv -e .env.local -- prisma db push",
     "db:seed": "dotenv -e .env.local -- tsx prisma/seed.ts",
+    "db:replace": "dotenv -e .env.local -v CATALOG_REPLACE=true -- tsx prisma/seed.ts",
     "db:check": "dotenv -e .env.local -- tsx prisma/check.ts",
     "db:studio": "dotenv -e .env.local -- prisma studio"
   },

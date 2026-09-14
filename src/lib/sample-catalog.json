@@ -1,0 +1,171 @@
+[
+  {
+    "slug": "men-explorer-graphic-tee",
+    "name": "Explorer Graphic Oversized Tee",
+    "category": "men",
+    "price": 799,
+    "tagline": "A travel graphic for your next escape.",
+    "badge": "Bestseller",
+    "imageUrl": "/uploads/catalog/men-explorer-graphic-tee.webp"
+  },
+  {
+    "slug": "men-less-is-more-tee",
+    "name": "Less Is More Printed Tee",
+    "category": "men",
+    "price": 749,
+    "tagline": "Clean typography. An everyday statement.",
+    "badge": "Top Pick",
+    "imageUrl": "/uploads/catalog/men-less-is-more-tee.webp"
+  },
+  {
+    "slug": "men-ikigai-graphic-tee",
+    "name": "Ikigai Graphic Oversized Tee",
+    "category": "men",
+    "price": 849,
+    "tagline": "Japanese-inspired artwork, relaxed streetwear fit.",
+    "badge": "Trending",
+    "imageUrl": "/uploads/catalog/men-ikigai-graphic-tee.webp"
+  },
+  {
+    "slug": "men-lunar-echo-tee",
+    "name": "Lunar Echo Graphic Tee",
+    "category": "men",
+    "price": 799,
+    "tagline": "A cosmic print for after-hours plans.",
+    "imageUrl": "/uploads/catalog/men-lunar-echo-tee.webp"
+  },
+  {
+    "slug": "men-voyage-printed-tee",
+    "name": "Voyage Printed Oversized Tee",
+    "category": "men",
+    "price": 849,
+    "tagline": "Wear your sense of adventure.",
+    "imageUrl": "/uploads/catalog/men-voyage-printed-tee.webp"
+  },
+  {
+    "slug": "women-cherry-bow-tee",
+    "name": "Cherry Bow Printed Tee",
+    "category": "women",
+    "price": 649,
+    "tagline": "A playful cherry print with a little bow.",
+    "badge": "Trending",
+    "imageUrl": "/uploads/catalog/women-cherry-bow-tee.webp"
+  },
+  {
+    "slug": "women-cat-mom-tee",
+    "name": "Cat Mom Graphic Tee",
+    "category": "women",
+    "price": 649,
+    "tagline": "For the one whose camera roll is all cats.",
+    "badge": "Bestseller",
+    "imageUrl": "/uploads/catalog/women-cat-mom-tee.webp"
+  },
+  {
+    "slug": "women-soul-shine-tee",
+    "name": "Soul Shine Printed Tee",
+    "category": "women",
+    "price": 649,
+    "tagline": "A little positivity in your everyday rotation.",
+    "badge": "Top Pick",
+    "imageUrl": "/uploads/catalog/women-soul-shine-tee.webp"
+  },
+  {
+    "slug": "women-wanderlust-tee",
+    "name": "Wanderlust Graphic Tee",
+    "category": "women",
+    "price": 699,
+    "tagline": "A printed reminder to take the scenic route.",
+    "imageUrl": "/uploads/catalog/women-wanderlust-tee.webp"
+  },
+  {
+    "slug": "women-kindness-rainbow-tee",
+    "name": "Kindness Rainbow Printed Tee",
+    "category": "women",
+    "price": 649,
+    "tagline": "Colourful artwork with a feel-good message.",
+    "imageUrl": "/uploads/catalog/women-kindness-rainbow-tee.webp"
+  },
+  {
+    "slug": "gifts-books-coffee-tote",
+    "name": "Books & Coffee Printed Tote",
+    "category": "gifts-more",
+    "price": 449,
+    "tagline": "Your reading-list companion.",
+    "badge": "Trending",
+    "imageUrl": "/uploads/catalog/gifts-books-coffee-tote.webp"
+  },
+  {
+    "slug": "gifts-plant-person-tote",
+    "name": "Plant Person Printed Tote",
+    "category": "gifts-more",
+    "price": 449,
+    "tagline": "For plant lovers and everyday errands.",
+    "imageUrl": "/uploads/catalog/gifts-plant-person-tote.webp"
+  },
+  {
+    "slug": "gifts-hand-art-tote",
+    "name": "Hand Art Printed Tote",
+    "category": "gifts-more",
+    "price": 499,
+    "tagline": "A classic art-inspired print to carry everywhere.",
+    "imageUrl": "/uploads/catalog/gifts-hand-art-tote.webp"
+  },
+  {
+    "slug": "gifts-aesthete-tote",
+    "name": "Aesthete Printed Tote",
+    "category": "gifts-more",
+    "price": 449,
+    "tagline": "An artful take on the everyday canvas bag.",
+    "imageUrl": "/uploads/catalog/gifts-aesthete-tote.webp"
+  },
+  {
+    "slug": "gifts-bookish-bloom-tote",
+    "name": "Bookish Bloom Printed Tote",
+    "category": "gifts-more",
+    "price": 499,
+    "tagline": "Books, blooms and your daily coffee.",
+    "imageUrl": "/uploads/catalog/gifts-bookish-bloom-tote.webp"
+  },
+  {
+    "slug": "together-forever-navy-set",
+    "name": "Together Forever Navy Tee Set",
+    "category": "matching",
+    "price": 1199,
+    "tagline": "Two tees. One shared story.",
+    "badge": "Bestseller",
+    "imageUrl": "/uploads/catalog/together-forever-navy-set.webp"
+  },
+  {
+    "slug": "perfect-match-white-set",
+    "name": "Perfect Match White Tee Set",
+    "category": "matching",
+    "price": 1249,
+    "tagline": "Two tees. One shared story.",
+    "badge": "Top Pick",
+    "imageUrl": "/uploads/catalog/perfect-match-white-set.webp"
+  },
+  {
+    "slug": "perfect-match-contrast-set",
+    "name": "Perfect Match Contrast Tee Set",
+    "category": "matching",
+    "price": 1299,
+    "tagline": "Two tees. One shared story.",
+    "imageUrl": "/uploads/catalog/perfect-match-contrast-set.webp"
+  },
+  {
+    "slug": "together-forever-white-set",
+    "name": "Together Forever White Tee Set",
+    "category": "matching",
+    "price": 1349,
+    "tagline": "Two tees. One shared story.",
+    "imageUrl": "/uploads/catalog/together-forever-white-set.webp"
+  },
+  {
+    "slug": "you-and-me-white-set",
+    "name": "You + Me White Tee Set",
+    "category": "matching",
+    "price": 1399,
+    "tagline": "Two tees. One shared story.",
+    "imageUrl": "/uploads/catalog/you-and-me-white-set.webp"
+  }
+]

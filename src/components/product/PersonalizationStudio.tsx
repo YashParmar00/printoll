@@ -123,7 +123,7 @@ export default function PersonalizationStudio({ product }: { product: Product })
       <div>
         {gallery[selectedImage] && !photoUrl ? (
           <div className="relative aspect-square overflow-hidden rounded-2xl" style={{ background: `linear-gradient(135deg, ${product.accent[0]}, ${product.accent[1]})` }}>
-            <Image src={gallery[selectedImage]} alt={`${product.name} — photo ${selectedImage + 1}`} className="h-full w-full object-cover"  fill sizes="(min-width: 1280px) 576px, (min-width: 1024px) 46vw, 94vw" loading="eager" fetchPriority="high" />
+            <Image src={gallery[selectedImage]} alt={`${product.name} — photo ${selectedImage + 1}`} className="h-full w-full object-contain"  fill sizes="(min-width: 1280px) 576px, (min-width: 1024px) 46vw, 94vw" loading="eager" fetchPriority="high" />
           </div>
         ) : <ProductMockup shape={product.shape} accent={product.accent} text={needsText ? text : undefined} photoUrl={needsPhoto ? photoUrl : undefined} />}
         {gallery.length > 1 && <div className="mt-3 grid grid-cols-5 gap-3">{gallery.map((url, index) => <button key={url} type="button" onClick={() => setSelectedImage(index)} aria-label={`View product photo ${index + 1}`} className={`relative aspect-square overflow-hidden rounded-xl border bg-sand ${selectedImage === index ? "border-coral ring-2 ring-coral ring-offset-2" : "border-line hover:border-coral"}`}><Image src={url} alt="" fill sizes="(min-width: 1024px) 108px, 18vw" className="object-cover" /><span className="sr-only">{index === 0 ? "Main photo" : `Photo ${index + 1}`}</span></button>)}</div>}
@@ -138,7 +138,7 @@ export default function PersonalizationStudio({ product }: { product: Product })
         <div className="flex items-center gap-2">
           {product.badge && <span className="tag bg-blush text-noir">{product.badge}</span>}
           <span className="text-xs font-medium uppercase tracking-wider text-ink">
-            {sizeCount === 2 ? "Couple set · 2 tees" : "Single garment"}
+            {sizeCount === 2 ? "Couple set · 2 tees" : sizeCount === 0 ? "One bag" : "Single garment"}
           </span>
         </div>
 
@@ -158,7 +158,7 @@ export default function PersonalizationStudio({ product }: { product: Product })
         </div>
 
         <div className="mt-5">{priceBlock}</div>
-        <p className="mt-1 text-sm text-ink">{sizeCount === 2 ? "Price is for the full set: both tees in one box." : "Price is for one garment."}</p>
+        <p className="mt-1 text-sm text-ink">{sizeCount === 2 ? "Price is for the full set: both tees in one box." : sizeCount === 0 ? "Price is for one bag." : "Price is for one garment."}</p>
 
         {/* Delivery promise before add-to-cart (RESEARCH §B5) */}
         <p className="mt-3 inline-flex items-center gap-2 rounded-lg bg-blush px-3 py-2 text-sm font-medium text-noir">
