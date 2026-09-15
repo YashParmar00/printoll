@@ -1,8 +1,9 @@
-The temporary catalogue contains five products each in Men, Women, Matching,
-and Gifts & More. All twenty items are printable: men's graphic oversized tees,
-women's graphic tees, matching tees and printed canvas totes. Regular shirts,
-frocks and branded handbags are no longer active. Each product has one reference photo stored locally in
-public/uploads/catalog. Original pages and image URLs are recorded in
+The temporary catalogue contains five printed styles each in Men, Women and Matching.
+Gifts & More contains three mugs, three bottles, three canvas totes and three phone cases
+(35 active products overall). Gift product-type filters use the stored shape field and
+work with search, price and editorial filters. Paintings is a separate top-level category with eight art prints of public-domain
+paintings (Van Gogh, Hokusai, Monet, Klimt, Vermeer, Raja Ravi Varma) sourced from Wikimedia Commons. Each product has one
+reference photo stored locally in public/uploads/catalog. Original pages and image URLs are recorded in
 catalog-photo-sources.json. These are sample listings, not verified Printoll
 inventory or supplier photos; prices and supplier SKUs are placeholders.
 Reference artwork belongs to its original seller; this selection describes

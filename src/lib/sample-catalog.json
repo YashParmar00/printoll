@@ -6,6 +6,7 @@
     "price": 799,
     "tagline": "A travel graphic for your next escape.",
     "badge": "Bestseller",
+    "shape": "tee",
     "imageUrl": "/uploads/catalog/men-explorer-graphic-tee.webp"
   },
   {
@@ -15,6 +16,7 @@
     "price": 749,
     "tagline": "Clean typography. An everyday statement.",
     "badge": "Top Pick",
+    "shape": "tee",
     "imageUrl": "/uploads/catalog/men-less-is-more-tee.webp"
   },
   {
@@ -24,6 +26,7 @@
     "price": 849,
     "tagline": "Japanese-inspired artwork, relaxed streetwear fit.",
     "badge": "Trending",
+    "shape": "tee",
     "imageUrl": "/uploads/catalog/men-ikigai-graphic-tee.webp"
   },
   {
@@ -32,6 +35,7 @@
     "category": "men",
     "price": 799,
     "tagline": "A cosmic print for after-hours plans.",
+    "shape": "tee",
     "imageUrl": "/uploads/catalog/men-lunar-echo-tee.webp"
   },
   {
@@ -40,6 +44,7 @@
     "category": "men",
     "price": 849,
     "tagline": "Wear your sense of adventure.",
+    "shape": "tee",
     "imageUrl": "/uploads/catalog/men-voyage-printed-tee.webp"
   },
   {
@@ -49,6 +54,7 @@
     "price": 649,
     "tagline": "A playful cherry print with a little bow.",
     "badge": "Trending",
+    "shape": "tee",
     "imageUrl": "/uploads/catalog/women-cherry-bow-tee.webp"
   },
   {
@@ -58,6 +64,7 @@
     "price": 649,
     "tagline": "For the one whose camera roll is all cats.",
     "badge": "Bestseller",
+    "shape": "tee",
     "imageUrl": "/uploads/catalog/women-cat-mom-tee.webp"
   },
   {
@@ -67,6 +74,7 @@
     "price": 649,
     "tagline": "A little positivity in your everyday rotation.",
     "badge": "Top Pick",
+    "shape": "tee",
     "imageUrl": "/uploads/catalog/women-soul-shine-tee.webp"
   },
   {
@@ -75,6 +83,7 @@
     "category": "women",
     "price": 699,
     "tagline": "A printed reminder to take the scenic route.",
+    "shape": "tee",
     "imageUrl": "/uploads/catalog/women-wanderlust-tee.webp"
   },
   {
@@ -83,48 +92,8 @@
     "category": "women",
     "price": 649,
     "tagline": "Colourful artwork with a feel-good message.",
+    "shape": "tee",
     "imageUrl": "/uploads/catalog/women-kindness-rainbow-tee.webp"
-  },
-  {
-    "slug": "gifts-books-coffee-tote",
-    "name": "Books & Coffee Printed Tote",
-    "category": "gifts-more",
-    "price": 449,
-    "tagline": "Your reading-list companion.",
-    "badge": "Trending",
-    "imageUrl": "/uploads/catalog/gifts-books-coffee-tote.webp"
-  },
-  {
-    "slug": "gifts-plant-person-tote",
-    "name": "Plant Person Printed Tote",
-    "category": "gifts-more",
-    "price": 449,
-    "tagline": "For plant lovers and everyday errands.",
-    "imageUrl": "/uploads/catalog/gifts-plant-person-tote.webp"
-  },
-  {
-    "slug": "gifts-hand-art-tote",
-    "name": "Hand Art Printed Tote",
-    "category": "gifts-more",
-    "price": 499,
-    "tagline": "A classic art-inspired print to carry everywhere.",
-    "imageUrl": "/uploads/catalog/gifts-hand-art-tote.webp"
-  },
-  {
-    "slug": "gifts-aesthete-tote",
-    "name": "Aesthete Printed Tote",
-    "category": "gifts-more",
-    "price": 449,
-    "tagline": "An artful take on the everyday canvas bag.",
-    "imageUrl": "/uploads/catalog/gifts-aesthete-tote.webp"
-  },
-  {
-    "slug": "gifts-bookish-bloom-tote",
-    "name": "Bookish Bloom Printed Tote",
-    "category": "gifts-more",
-    "price": 499,
-    "tagline": "Books, blooms and your daily coffee.",
-    "imageUrl": "/uploads/catalog/gifts-bookish-bloom-tote.webp"
   },
   {
     "slug": "together-forever-navy-set",
@@ -133,6 +102,7 @@
     "price": 1199,
     "tagline": "Two tees. One shared story.",
     "badge": "Bestseller",
+    "shape": "tee",
     "imageUrl": "/uploads/catalog/together-forever-navy-set.webp"
   },
   {
@@ -142,6 +112,7 @@
     "price": 1249,
     "tagline": "Two tees. One shared story.",
     "badge": "Top Pick",
+    "shape": "tee",
     "imageUrl": "/uploads/catalog/perfect-match-white-set.webp"
   },
   {
@@ -150,6 +121,8 @@
     "category": "matching",
     "price": 1299,
     "tagline": "Two tees. One shared story.",
+    "badge": "Trending",
+    "shape": "tee",
     "imageUrl": "/uploads/catalog/perfect-match-contrast-set.webp"
   },
   {
@@ -158,6 +131,7 @@
     "category": "matching",
     "price": 1349,
     "tagline": "Two tees. One shared story.",
+    "shape": "tee",
     "imageUrl": "/uploads/catalog/together-forever-white-set.webp"
   },
   {
@@ -166,6 +140,190 @@
     "category": "matching",
     "price": 1399,
     "tagline": "Two tees. One shared story.",
+    "shape": "tee",
     "imageUrl": "/uploads/catalog/you-and-me-white-set.webp"
+  },
+  {
+    "slug": "gifts-books-coffee-tote",
+    "name": "Books & Coffee Printed Tote",
+    "category": "gifts-more",
+    "price": 449,
+    "tagline": "Your reading-list companion.",
+    "badge": "Trending",
+    "shape": "tote",
+    "imageUrl": "/uploads/catalog/gifts-books-coffee-tote.webp"
+  },
+  {
+    "slug": "gifts-plant-person-tote",
+    "name": "Plant Person Printed Tote",
+    "category": "gifts-more",
+    "price": 449,
+    "tagline": "For plant lovers and everyday errands.",
+    "shape": "tote",
+    "imageUrl": "/uploads/catalog/gifts-plant-person-tote.webp"
+  },
+  {
+    "slug": "gifts-hand-art-tote",
+    "name": "Hand Art Printed Tote",
+    "category": "gifts-more",
+    "price": 499,
+    "tagline": "A classic art-inspired print to carry everywhere.",
+    "shape": "tote",
+    "imageUrl": "/uploads/catalog/gifts-hand-art-tote.webp"
+  },
+  {
+    "slug": "gifts-hornbill-mug-h",
+    "name": "Hornbill Mug - H Printed Mug",
+    "category": "gifts-more",
+    "price": 399,
+    "tagline": "A little art for your coffee break.",
+    "shape": "mug",
+    "imageUrl": "/uploads/catalog/gifts-hornbill-mug-h.webp"
+  },
+  {
+    "slug": "gifts-penguin-mug-p",
+    "name": "Penguin Mug - P Printed Mug",
+    "category": "gifts-more",
+    "price": 449,
+    "tagline": "A little art for your coffee break.",
+    "shape": "mug",
+    "imageUrl": "/uploads/catalog/gifts-penguin-mug-p.webp"
+  },
+  {
+    "slug": "gifts-swan-mug-s",
+    "name": "Swan Mug - S Printed Mug",
+    "category": "gifts-more",
+    "price": 499,
+    "tagline": "A little art for your coffee break.",
+    "shape": "mug",
+    "imageUrl": "/uploads/catalog/gifts-swan-mug-s.webp"
+  },
+  {
+    "slug": "gifts-floral-positive-bottle",
+    "name": "Floral Quote Printed Bottle",
+    "category": "gifts-more",
+    "price": 649,
+    "tagline": "A floral print for your daily hydration.",
+    "badge": "Top Pick",
+    "shape": "bottle",
+    "imageUrl": "/uploads/catalog/gifts-floral-positive-bottle.webp"
+  },
+  {
+    "slug": "gifts-hangout-astronaut-bottle",
+    "name": "Hangout Astronaut Printed Bottle",
+    "category": "gifts-more",
+    "price": 799,
+    "tagline": "A cosmic companion for everyday outings.",
+    "shape": "bottle",
+    "imageUrl": "/uploads/catalog/gifts-hangout-astronaut-bottle.webp"
+  },
+  {
+    "slug": "gifts-space-sipper-bottle",
+    "name": "Space Adventure Printed Sipper",
+    "category": "gifts-more",
+    "price": 549,
+    "tagline": "Rockets and planets, ready to travel.",
+    "shape": "bottle",
+    "imageUrl": "/uploads/catalog/gifts-space-sipper-bottle.webp"
+  },
+  {
+    "slug": "gifts-petal-dreams-phone-case",
+    "name": "Petal Dreams Printed Case – iPhone 15",
+    "category": "gifts-more",
+    "price": 399,
+    "tagline": "A delicate floral print for iPhone 15 only.",
+    "shape": "phone-case",
+    "imageUrl": "/uploads/catalog/gifts-petal-dreams-phone-case.webp"
+  },
+  {
+    "slug": "gifts-pot-pluck-phone-case",
+    "name": "Pot Pluck Case – iPhone 15",
+    "category": "gifts-more",
+    "price": 399,
+    "tagline": "A bold botanical print for iPhone 15 only.",
+    "shape": "phone-case",
+    "imageUrl": "/uploads/catalog/gifts-pot-pluck-phone-case.webp"
+  },
+  {
+    "slug": "gifts-moth-myst-phone-case",
+    "name": "Moth Myst Case – iPhone 15",
+    "category": "gifts-more",
+    "price": 399,
+    "tagline": "Colourful nature artwork for iPhone 15 only.",
+    "shape": "phone-case",
+    "imageUrl": "/uploads/catalog/gifts-moth-myst-phone-case.webp"
+  },
+  {
+    "slug": "paintings-starry-night-art-print",
+    "name": "The Starry Night Art Print",
+    "category": "paintings",
+    "price": 1299,
+    "tagline": "Van Gogh’s swirling night sky for a dreamy corner.",
+    "badge": "Bestseller",
+    "shape": "painting",
+    "imageUrl": "/uploads/catalog/paintings-starry-night-art-print.webp"
+  },
+  {
+    "slug": "paintings-great-wave-art-print",
+    "name": "The Great Wave Art Print",
+    "category": "paintings",
+    "price": 1199,
+    "tagline": "Hokusai’s iconic wave in bold Japanese blues.",
+    "shape": "painting",
+    "imageUrl": "/uploads/catalog/paintings-great-wave-art-print.webp"
+  },
+  {
+    "slug": "paintings-sunflowers-art-print",
+    "name": "Sunflowers Art Print",
+    "category": "paintings",
+    "price": 1199,
+    "tagline": "Warm Van Gogh yellows to brighten any room.",
+    "shape": "painting",
+    "imageUrl": "/uploads/catalog/paintings-sunflowers-art-print.webp"
+  },
+  {
+    "slug": "paintings-almond-blossom-art-print",
+    "name": "Almond Blossom Art Print",
+    "category": "paintings",
+    "price": 1099,
+    "tagline": "Soft blossoms on turquoise, calm and fresh.",
+    "shape": "painting",
+    "imageUrl": "/uploads/catalog/paintings-almond-blossom-art-print.webp"
+  },
+  {
+    "slug": "paintings-water-lilies-art-print",
+    "name": "Water Lilies Art Print",
+    "category": "paintings",
+    "price": 1099,
+    "tagline": "Monet’s gentle pond in misty greens and blues.",
+    "shape": "painting",
+    "imageUrl": "/uploads/catalog/paintings-water-lilies-art-print.webp"
+  },
+  {
+    "slug": "paintings-the-kiss-art-print",
+    "name": "The Kiss Art Print",
+    "category": "paintings",
+    "price": 1399,
+    "tagline": "Klimt’s golden embrace for couples and romantics.",
+    "shape": "painting",
+    "imageUrl": "/uploads/catalog/paintings-the-kiss-art-print.webp"
+  },
+  {
+    "slug": "paintings-pearl-earring-art-print",
+    "name": "Girl with a Pearl Earring Art Print",
+    "category": "paintings",
+    "price": 1299,
+    "tagline": "Vermeer’s timeless portrait with a quiet glow.",
+    "shape": "painting",
+    "imageUrl": "/uploads/catalog/paintings-pearl-earring-art-print.webp"
+  },
+  {
+    "slug": "paintings-ravi-varma-lady-art-print",
+    "name": "Portrait of a Lady Art Print",
+    "category": "paintings",
+    "price": 1299,
+    "tagline": "Raja Ravi Varma’s classic Indian portrait artwork.",
+    "shape": "painting",
+    "imageUrl": "/uploads/catalog/paintings-ravi-varma-lady-art-print.webp"
   }
 ]

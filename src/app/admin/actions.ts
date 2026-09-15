@@ -42,7 +42,7 @@ export async function saveProductAction(formData: FormData) {
   const personalization = text(formData, "personalization");
   const shape = text(formData, "shape");
   const category = text(formData, "category");
-  if (!slug || !text(formData, "name", 160) || !category || !["none", "text", "photo", "both"].includes(personalization) || !["tee", "hoodie", "tote"].includes(shape)) {
+  if (!slug || !text(formData, "name", 160) || !category || !["none", "text", "photo", "both"].includes(personalization) || !["tee", "hoodie", "tote", "mug", "bottle", "phone-case", "painting"].includes(shape)) {
     throw new Error("Please fill all required product details.");
   }
   const faqLines = lines(formData.get("faqs"));
@@ -53,7 +53,7 @@ export async function saveProductAction(formData: FormData) {
   await saveCatalogProduct({
     slug, name: text(formData, "name", 160), tagline: text(formData, "tagline", 240),
     price: integer(formData, "price"), compareAtPrice: integer(formData, "compareAtPrice"),
-    category, personalization: personalization as "none" | "text" | "photo" | "both", shape: shape as "tee" | "hoodie" | "tote",
+    category, personalization: personalization as "none" | "text" | "photo" | "both", shape: shape as "tee" | "hoodie" | "tote" | "mug" | "bottle" | "phone-case" | "painting",
     supplierSku: text(formData, "supplierSku", 120), requiresAdvance: formData.get("requiresAdvance") === "on",
     occasions: lines(formData.get("occasions")), rating: Math.min(5, Number(formData.get("rating")) || 0), reviews: integer(formData, "reviews"),
     description: lines(formData.get("description")), highlights: lines(formData.get("highlights")), faqs,

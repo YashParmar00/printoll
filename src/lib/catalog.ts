@@ -107,7 +107,7 @@ export const listCatalogCards = unstable_cache(async (limit?: number): Promise<C
   if (usingStaticCatalogue) return staticCatalogue().slice(0, limit).map(({ slug, name, tagline, price, compareAtPrice, category, shape, reviews, accent, imageUrl, imageUrls, badge }) => ({ slug, name, tagline, price, compareAtPrice, category, shape, reviews, accent, imageUrl, imageUrls, badge }));
   const rows = await prisma.product.findMany({ where: { active: true }, orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }], take: limit, select: cardSelect });
   return rows.map(row => ({ ...row, shape: row.shape as Product["shape"], reviews: row.reviewsCount, accent: accent(row.accent), imageUrl: row.imageUrl ?? undefined }));
-}, ["catalog-cards-printed-v4", String(usingStaticCatalogue)], { tags: ["catalog"], revalidate: 300 });
+}, ["catalog-cards-gifts-v5", String(usingStaticCatalogue)], { tags: ["catalog"], revalidate: 300 });
 
 export type CatalogInput = Omit<Product, "slug"> & { slug: string; active: boolean; sortOrder: number };
 
@@ -119,7 +119,7 @@ export async function checkoutProducts(slugs: string[]) {
 
 export async function listCatalogCategories() {
   const rows = await prisma.product.findMany({ select: { category: true }, distinct: ["category"], orderBy: { category: "asc" } });
-  return Array.from(new Set(["couple-sets", ...rows.map(row => row.category)]));
+  return Array.from(new Set(["men", "women", "matching", "paintings", "gifts-more", ...rows.map(row => row.category)]));
 }
 
 export async function saveCatalogProduct(input: CatalogInput) {
@@ -134,8 +134,8 @@ export async function saveCatalogProduct(input: CatalogInput) {
   return prisma.product.upsert({ where: { slug: input.slug }, update: data, create: { slug: input.slug, ...data } });
 }
 
-const cachedList = unstable_cache((limit?: number) => readCatalogProducts(false, limit), ["catalog-list-printed-v4", String(usingStaticCatalogue)], { tags: ["catalog"], revalidate: 300 });
-const cachedProduct = unstable_cache((slug: string) => readCatalogProduct(slug), ["catalog-product-printed-v4", String(usingStaticCatalogue)], { tags: ["catalog"], revalidate: 300 });
+const cachedList = unstable_cache((limit?: number) => readCatalogProducts(false, limit), ["catalog-list-gifts-v5", String(usingStaticCatalogue)], { tags: ["catalog"], revalidate: 300 });
+const cachedProduct = unstable_cache((slug: string) => readCatalogProduct(slug), ["catalog-product-gifts-v5", String(usingStaticCatalogue)], { tags: ["catalog"], revalidate: 300 });
 export const findCatalogProduct = cache((slug: string, includeInactive = false) => includeInactive ? readCatalogProduct(slug, true) : cachedProduct(slug));
 export const listCatalogProducts = (includeInactive = false, limit?: number) => includeInactive ? readCatalogProducts(true, limit) : cachedList(limit);
-export const relatedCatalogProducts = unstable_cache(readRelatedCatalogProducts, ["catalog-related-printed-v4", String(usingStaticCatalogue)], { tags: ["catalog"], revalidate: 300 });
+export const relatedCatalogProducts = unstable_cache(readRelatedCatalogProducts, ["catalog-related-gifts-v5", String(usingStaticCatalogue)], { tags: ["catalog"], revalidate: 300 });

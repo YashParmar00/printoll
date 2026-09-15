@@ -4,6 +4,7 @@ import Image from "next/image";
 import { FALLBACK_PRODUCT_IMAGE } from "@/lib/products";
 import { inr, savingsPct } from "@/lib/format";
 import { StarIcon } from "@/components/ui/icons";
+import WishlistButton from "@/components/ui/WishlistButton";
 
 /**
  * Product card — badge tag + rating + price, with a coral "Choose options"
@@ -14,6 +15,7 @@ import { StarIcon } from "@/components/ui/icons";
 export default function ProductCard({ product, sizes = "(min-width: 1280px) 384px, (min-width: 1024px) 31vw, 46vw" }: { product: Product; sizes?: string }) {
   const isSet = ["couple-sets", "matching"].includes(product.category);
   const isBag = product.shape === "tote";
+  const isAccessory = !["tee", "hoodie"].includes(product.shape);
   const save = savingsPct(product.price, product.compareAtPrice);
   // Products without their own photo fall back to a shared stock shot.
   const image = product.imageUrls?.[0] ?? product.imageUrl ?? FALLBACK_PRODUCT_IMAGE;
@@ -36,6 +38,7 @@ export default function ProductCard({ product, sizes = "(min-width: 1280px) 384p
         />
 
         {product.badge && <span className="absolute left-3 top-3 rounded-full bg-night/90 px-3 py-1 text-[10px] font-semibold text-white">{product.badge}</span>}
+        <WishlistButton slug={product.slug} className="absolute right-3 top-3" />
       </div>
 
       {/* Body */}
@@ -66,11 +69,11 @@ export default function ProductCard({ product, sizes = "(min-width: 1280px) 384p
               <span>({product.reviews})</span>
             </>
           ) : (
-            <span>{isSet ? "2 tees per set" : isBag ? "One bag" : "Single garment"} · COD available</span>
+            <span>{isSet ? "2 tees per set" : isBag ? "One tote bag" : isAccessory ? "One item" : "Single garment"} · COD available</span>
           )}
         </div>
 
-        <span className="btn-primary mt-auto w-full whitespace-nowrap px-2 py-3 text-xs sm:px-4 sm:text-sm md:px-6">{isSet ? "Choose your pair" : isBag ? "View bag" : "Choose your size"}</span>
+        <span className="btn-primary mt-auto w-full whitespace-nowrap px-2 py-3 text-xs sm:px-4 sm:text-sm md:px-6">{isSet ? "Choose your pair" : isAccessory ? "View product" : "Choose your size"}</span>
       </div>
     </Link>
   );

@@ -107,7 +107,7 @@ export default function HeroShowcase() {
         <ArrowButton side="right" onClick={() => go(index + 1)} />
       </div>
 
-      <div className="mt-1 flex items-center justify-center gap-3">
+      <div className="mt-2 flex flex-col items-center justify-center gap-2 sm:mt-1 sm:flex-row sm:gap-3">
         <div className="flex gap-2">
           {SLIDES.map((s, i) => (
             <button
@@ -120,7 +120,7 @@ export default function HeroShowcase() {
             />
           ))}
         </div>
-        <p className="text-[11px] uppercase tracking-[0.2em] text-night-ink" aria-live="polite">
+        <p className="text-center text-[11px] uppercase tracking-[0.2em] text-night-ink" aria-live="polite">
           {slide.title} · <span className="sm:hidden">swipe</span>
           <span className="hidden sm:inline">drag</span> to rotate
         </p>

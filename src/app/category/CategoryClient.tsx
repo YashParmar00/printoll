@@ -1,12 +1,27 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import type { HomeCollection } from "@/lib/home-collections";
 import type { CatalogCard as Product } from "@/lib/catalog-card";
 import ProductCard from "@/components/ui/ProductCard";
 import SortDropdown from "@/components/ui/SortDropdown";
 import ShopFilters, { FilterOptions } from "@/components/ui/ShopFilters";
+import { useAnnouncementState } from "@/components/site/announcement-state";
+
+// Header.tsx's LightHeader main bar: h-14 (56px) below the sm breakpoint, h-16
+// (64px) from sm up, plus its 1px border-b either way.
+function useMainBarHeight() {
+  const [height, setHeight] = useState(57);
+  useEffect(() => {
+    const query = window.matchMedia("(min-width: 640px)");
+    const update = () => setHeight(query.matches ? 65 : 57);
+    update();
+    query.addEventListener("change", update);
+    return () => query.removeEventListener("change", update);
+  }, []);
+  return height;
+}
 
 const budgets = [
   { value: "all", label: "Any price", min: 0, max: Infinity },
@@ -21,7 +36,7 @@ const edits = [
   { value: "trending", label: "Trending", badge: "Trending" },
 ];
 const sorts = [{ value: "featured", label: "Recommended" }, { value: "low", label: "Price: low to high" }, { value: "high", label: "Price: high to low" }];
-const filterGroups = [{ key: "budget" as const, title: "Your budget", options: budgets }, { key: "edit" as const, title: "Explore the edit", options: edits }];
+const baseFilterGroups = [{ key: "budget" as const, title: "Your budget", options: budgets }, { key: "edit" as const, title: "Explore the edit", options: edits }];
 const focus = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coral focus-visible:ring-offset-2 focus-visible:ring-offset-paper";
 
 function categoryKey(value: string) {
@@ -38,6 +53,9 @@ function Icon({ kind, className = "h-4 w-4" }: { kind: "search" | "filter" | "cl
 export default function CategoryClient({ products, collections }: { products: Product[]; collections: HomeCollection[] }) {
   const params = useSearchParams();
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const announcement = useAnnouncementState();
+  const mainBarHeight = useMainBarHeight();
+  const stickyTop = mainBarHeight + (announcement.visible ? announcement.height : 0);
   const categories = useMemo(() => {
     const items = collections.map(collection => {
       const query = collection.href.split("?")[1] ?? "";
@@ -55,10 +73,14 @@ export default function CategoryClient({ products, collections }: { products: Pr
   const sort = sorts.find(item => item.value === params.get("sort")) ?? sorts[0];
   const query = params.get("q") ?? "";
   const activeLabel = categories.find(item => item.key === category)?.label ?? "All prints";
-  const filterCount = Number(budget.value !== "all") + Number(edit.value !== "all");
+  const giftTypes = [{ value: "all", label: "All gifts" }, { value: "mug", label: "Mugs" }, { value: "bottle", label: "Bottles" }, { value: "tote", label: "Tote bags" }, { value: "phone-case", label: "Phone cases" }];
+  const productType = category === "gifts-more" ? giftTypes.find(item => item.value === params.get("type")) ?? giftTypes[0] : giftTypes[0];
+  const filterGroups = category === "gifts-more" ? [{ key: "type" as const, title: "Product type", options: giftTypes }, ...baseFilterGroups] : baseFilterGroups;
+  const filterCount = Number(budget.value !== "all") + Number(edit.value !== "all") + Number(productType.value !== "all");
 
   function update(key: string, value: string, replace = false) {
     const next = new URLSearchParams(params.toString());
+    if (key === "category") next.delete("type");
     if (!value || value === "all" || value === "featured") next.delete(key);
     else next.set(key, value);
     const url = `/category${next.size ? `?${next}` : ""}`;
@@ -66,13 +88,13 @@ export default function CategoryClient({ products, collections }: { products: Pr
     else window.history.pushState(null, "", url);
   }
 
-  function previewCount(values: { budget: string; edit: string }) {
+  function previewCount(values: { budget: string; edit: string; type: string }) {
     const price = budgets.find(item => item.value === values.budget) ?? budgets[0];
     const pick = edits.find(item => item.value === values.edit) ?? edits[0];
-    return products.filter(product => (category === "all" || categoryKey(product.category) === category) && product.price >= price.min && product.price <= price.max && (!pick.badge || product.badge === pick.badge) && (!query.trim() || `${product.name} ${product.tagline}`.toLowerCase().includes(query.trim().toLowerCase()))).length;
+    return products.filter(product => (category === "all" || categoryKey(product.category) === category) && (category !== "gifts-more" || values.type === "all" || product.shape === values.type) && product.price >= price.min && product.price <= price.max && (!pick.badge || product.badge === pick.badge) && (!query.trim() || `${product.name} ${product.tagline}`.toLowerCase().includes(query.trim().toLowerCase()))).length;
   }
 
-  function applyFilters(values: { budget: string; edit: string }) {
+  function applyFilters(values: { budget: string; edit: string; type: string }) {
     const next = new URLSearchParams(params.toString());
     for (const [key, value] of Object.entries(values)) { if (value === "all") next.delete(key); else next.set(key, value); }
     window.history.pushState(null, "", `/category${next.size ? `?${next}` : ""}`);
@@ -82,12 +104,13 @@ export default function CategoryClient({ products, collections }: { products: Pr
     const search = query.trim().toLowerCase();
     const result = products.filter(product =>
       (category === "all" || categoryKey(product.category) === category) &&
+      (productType.value === "all" || product.shape === productType.value) &&
       product.price >= budget.min && product.price <= budget.max &&
       (!edit.badge || product.badge === edit.badge) &&
       (!search || `${product.name} ${product.tagline}`.toLowerCase().includes(search)));
     if (sort.value !== "featured") result.sort((a, b) => sort.value === "low" ? a.price - b.price : b.price - a.price);
     return result;
-  }, [products, category, budget, edit, query, sort]);
+  }, [products, category, budget, edit, query, sort, productType.value]);
 
   return (
     <div className="container-page pb-12 pt-4 lg:pb-16 lg:pt-12">
@@ -96,7 +119,7 @@ export default function CategoryClient({ products, collections }: { products: Pr
         <span aria-hidden="true" className="pointer-events-none absolute hidden lg:block -right-4 -top-16 h-56 w-56 rounded-full border border-coral/10 sm:right-18" />
         <p className="eyebrow flex items-center gap-2 text-[10px] lg:text-xs"><span className="h-1.5 w-1.5 rounded-full bg-coral" /> The print collection</p>
         <h1 className="relative mt-2 text-[26px] lg:mt-3 lg:text-5xl">Find your kind of <span className="text-coral-light">print.</span></h1>
-        <p className="relative mt-2 max-w-md text-xs leading-relaxed text-ink lg:mt-3 lg:text-sm">Printed tees, matching sets & everyday totes.</p>
+        <p className="relative mt-2 max-w-md text-xs leading-relaxed text-ink lg:mt-3 lg:text-sm">Printed tees, art & thoughtful everyday gifts.</p>
       </div>
 
       <nav aria-label="Shop categories" className="mt-3 flex flex-wrap gap-1.5 border-b border-line pb-3 lg:mt-5 lg:gap-9 lg:pb-0">
@@ -109,31 +132,31 @@ export default function CategoryClient({ products, collections }: { products: Pr
         })}
       </nav>
 
-      <div className="mt-3 lg:mt-6 lg:rounded-2xl lg:border lg:border-line lg:bg-sand">
+      <div style={{ top: `${stickyTop}px` }} className="sticky z-20 -mx-4 mt-3 bg-paper/95 px-4 py-2 backdrop-blur transition-[top] duration-300 ease-out lg:static lg:z-auto lg:mx-0 lg:mt-6 lg:rounded-2xl lg:border lg:border-line lg:bg-sand lg:p-0 lg:backdrop-blur-none">
         <div className="flex flex-wrap items-center gap-2 lg:gap-3 lg:p-4">
           <div className="relative min-w-0 flex-1">
             <Icon kind="search" className="pointer-events-none absolute left-2.5 top-2.5 lg:top-4 h-4 w-4 text-ink" />
             <input aria-label="Search prints" type="search" value={query} onChange={event => update("q", event.target.value, true)} placeholder="Search prints" className={`h-9 w-full rounded-lg border border-line bg-paper pl-8 pr-2 text-base lg:h-12 lg:rounded-xl lg:text-sm text-white placeholder:text-ink ${focus}`} />
           </div>
-          <ShopFilters groups={filterGroups} values={{ budget: budget.value, edit: edit.value }} count={filterCount} desktopOpen={filtersOpen} onDesktopToggle={() => setFiltersOpen(!filtersOpen)} onApply={applyFilters} resultCount={previewCount} />
+          <ShopFilters groups={filterGroups} values={{ budget: budget.value, edit: edit.value, type: productType.value }} count={filterCount} desktopOpen={filtersOpen} onDesktopToggle={() => setFiltersOpen(!filtersOpen)} onApply={applyFilters} resultCount={previewCount} />
           <SortDropdown options={sorts} value={sort.value} onChange={value => update("sort", value)} />
         </div>
         <div id="shop-filters" className={`border-t border-line p-6 ${filtersOpen ? "hidden lg:block" : "hidden"}`}>
-          {filtersOpen && <FilterOptions groups={filterGroups} values={{ budget: budget.value, edit: edit.value }} prefix="desktop" onChange={update} />}
+          {filtersOpen && <FilterOptions groups={filterGroups} values={{ budget: budget.value, edit: edit.value, type: productType.value }} prefix="desktop" onChange={update} />}
         </div>
       </div>
 
       <div className="mb-4 mt-4 flex flex-wrap items-center justify-between gap-2 lg:mb-6 lg:mt-7 lg:gap-3">
         <h2 id="results-title" tabIndex={-1} className="text-lg outline-none lg:text-2xl">{activeLabel} <span role="status" aria-live="polite" className="ml-2 font-body text-xs font-normal text-ink">{list.length} {list.length === 1 ? "print" : "prints"}</span></h2>
         {(category !== "all" || filterCount > 0 || query || sort.value !== "featured") && <div className="flex flex-wrap items-center gap-2">
-          {[...(category !== "all" ? [{ key: "category", label: activeLabel }] : []), ...(budget.value !== "all" ? [{ key: "budget", label: budget.label }] : []), ...(edit.value !== "all" ? [{ key: "edit", label: edit.label }] : []), ...(query ? [{ key: "q", label: `“${query}”` }] : [])].map(item => <button key={item.key} aria-label={`Remove ${item.label} filter`} onClick={() => update(item.key, "")} className={`flex min-h-9 max-w-60 items-center gap-2 rounded-full border border-coral/25 bg-coral/5 px-3 text-xs text-coral-light ${focus}`}><span className="truncate">{item.label}</span><Icon kind="close" className="h-3 w-3 shrink-0" /></button>)}
+          {[...(category !== "all" ? [{ key: "category", label: activeLabel }] : []), ...(budget.value !== "all" ? [{ key: "budget", label: budget.label }] : []), ...(edit.value !== "all" ? [{ key: "edit", label: edit.label }] : []), ...(productType.value !== "all" ? [{ key: "type", label: productType.label }] : []), ...(query ? [{ key: "q", label: `“${query}”` }] : [])].map(item => <button key={item.key} aria-label={`Remove ${item.label} filter`} onClick={() => update(item.key, "")} className={`flex min-h-9 max-w-60 items-center gap-2 rounded-full border border-coral/25 bg-coral/5 px-3 text-xs text-coral-light ${focus}`}><span className="truncate">{item.label}</span><Icon kind="close" className="h-3 w-3 shrink-0" /></button>)}
           <button onClick={() => window.history.pushState(null, "", "/category")} className={`min-h-10 rounded-md px-2 text-xs text-ink underline underline-offset-4 hover:text-white ${focus}`}>Clear all</button>
         </div>}
       </div>
       {list.length ? <div className="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-3">{list.map(product => <ProductCard key={product.slug} product={product} />)}</div> : <div className="rounded-3xl border border-dashed border-line bg-sand/50 px-6 py-16 text-center">
         <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-coral/10 text-coral"><Icon kind="search" className="h-6 w-6" /></div>
-        <h3 className="text-2xl">Your print is still out there.</h3>
-        <p className="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-ink">No matches for this combination. Try another keyword or give your filters a little more room.</p>
+        <h3 className="text-2xl">{category === "paintings" && !query && !filterCount ? "Paintings are coming soon." : "Your print is still out there."}</h3>
+        <p className="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-ink">{category === "paintings" && !query && !filterCount ? "We’re putting together our art collection. Explore our printed styles and gifts in the meantime." : "No matches for this combination. Try another keyword or give your filters a little more room."}</p>
         <button onClick={() => window.history.pushState(null, "", "/category")} className="btn-primary mt-6 text-sm">Explore all prints <Icon kind="arrow" /></button>
       </div>}
     </div>

@@ -30,3 +30,8 @@ export function adminSubject(user = process.env.ADMIN_USER ?? "", password = pro
   // Rotation of either credential invalidates existing sessions without putting credentials in the cookie.
   return createHmac("sha256", secret()).update(JSON.stringify([user, password])).digest("hex");
 }
+
+export function customerSubject(id: string, passwordHash: string) {
+  // A password change invalidates existing sessions without putting the hash in the cookie.
+  return createHmac("sha256", secret()).update(JSON.stringify([id, passwordHash])).digest("hex");
+}

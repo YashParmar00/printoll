@@ -44,13 +44,21 @@ export const defaultHomeCollections: HomeCollection[] = [
     sortOrder: 2,
   },
   {
+    id: "paintings",
+    title: "Paintings",
+    description: "Art prints and paintings for a space that feels like you.",
+    href: "/category?category=paintings",
+    active: true,
+    sortOrder: 3,
+  },
+  {
     id: "others",
     title: "Gifts & More",
     description: "Thoughtful prints for every occasion and person.",
     imageUrl: "https://images.pexels.com/photos/5704849/pexels-photo-5704849.jpeg?auto=compress&cs=tinysrgb&w=900",
     href: "/category?category=gifts-more",
     active: true,
-    sortOrder: 3,
+    sortOrder: 4,
   },
 ];
 
@@ -71,7 +79,7 @@ async function readHomeCollections(includeInactive = false): Promise<HomeCollect
   const rows = await prisma.homeCollection.findMany({ where: includeInactive ? undefined : { active: true }, orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }] });
   return rows.map(toHomeCollection);
 }
-const cachedCollections = unstable_cache(() => readHomeCollections(), ["collections-v2", process.env.CATALOG_SOURCE ?? "static"], { tags: ["collections"], revalidate: 300 });
+const cachedCollections = unstable_cache(() => readHomeCollections(), ["collections-v3", process.env.CATALOG_SOURCE ?? "static"], { tags: ["collections"], revalidate: 300 });
 export const listHomeCollections = (includeInactive = false) => includeInactive ? readHomeCollections(true) : cachedCollections();
 export async function findHomeCollection(id: string) {
   const row = await prisma.homeCollection.findUnique({ where: { id } });

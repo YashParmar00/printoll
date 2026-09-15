@@ -11,11 +11,15 @@ const sections = [
 
 export default async function FeaturedProducts() {
   const products = await listCatalogCards();
+  // Each section pulls from its own badge, skipping anything already shown in
+  // an earlier section so the ~12 cards on Home stay non-repeating.
+  const used = new Set<string>();
   return (
     <section id="featured" className="scroll-mt-28 bg-night py-12 sm:py-16">
       <div className="container-page space-y-14 sm:space-y-20">
         {sections.map(section => {
-          const selected = products.filter(product => product.badge === section.badge).slice(0, 3);
+          const selected = products.filter(product => product.badge === section.badge && !used.has(product.slug)).slice(0, 4);
+          selected.forEach(product => used.add(product.slug));
           if (!selected.length) return null;
           return (
             <div key={section.badge}>
@@ -29,8 +33,8 @@ export default async function FeaturedProducts() {
                   Explore collections <ArrowRightIcon className="h-4 w-4" />
                 </Link>
               </div>
-              <div className="grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-3">
-                {selected.map(product => <ProductCard key={product.slug} product={product} sizes="(min-width: 1280px) 384px, (min-width: 768px) 30vw, 46vw" />)}
+              <div className="grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-4">
+                {selected.map(product => <ProductCard key={product.slug} product={product} sizes="(min-width: 1280px) 288px, (min-width: 768px) 22vw, 46vw" />)}
               </div>
             </div>
           );

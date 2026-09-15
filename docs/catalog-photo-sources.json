@@ -96,52 +96,6 @@
     "image": "https://cdn.shopify.com/s/files/1/0633/5984/4436/files/Kindness-rainbow-Women-T-Shirt-3.jpg?v=1758613254"
   },
   {
-    "slug": "gifts-books-coffee-tote",
-    "name": "Books & Coffee Printed Tote",
-    "category": "gifts-more",
-    "tagline": "Your reading-list companion.",
-    "price": 449,
-    "badge": "Trending",
-    "page": "https://patrah.com/products/book-and-coffee-canvas-tote-bag",
-    "image": "https://cdn.shopify.com/s/files/1/0701/0281/0945/products/book-and-coffee-canvas-tote-bag-2.jpg?v=1682257606"
-  },
-  {
-    "slug": "gifts-plant-person-tote",
-    "name": "Plant Person Printed Tote",
-    "category": "gifts-more",
-    "tagline": "For plant lovers and everyday errands.",
-    "price": 449,
-    "page": "https://patrah.com/products/plant-person-canvas-tote-bag",
-    "image": "https://cdn.shopify.com/s/files/1/0701/0281/0945/products/plant-person-canvas-tote-bag-3.jpg?v=1682259531"
-  },
-  {
-    "slug": "gifts-hand-art-tote",
-    "name": "Hand Art Printed Tote",
-    "category": "gifts-more",
-    "tagline": "A classic art-inspired print to carry everywhere.",
-    "price": 499,
-    "page": "https://patrah.com/products/adams-hand-art-canvas-tote-bag",
-    "image": "https://cdn.shopify.com/s/files/1/0701/0281/0945/products/adams-hand-art-canvas-tote-bag-4.jpg?v=1682259274"
-  },
-  {
-    "slug": "gifts-aesthete-tote",
-    "name": "Aesthete Printed Tote",
-    "category": "gifts-more",
-    "tagline": "An artful take on the everyday canvas bag.",
-    "price": 449,
-    "page": "https://patrah.com/products/aesthete-canvas-tote-bag",
-    "image": "https://cdn.shopify.com/s/files/1/0701/0281/0945/products/aesthete-canvas-tote-bag-2.jpg?v=1682258303"
-  },
-  {
-    "slug": "gifts-bookish-bloom-tote",
-    "name": "Bookish Bloom Printed Tote",
-    "category": "gifts-more",
-    "tagline": "Books, blooms and your daily coffee.",
-    "price": 499,
-    "page": "https://hobbyindia.store/products/canvas-tote-bag-book-coffee-with-flowers",
-    "image": "https://hobbyindia.store/cdn/shop/files/28_1200x1200.png?v=1734349245"
-  },
-  {
     "slug": "together-forever-navy-set",
     "name": "Together Forever Navy Tee Set",
     "category": "matching",
@@ -171,7 +125,8 @@
     "imageUrl": "/uploads/catalog/perfect-match-contrast-set.webp",
     "tagline": "Two tees. One shared story.",
     "page": "https://cibercompra.co/collections/flore",
-    "image": "https://cibercompra.co/cdn/shop/files/LoveConexion9-Mar-26_14.jpg?width=1000"
+    "image": "https://cibercompra.co/cdn/shop/files/LoveConexion9-Mar-26_14.jpg?width=1000",
+    "badge": "Trending"
   },
   {
     "slug": "together-forever-white-set",
@@ -192,5 +147,216 @@
     "tagline": "Two tees. One shared story.",
     "page": "https://ussamecloth.thebase.in/items/11761014",
     "image": "https://baseec-img-mng.akamaized.net/images/item/origin/92f9afcf40ffd6ac69a3dd05db5c8c4a.jpg"
+  },
+  {
+    "slug": "gifts-books-coffee-tote",
+    "name": "Books & Coffee Printed Tote",
+    "category": "gifts-more",
+    "tagline": "Your reading-list companion.",
+    "price": 449,
+    "badge": "Trending",
+    "page": "https://patrah.com/products/book-and-coffee-canvas-tote-bag",
+    "image": "https://cdn.shopify.com/s/files/1/0701/0281/0945/products/book-and-coffee-canvas-tote-bag-2.jpg?v=1682257606",
+    "shape": "tote"
+  },
+  {
+    "slug": "gifts-plant-person-tote",
+    "name": "Plant Person Printed Tote",
+    "category": "gifts-more",
+    "tagline": "For plant lovers and everyday errands.",
+    "price": 449,
+    "page": "https://patrah.com/products/plant-person-canvas-tote-bag",
+    "image": "https://cdn.shopify.com/s/files/1/0701/0281/0945/products/plant-person-canvas-tote-bag-3.jpg?v=1682259531",
+    "shape": "tote"
+  },
+  {
+    "slug": "gifts-hand-art-tote",
+    "name": "Hand Art Printed Tote",
+    "category": "gifts-more",
+    "tagline": "A classic art-inspired print to carry everywhere.",
+    "price": 499,
+    "page": "https://patrah.com/products/adams-hand-art-canvas-tote-bag",
+    "image": "https://cdn.shopify.com/s/files/1/0701/0281/0945/products/adams-hand-art-canvas-tote-bag-4.jpg?v=1682259274",
+    "shape": "tote"
+  },
+  {
+    "slug": "gifts-hornbill-mug-h",
+    "name": "Hornbill Mug - H Printed Mug",
+    "category": "gifts-more",
+    "shape": "mug",
+    "price": 399,
+    "tagline": "A little art for your coffee break.",
+    "page": "https://www.chumbak.com/products/hornbill-mug-h",
+    "image": "https://cdn.shopify.com/s/files/1/0601/1093/0098/files/8907605135811_1_40d1597a-2353-454f-9917-12ddfe69950d.jpg?v=1718958118"
+  },
+  {
+    "slug": "gifts-penguin-mug-p",
+    "name": "Penguin Mug - P Printed Mug",
+    "category": "gifts-more",
+    "shape": "mug",
+    "price": 449,
+    "tagline": "A little art for your coffee break.",
+    "page": "https://www.chumbak.com/products/penguin-mug-p",
+    "image": "https://cdn.shopify.com/s/files/1/0601/1093/0098/files/1_3972a2ee-7e8a-4cfe-abef-0872d0a14cc3.jpg?v=1785234645"
+  },
+  {
+    "slug": "gifts-swan-mug-s",
+    "name": "Swan Mug - S Printed Mug",
+    "category": "gifts-more",
+    "shape": "mug",
+    "price": 499,
+    "tagline": "A little art for your coffee break.",
+    "page": "https://www.chumbak.com/products/swan-mug-s",
+    "image": "https://cdn.shopify.com/s/files/1/0601/1093/0098/files/1_d9d83c2a-7bd4-4cf5-b4c5-493bab1cfa6d.jpg?v=1785234023"
+  },
+  {
+    "slug": "gifts-floral-positive-bottle",
+    "name": "Floral Quote Printed Bottle",
+    "price": 649,
+    "tagline": "A floral print for your daily hydration.",
+    "page": "https://indigifts.in/products/floral-printed-aluminium-sipper-water-bottle",
+    "image": "https://indigifts.in/cdn/shop/files/S-BTSALWH01RO75-GEN23001_front_46e040a3-6bf1-471f-a50f-cd596742d2d2.jpg?v=1706078920",
+    "shape": "bottle",
+    "category": "gifts-more",
+    "badge": "Top Pick"
+  },
+  {
+    "slug": "gifts-hangout-astronaut-bottle",
+    "name": "Hangout Astronaut Printed Bottle",
+    "price": 799,
+    "tagline": "A cosmic companion for everyday outings.",
+    "page": "https://nayasa.com/products/hangout-vacuum-flask",
+    "image": "https://nayasa.com/cdn/shop/files/NE03709_1.jpg?v=1773376191",
+    "shape": "bottle",
+    "category": "gifts-more"
+  },
+  {
+    "slug": "gifts-space-sipper-bottle",
+    "name": "Space Adventure Printed Sipper",
+    "price": 549,
+    "tagline": "Rockets and planets, ready to travel.",
+    "page": "https://www.tradeindia.com/products/printed-sipper-bottles-8612512.html",
+    "image": "https://tiimg.tistatic.com/fp/1/008/612/printed-sipper-bottles-512.jpg",
+    "shape": "bottle",
+    "category": "gifts-more"
+  },
+  {
+    "slug": "gifts-petal-dreams-phone-case",
+    "name": "Petal Dreams Printed Case – iPhone 15",
+    "price": 399,
+    "tagline": "A delicate floral print for iPhone 15 only.",
+    "page": "https://www.cellhelmet.com/products/case-collective-flower-pattern-petal-dreams-magsafe-case-apple-iphone-15-series",
+    "image": "https://www.cellhelmet.com/cdn/shop/files/CX-M-i15-CC-FWRPDM_01.png?v=1758296220",
+    "shape": "phone-case",
+    "category": "gifts-more"
+  },
+  {
+    "slug": "gifts-pot-pluck-phone-case",
+    "name": "Pot Pluck Case – iPhone 15",
+    "price": 399,
+    "tagline": "A bold botanical print for iPhone 15 only.",
+    "page": "https://www.dailyobjects.com/dailyobjects-raven-rush-stride-3-0-magsafe-case-cover-for-iphone-15/dp?f=pid~STRD-3-0-RAVE-RUSH-AP-IPH15",
+    "image": "https://images.dailyobjects.com/marche/product-images/1101/dailyobjects-pot-pluck-stride-3-0-magsafe-case-cover-for-iphone-15-images/Pot-Pluck-Stride-3-0-MagSafe-Case-Cover-For-iPhone-15-vw.png",
+    "shape": "phone-case",
+    "category": "gifts-more"
+  },
+  {
+    "slug": "gifts-moth-myst-phone-case",
+    "name": "Moth Myst Case – iPhone 15",
+    "price": 399,
+    "tagline": "Colourful nature artwork for iPhone 15 only.",
+    "page": "https://www.dailyobjects.com/dailyobjects-raven-rush-stride-3-0-magsafe-case-cover-for-iphone-15/dp?f=pid~STRD-3-0-RAVE-RUSH-AP-IPH15",
+    "image": "https://images.dailyobjects.com/marche/product-images/1101/dailyobjects-moth-myst-stride-3-0-magsafe-case-cover-for-iphone-15-images/Moth-Myst-Stride-3-0-MagSafe-Case-Cover-For-iPhone-15-vw.png",
+    "shape": "phone-case",
+    "category": "gifts-more"
+  },
+  {
+    "slug": "paintings-starry-night-art-print",
+    "name": "The Starry Night Art Print",
+    "tagline": "Van Gogh’s swirling night sky for a dreamy corner.",
+    "price": 1299,
+    "page": "https://commons.wikimedia.org/wiki/File:Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg",
+    "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg?width=1000",
+    "license": "Public domain artwork (Wikimedia Commons)",
+    "shape": "painting",
+    "category": "paintings",
+    "badge": "Bestseller"
+  },
+  {
+    "slug": "paintings-great-wave-art-print",
+    "name": "The Great Wave Art Print",
+    "tagline": "Hokusai’s iconic wave in bold Japanese blues.",
+    "price": 1199,
+    "page": "https://commons.wikimedia.org/wiki/File:Tsunami_by_hokusai_19th_century.jpg",
+    "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Tsunami_by_hokusai_19th_century.jpg?width=1000",
+    "license": "Public domain artwork (Wikimedia Commons)",
+    "shape": "painting",
+    "category": "paintings"
+  },
+  {
+    "slug": "paintings-sunflowers-art-print",
+    "name": "Sunflowers Art Print",
+    "tagline": "Warm Van Gogh yellows to brighten any room.",
+    "price": 1199,
+    "page": "https://commons.wikimedia.org/wiki/File:Vincent_Willem_van_Gogh_127.jpg",
+    "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Vincent_Willem_van_Gogh_127.jpg?width=1000",
+    "license": "Public domain artwork (Wikimedia Commons)",
+    "shape": "painting",
+    "category": "paintings"
+  },
+  {
+    "slug": "paintings-almond-blossom-art-print",
+    "name": "Almond Blossom Art Print",
+    "tagline": "Soft blossoms on turquoise, calm and fresh.",
+    "price": 1099,
+    "page": "https://commons.wikimedia.org/wiki/File:Vincent_van_Gogh_-_Almond_blossom_-_Google_Art_Project.jpg",
+    "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Vincent_van_Gogh_-_Almond_blossom_-_Google_Art_Project.jpg?width=1000",
+    "license": "Public domain artwork (Wikimedia Commons)",
+    "shape": "painting",
+    "category": "paintings"
+  },
+  {
+    "slug": "paintings-water-lilies-art-print",
+    "name": "Water Lilies Art Print",
+    "tagline": "Monet’s gentle pond in misty greens and blues.",
+    "price": 1099,
+    "page": "https://commons.wikimedia.org/wiki/File:Claude_Monet_-_Water_Lilies_-_1906%2C_Ryerson.jpg",
+    "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Claude_Monet_-_Water_Lilies_-_1906%2C_Ryerson.jpg?width=1000",
+    "license": "Public domain artwork (Wikimedia Commons)",
+    "shape": "painting",
+    "category": "paintings"
+  },
+  {
+    "slug": "paintings-the-kiss-art-print",
+    "name": "The Kiss Art Print",
+    "tagline": "Klimt’s golden embrace for couples and romantics.",
+    "price": 1399,
+    "page": "https://commons.wikimedia.org/wiki/File:Gustav_Klimt_016.jpg",
+    "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Gustav_Klimt_016.jpg?width=1000",
+    "license": "Public domain artwork (Wikimedia Commons)",
+    "shape": "painting",
+    "category": "paintings"
+  },
+  {
+    "slug": "paintings-pearl-earring-art-print",
+    "name": "Girl with a Pearl Earring Art Print",
+    "tagline": "Vermeer’s timeless portrait with a quiet glow.",
+    "price": 1299,
+    "page": "https://commons.wikimedia.org/wiki/File:Meisje_met_de_parel.jpg",
+    "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Meisje_met_de_parel.jpg?width=1000",
+    "license": "Public domain artwork (Wikimedia Commons)",
+    "shape": "painting",
+    "category": "paintings"
+  },
+  {
+    "slug": "paintings-ravi-varma-lady-art-print",
+    "name": "Portrait of a Lady Art Print",
+    "tagline": "Raja Ravi Varma’s classic Indian portrait artwork.",
+    "price": 1299,
+    "page": "https://commons.wikimedia.org/wiki/File:Raja_Ravi_Varma_-_Portrait_of_a_Lady_-_Google_Art_Project.jpg",
+    "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Raja_Ravi_Varma_-_Portrait_of_a_Lady_-_Google_Art_Project.jpg?width=1000",
+    "license": "Public domain artwork (Wikimedia Commons)",
+    "shape": "painting",
+    "category": "paintings"
   }
 ]

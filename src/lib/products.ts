@@ -1,7 +1,7 @@
 import sampleCatalog from "./sample-catalog.json";
 
 export type PersonalizationType = "none" | "text" | "photo" | "both";
-export type ProductShape = "tee" | "hoodie" | "tote";
+export type ProductShape = "tee" | "hoodie" | "tote" | "mug" | "bottle" | "phone-case" | "painting";
 export interface ProductFaq { q: string; a: string }
 export interface Product {
   slug: string;
@@ -36,23 +36,26 @@ export const HERO_IMAGE = "https://images.pexels.com/photos/29219966/pexels-phot
 // are sample values; no sales counts or reviews are invented.
 export const products: Product[] = sampleCatalog.map((item, sortOrder) => {
   const isSet = item.category === "matching";
-  const isBag = item.category === "gifts-more";
-  const included = isSet ? "Two printed T-shirts" : isBag ? "One printed canvas tote" : "One printed T-shirt";
+  const shape = item.shape as ProductShape;
+  const isBag = shape === "tote";
+  const isGift = item.category === "gifts-more";
+  const isPainting = shape === "painting";
+  const included = isSet ? "Two printed T-shirts" : isBag ? "One printed canvas tote" : isPainting ? "One art print of the pictured painting" : isGift ? `One printed ${shape.replace("-", " ")}` : "One printed T-shirt";
   return {
     ...item,
     compareAtPrice: item.price + (isSet ? 500 : 300),
     personalization: "none",
-    shape: isBag ? "tote" : "tee",
+    shape,
     supplierSku: `SAMPLE-${item.slug.toUpperCase()}`,
     requiresAdvance: false,
-    occasions: isSet ? ["Anniversary", "Date Night"] : ["Everyday", "Birthday"],
+    occasions: isSet ? ["Anniversary", "Date Night"] : isPainting ? ["Housewarming", "Birthday"] : ["Everyday", "Birthday"],
     rating: 0,
     reviews: 0,
     description: [
       `${item.name}. ${item.tagline}`,
-      isSet ? "Coordinating printed tees for days out together. Pick a size for each tee to make the pair your own." : isBag ? "A printed canvas tote for your books, daily essentials and thoughtful gifting." : "A graphic printed tee to pair with denim, cargos or your favourite everyday layers.",
+      isSet ? "Coordinating printed tees for days out together. Pick a size for each tee to make the pair your own." : isBag ? "A printed canvas tote for your books, daily essentials and thoughtful gifting." : isPainting ? "A reproduction of a classic public-domain painting, printed for your walls or for gifting." : isGift ? "A ready-designed printed gift for everyday use. Check the product name for the exact style and, for phone cases, the compatible model." : "A graphic printed tee to pair with denim, cargos or your favourite everyday layers.",
     ],
-    highlights: [included, isBag ? "One size; no garment size selection needed" : isSet ? "Choose two sizes independently" : "Choose your preferred size", "Graphic artwork printed on the product", "Pre-designed print; no personalisation required"],
+    highlights: [included, isPainting ? "No garment size selection needed" : isGift ? (shape === "phone-case" ? "Fits only the phone model named in this listing" : "One item; no garment size selection needed") : isSet ? "Choose two sizes independently" : "Choose your preferred size", isPainting ? "Classic artwork, now in the public domain" : "Graphic artwork printed on the product", "Pre-designed print; no personalisation required"],
     faqs: [
       { q: "What is included?", a: `${included}. The displayed price covers the complete ${isSet ? "pair" : "item"}.` },
       { q: "Can I personalise this item?", a: "This style comes as pictured, without text or photo customisation." },

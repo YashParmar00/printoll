@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 
-type Values = { budget: string; edit: string };
+type Values = { budget: string; edit: string; type: string };
 type Group = { key: keyof Values; title: string; options: { value: string; label: string }[] };
 const focus = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coral";
 
@@ -66,7 +66,7 @@ export default function ShopFilters({ groups, values, count, desktopOpen, onDesk
           <FilterOptions groups={groups} values={draft} prefix="mobile" onChange={(key, value) => setDraft(current => ({ ...current, [key]: value }))} />
         </div>
         <div className="flex shrink-0 items-center gap-3 border-t border-line bg-night-card px-4 pt-2.5 pb-[max(0.625rem,env(safe-area-inset-bottom))]">
-          <button type="button" onClick={() => setDraft({ budget: "all", edit: "all" })} className={`min-h-9 rounded-lg px-2 text-xs text-ink underline underline-offset-4 hover:text-white ${focus}`}>Reset</button>
+          <button type="button" onClick={() => setDraft({ budget: "all", edit: "all", type: "all" })} className={`min-h-9 rounded-lg px-2 text-xs text-ink underline underline-offset-4 hover:text-white ${focus}`}>Reset</button>
           <button type="button" onClick={() => { onApply(draft); dialog.current?.close(); }} className="btn-primary min-h-9 flex-1 rounded-lg px-3 py-2 text-xs">Show {resultCount(draft)} results</button>
         </div>
       </div>

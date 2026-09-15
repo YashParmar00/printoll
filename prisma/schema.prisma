@@ -20,7 +20,7 @@ model Product {
   compareAtPrice  Int
   category        String // "couple-sets"
   personalization String // "none" | "text" | "photo" | "both"
-  shape           String // "tee" | "hoodie" | "tote"
+  shape           String // Product type: tee, hoodie, tote, mug, bottle, phone-case, painting
   supplierSku     String
   requiresAdvance Boolean  @default(true)
   occasions       String[]
@@ -107,6 +107,49 @@ model RequestLimit {
   key       String   @id
   count     Int
   resetAt   DateTime
+}
+
+model Customer {
+  id           String         @id @default(cuid())
+  email        String         @unique
+  passwordHash String
+  name         String
+  phone        String?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  addresses    Address[]
+  wishlist     WishlistItem[]
+}
+
+model Address {
+  id         String   @id @default(cuid())
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  customerId String
+  label      String   @default("Home")
+  fullName   String
+  phone      String
+  line1      String
+  line2      String   @default("")
+  city       String
+  state      String
+  pincode    String
+  isDefault  Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  @@index([customerId])
+}
+
+// No FK to Product — mirrors OrderItem.slug, so wishlisting survives catalog
+// edits/reseeds and works the same whether the catalogue source is static or DB.
+model WishlistItem {
+  id          String   @id @default(cuid())
+  customer    Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  customerId  String
+  productSlug String
+  createdAt   DateTime @default(now())
+
+  @@unique([customerId, productSlug])
+  @@index([customerId])
 }
 
 model OrderItem {

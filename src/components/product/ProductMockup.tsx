@@ -23,6 +23,9 @@ const NOIR = "#141414";
  * once the Qikink mockups land — upload them from /admin/products.)
  */
 export default function ProductMockup({ shape, accent, text, photoUrl }: ProductMockupProps) {
+  if (!["tee", "hoodie", "tote"].includes(shape)) {
+    return <div className="flex aspect-square items-center justify-center rounded-2xl border border-line bg-sand p-8 text-center text-sm text-ink">Product photo coming soon</div>;
+  }
   const value = text?.trim();
   return (
     <div

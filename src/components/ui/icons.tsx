@@ -174,3 +174,18 @@ export const EyeOffIcon = (p: IconProps) => (
     <path d="M9.9 9.9a3 3 0 0 0 4.2 4.2M3 3l18 18" />
   </svg>
 );
+
+export const StoreIcon = (p: IconProps) => (
+  <svg {...base(p)}>
+    <path d="M2.5 5h19l1 5a3 3 0 0 1-6 0 3 3 0 0 1-6 0 3 3 0 0 1-6 0 3 3 0 0 1-6 0Z" />
+    <path d="M4 10v11h16V10" />
+    <path d="M9 21v-6h6v6" />
+  </svg>
+);
+
+export const UserIcon = (p: IconProps) => (
+  <svg {...base(p)}>
+    <circle cx="12" cy="8" r="4" />
+    <path d="M4 20c0-4.4 3.6-7 8-7s8 2.6 8 7" />
+  </svg>
+);

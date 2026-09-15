@@ -2,7 +2,7 @@ import { CheckoutError, MAX_QTY, type CheckoutLineInput } from "@/lib/checkout";
 
 export const SIZES = ["XS", "S", "M", "L", "XL", "XXL"] as const;
 export function garmentCount(product: { category: string; shape: string }) {
-  return product.shape === "tote" ? 0 : ["couple-sets", "matching"].includes(product.category.toLowerCase()) ? 2 : 1;
+  return !["tee", "hoodie"].includes(product.shape) ? 0 : ["couple-sets", "matching"].includes(product.category.toLowerCase()) ? 2 : 1;
 }
 
 export function validateItems(value: unknown): CheckoutLineInput[] {

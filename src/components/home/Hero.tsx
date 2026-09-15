@@ -1,30 +1,7 @@
 import Link from "next/link";
 import { site, whatsappLink } from "@/lib/site";
 import HeroShowcase from "@/components/home/HeroShowcase";
-import {
-  HeartIcon,
-  RupeeIcon,
-  TruckIcon,
-  ShieldIcon,
-  ArrowRightIcon,
-  WhatsAppIcon,
-} from "@/components/ui/icons";
-
-/**
- * Decorative avatar stack. Deliberately unlabelled — no initials, because we
- * don't have real customers to attribute them to yet.
- */
-const avatars = [
-  { id: "a", accent: ["#d2603f", "#f0b49b"] },
-  { id: "b", accent: ["#3d3a38", "#6f645c"] },
-  { id: "c", accent: ["#b0472a", "#d2603f"] },
-];
-
-const promises = [
-  { Icon: RupeeIcon, label: "₹99 now, rest on delivery" },
-  { Icon: TruckIcon, label: "Delivered in 5–7 days" },
-  { Icon: ShieldIcon, label: "7-day damage replacement" },
-];
+import { HeartIcon, ArrowRightIcon, WhatsAppIcon } from "@/components/ui/icons";
 
 export default function Hero() {
   return (
@@ -32,24 +9,28 @@ export default function Hero() {
       {/* coral bloom behind the headline */}
       <div aria-hidden className="glow pointer-events-none absolute inset-0" />
 
-      <div className="container-page relative pb-14 pt-28 text-center sm:pb-20 sm:pt-32 md:pb-24 md:pt-36">
+      {/* pt clears the floating pill header (fixed, hides on scroll-down / reappears on scroll-up) so the heading never sits under it */}
+      <div className="container-page relative pb-8 pt-24 text-center sm:pb-20 sm:pt-32 md:pb-24 md:pt-36">
         <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.06] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-coral backdrop-blur sm:px-3.5 sm:py-1.5 sm:text-[11px]">
           <HeartIcon className="h-3.5 w-3.5" />
           Prints for every story
         </span>
 
-        <h1 className="mx-auto mt-5 max-w-4xl text-4xl leading-[1.05] text-white sm:mt-6 sm:text-5xl md:text-6xl lg:text-7xl">
+        <h1 className="mx-auto mt-3 max-w-4xl text-4xl leading-[1.05] text-white sm:mt-6 sm:text-5xl md:text-6xl lg:text-7xl">
           Printed for your story.
         </h1>
 
-        <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-night-ink sm:text-base md:text-lg">
+        <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-night-ink sm:mt-4 sm:text-base md:text-lg">
           Custom tees, matching styles and thoughtful gifts. Made for every kind of connection,
           delivered across India.
         </p>
 
-        <HeroShowcase />
+        {/* Kept smaller on mobile so the hero doesn't push products below the fold */}
+        <div className="mx-auto max-w-70 sm:max-w-none">
+          <HeroShowcase />
+        </div>
 
-        <div className="mt-8 grid grid-cols-2 items-stretch gap-2.5 sm:mt-10 sm:flex sm:justify-center sm:gap-3">
+        <div className="mt-5 grid grid-cols-2 items-stretch gap-2.5 sm:mt-10 sm:flex sm:justify-center sm:gap-3">
           <Link href="/category" className="btn-primary w-full whitespace-nowrap px-2.5 py-2.5 text-[11px] sm:w-auto sm:px-6 sm:py-3 sm:text-base">
             Shop prints
             <ArrowRightIcon className="h-4 w-4 sm:h-5 sm:w-5" />
@@ -64,39 +45,6 @@ export default function Hero() {
             Chat on WhatsApp
           </a>
         </div>
-
-        {/* social proof — TODO(Yash): keep site.couplesServed honest as orders come in */}
-        <div className="mt-9 flex items-center justify-center gap-3">
-          <ul className="flex -space-x-2.5" aria-hidden>
-            {avatars.map((a) => (
-              <li
-                key={a.id}
-                className="h-8 w-8 rounded-full ring-2 ring-night"
-                style={{ background: `linear-gradient(135deg, ${a.accent[0]}, ${a.accent[1]})` }}
-              />
-            ))}
-          </ul>
-          <p className="text-xs text-night-ink sm:text-sm">
-            <span className="font-semibold text-white">{site.couplesServed} customers</span> have found
-            something they love
-          </p>
-        </div>
-
-        <ul className="mt-8 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 sm:mt-10 sm:gap-x-7 sm:gap-y-3">
-          {promises.map(({ Icon, label }) => (
-            <li key={label} className="flex items-center gap-1.5 text-[11px] font-medium text-night-ink sm:gap-2 sm:text-sm">
-              <Icon className="h-4 w-4 shrink-0 text-coral sm:h-5 sm:w-5" />
-              {label}
-            </li>
-          ))}
-        </ul>
-
-        <p className="mt-6 text-xs text-night-ink sm:mt-8 sm:text-sm">
-          Prefer to talk it through?{" "}
-          <Link href="/contact" className="font-semibold text-coral hover:underline">
-            Message us on WhatsApp
-          </Link>
-        </p>
       </div>
     </section>
   );

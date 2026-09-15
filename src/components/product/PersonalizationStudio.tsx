@@ -9,6 +9,7 @@ import { inr, savingsPct, deliveryBy } from "@/lib/format";
 import { site, whatsappLink } from "@/lib/site";
 import { useCart } from "@/lib/cart";
 import ProductMockup from "@/components/product/ProductMockup";
+import WishlistButton from "@/components/ui/WishlistButton";
 import {
   SparkleIcon,
   UploadIcon,
@@ -135,11 +136,14 @@ export default function PersonalizationStudio({ product }: { product: Product })
 
       {/* Right: buy box */}
       <div>
-        <div className="flex items-center gap-2">
-          {product.badge && <span className="tag bg-blush text-noir">{product.badge}</span>}
-          <span className="text-xs font-medium uppercase tracking-wider text-ink">
-            {sizeCount === 2 ? "Couple set · 2 tees" : sizeCount === 0 ? "One bag" : "Single garment"}
-          </span>
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            {product.badge && <span className="tag bg-blush text-noir">{product.badge}</span>}
+            <span className="text-xs font-medium uppercase tracking-wider text-ink">
+              {sizeCount === 2 ? "Couple set · 2 tees" : sizeCount === 0 ? "One item" : "Single garment"}
+            </span>
+          </div>
+          <WishlistButton slug={product.slug} />
         </div>
 
         <h1 className="mt-2 text-3xl sm:text-4xl">{product.name}</h1>
@@ -158,7 +162,7 @@ export default function PersonalizationStudio({ product }: { product: Product })
         </div>
 
         <div className="mt-5">{priceBlock}</div>
-        <p className="mt-1 text-sm text-ink">{sizeCount === 2 ? "Price is for the full set: both tees in one box." : sizeCount === 0 ? "Price is for one bag." : "Price is for one garment."}</p>
+        <p className="mt-1 text-sm text-ink">{sizeCount === 2 ? "Price is for the full set: both tees in one box." : sizeCount === 0 ? "Price is for one item." : "Price is for one garment."}</p>
 
         {/* Delivery promise before add-to-cart (RESEARCH §B5) */}
         <p className="mt-3 inline-flex items-center gap-2 rounded-lg bg-blush px-3 py-2 text-sm font-medium text-noir">
