@@ -4,6 +4,7 @@ import { validateCustomer, CheckoutError, type CustomerInput, type PaymentMethod
 import { checkoutSnapshot } from "@/lib/checkout-server";
 import { validateItems } from "@/lib/checkout-input";
 import { createOrder, getOrder, updateOrder, type Order } from "@/lib/orders";
+import { getCurrentCustomer } from "@/lib/customer-auth";
 import { createRazorpayOrder, publicKeyId } from "@/lib/razorpay";
 import { prisma } from "@/lib/prisma";
 import { boundedText, privateJson } from "@/lib/private-response";
@@ -42,9 +43,10 @@ export async function POST(request: Request) {
     if (!snapshot.methods.includes(method)) return privateJson({ error: "This payment method is unavailable. Please refresh checkout." }, 400);
     const totals = snapshot.totals[method];
     if (body.expectedTotal !== totals.total) return privateJson({ error: "Prices changed. Refresh your quote and review the new total.", code: "PRICE_CHANGED" }, 409);
+    const signedInCustomer = await getCurrentCustomer();
     let order: Order;
     try {
-      order = await createOrder({ status: method === "cod" ? "pending" : "awaiting_payment", paymentMethod: method, customer, items: totals.lineItems, subtotal: totals.subtotal, discount: totals.discount, shipping: totals.shipping, total: totals.total, advancePaid: 0, codDue: totals.total, onlineAmount: totals.advancePaid, currency: totals.currency, checkoutKey: key, requestHash });
+      order = await createOrder({ status: method === "cod" ? "pending" : "awaiting_payment", paymentMethod: method, customerId: signedInCustomer?.id, customer, items: totals.lineItems, subtotal: totals.subtotal, discount: totals.discount, shipping: totals.shipping, total: totals.total, advancePaid: 0, codDue: totals.total, onlineAmount: totals.advancePaid, currency: totals.currency, checkoutKey: key, requestHash });
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") return privateJson({ error: "Checkout is already processing. Retry with the same details shortly." }, 409);
       throw error;

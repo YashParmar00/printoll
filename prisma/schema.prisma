@@ -74,6 +74,11 @@ model Order {
   orderNumber       String      @unique
   status            String // pending | awaiting_payment | paid | confirmed | pushed_to_supplier | shipped | delivered | cancelled
   paymentMethod     String // cod | prepaid | advance_cod
+  // Set only when the shopper was signed in at checkout — guest checkout (the
+  // supported default) leaves this null, so "My orders" only ever shows what
+  // was actually placed while logged in.
+  customer          Customer?   @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  customerId        String?
   customerName      String
   customerPhone     String
   customerEmail     String?
@@ -101,6 +106,7 @@ model Order {
 
   @@index([customerPhone])
   @@index([razorpayOrderId])
+  @@index([customerId])
 }
 
 model RequestLimit {
@@ -119,6 +125,7 @@ model Customer {
   updatedAt    DateTime       @updatedAt
   addresses    Address[]
   wishlist     WishlistItem[]
+  orders       Order[]
 }
 
 model Address {

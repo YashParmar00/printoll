@@ -183,6 +183,12 @@ export const StoreIcon = (p: IconProps) => (
   </svg>
 );
 
+export const XIcon = (p: IconProps) => (
+  <svg {...base(p)}>
+    <path d="M6 6l12 12M18 6L6 18" />
+  </svg>
+);
+
 export const UserIcon = (p: IconProps) => (
   <svg {...base(p)}>
     <circle cx="12" cy="8" r="4" />

@@ -36,6 +36,7 @@ export interface Order {
   createdAt: string;
   status: OrderStatus;
   paymentMethod: PaymentMethod;
+  customerId?: string; // set only when the shopper was signed in at checkout
   customer: OrderCustomer;
   items: OrderLine[];
   subtotal: number;
@@ -67,6 +68,7 @@ function toOrder(row: DbOrder & { items: DbOrderItem[] }): Order {
     createdAt: row.createdAt.toISOString(),
     status: row.status as OrderStatus,
     paymentMethod: row.paymentMethod as PaymentMethod,
+    customerId: row.customerId ?? undefined,
     customer: {
       name: row.customerName,
       phone: row.customerPhone,
@@ -111,6 +113,7 @@ export async function createOrder(input: Omit<Order, "orderNumber" | "createdAt"
       orderNumber: generateOrderNumber(),
       status: input.status,
       paymentMethod: input.paymentMethod,
+      customerId: input.customerId ?? null,
       customerName: input.customer.name,
       customerPhone: input.customer.phone,
       customerEmail: input.customer.email ?? null,
@@ -196,4 +199,15 @@ export async function listOrders(cursor?: string): Promise<Order[]> {
     ...(cursor ? { cursor: { orderNumber: cursor }, skip: 1 } : {}),
   });
   return rows.map(toOrder);
+}
+
+/** Orders placed while signed in as this customer — guest checkouts never appear here. */
+export async function listOrdersByCustomer(customerId: string): Promise<Order[]> {
+  const rows = await prisma.order.findMany({ where: { customerId }, include: { items: true }, orderBy: { createdAt: "desc" } });
+  return rows.map(toOrder);
+}
+
+export async function getOrderForCustomer(orderNumber: string, customerId: string): Promise<Order | undefined> {
+  const row = await prisma.order.findFirst({ where: { orderNumber, customerId }, include: { items: true } });
+  return row ? toOrder(row) : undefined;
 }

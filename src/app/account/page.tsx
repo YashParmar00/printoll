@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { getCurrentCustomer } from "@/lib/customer-auth";
 import { prisma } from "@/lib/prisma";
 import { logoutAction } from "@/app/account/actions";
-import { HeartIcon, TruckIcon, ArrowRightIcon } from "@/components/ui/icons";
+import { HeartIcon, TruckIcon, BagIcon, ArrowRightIcon } from "@/components/ui/icons";
 
 export const metadata: Metadata = { title: "My account" };
 export const dynamic = "force-dynamic";
@@ -12,9 +12,10 @@ export const dynamic = "force-dynamic";
 export default async function AccountPage() {
   const customer = await getCurrentCustomer();
   if (!customer) redirect("/account/login?next=/account");
-  const [addressCount, wishlistCount] = await Promise.all([
+  const [addressCount, wishlistCount, orderCount] = await Promise.all([
     prisma.address.count({ where: { customerId: customer.id } }),
     prisma.wishlistItem.count({ where: { customerId: customer.id } }),
+    prisma.order.count({ where: { customerId: customer.id } }),
   ]);
 
   return (
@@ -24,6 +25,17 @@ export default async function AccountPage() {
       <p className="mt-1 text-sm text-ink">{customer.email}</p>
 
       <div className="mt-8 grid gap-4 sm:grid-cols-2">
+        <Link href="/account/orders" className="flex items-center justify-between gap-4 rounded-2xl border border-line bg-night-card p-5 transition hover:border-coral/40">
+          <div className="flex items-center gap-3">
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-coral/10 text-coral"><BagIcon className="h-5 w-5" /></span>
+            <div>
+              <span className="block font-semibold text-noir">My orders</span>
+              <span className="block text-sm text-ink">{orderCount ? `${orderCount} order${orderCount > 1 ? "s" : ""}` : "No orders yet"}</span>
+            </div>
+          </div>
+          <ArrowRightIcon className="h-4 w-4 shrink-0 text-ink" />
+        </Link>
+
         <Link href="/account/addresses" className="flex items-center justify-between gap-4 rounded-2xl border border-line bg-night-card p-5 transition hover:border-coral/40">
           <div className="flex items-center gap-3">
             <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-coral/10 text-coral"><TruckIcon className="h-5 w-5" /></span>

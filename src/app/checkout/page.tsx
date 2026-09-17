@@ -8,7 +8,12 @@ import { validateCustomer, type OrderTotals, type PaymentMethod } from "@/lib/ch
 import { loadRazorpay } from "@/lib/razorpay-browser";
 import { inr } from "@/lib/format";
 import { site } from "@/lib/site";
-import { ShieldIcon, RupeeIcon, CheckIcon } from "@/components/ui/icons";
+import { ShieldIcon, RupeeIcon, CheckIcon, TruckIcon } from "@/components/ui/icons";
+
+interface SavedAddress {
+  id: string; label: string; fullName: string; phone: string;
+  line1: string; line2: string; city: string; state: string; pincode: string; isDefault: boolean;
+}
 
 interface RazorpayResponse {
   razorpay_order_id: string;
@@ -32,6 +37,37 @@ export default function CheckoutPage() {
   const [chosenMethod, setPaymentMethod] = useState<PaymentMethod>("cod");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
+
+  const [savedAddresses, setSavedAddresses] = useState<SavedAddress[]>([]);
+  const [selectedAddressId, setSelectedAddressId] = useState<string>("");
+
+  function applyAddress(address: SavedAddress, email?: string) {
+    setSelectedAddressId(address.id);
+    setForm((f) => ({
+      name: address.fullName,
+      phone: address.phone,
+      email: email ?? f.email,
+      address: address.line2 ? `${address.line1}, ${address.line2}` : address.line1,
+      city: address.city,
+      state: address.state,
+      pincode: address.pincode,
+    }));
+  }
+
+  useEffect(() => {
+    fetch("/api/account/addresses")
+      .then((response) => (response.ok ? response.json() : null))
+      .then((data) => {
+        if (!data?.loggedIn) return;
+        setSavedAddresses(data.addresses ?? []);
+        const preferred = data.addresses?.find((a: SavedAddress) => a.isDefault) ?? data.addresses?.[0];
+        if (preferred) applyAddress(preferred, data.email);
+        else if (data.email) setForm((f) => ({ ...f, email: data.email }));
+      })
+      .catch(() => {});
+    // Runs once on mount — applyAddress reads state via updater functions, so it doesn't need to be a dependency.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const submittingRef = useRef(false);
   const [quote, setQuote] = useState<{ methods: PaymentMethod[]; totals: Record<PaymentMethod, OrderTotals>; input: string } | null>(null);
@@ -59,6 +95,7 @@ export default function CheckoutPage() {
 
   function set<K extends keyof typeof form>(key: K, value: string) {
     setForm((f) => ({ ...f, [key]: value }));
+    if (selectedAddressId) setSelectedAddressId(""); // editing by hand un-selects the saved-address chip
     if (error) setError("");
   }
 
@@ -189,6 +226,27 @@ export default function CheckoutPage() {
         <div>
           <section>
             <h2 className="text-xl">Delivery details</h2>
+            {savedAddresses.length > 0 && (
+              <div className="mt-3 flex flex-wrap gap-2">
+                {savedAddresses.map((address) => (
+                  <button
+                    key={address.id}
+                    type="button"
+                    onClick={() => applyAddress(address)}
+                    aria-pressed={selectedAddressId === address.id}
+                    className={`flex items-start gap-2 rounded-xl border px-3 py-2 text-left text-xs transition ${
+                      selectedAddressId === address.id ? "border-coral bg-coral/10 ring-1 ring-coral" : "border-line bg-sand hover:border-coral/40"
+                    }`}
+                  >
+                    <TruckIcon className="mt-0.5 h-4 w-4 shrink-0 text-coral" />
+                    <span>
+                      <span className="block font-semibold text-charcoal">{address.label}{address.isDefault && " · Default"}</span>
+                      <span className="block text-ink">{address.line1}, {address.city} – {address.pincode}</span>
+                    </span>
+                  </button>
+                ))}
+              </div>
+            )}
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
               <div>
                 <label htmlFor="name" className="field-label">Full name</label>
