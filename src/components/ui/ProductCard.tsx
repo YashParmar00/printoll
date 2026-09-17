@@ -7,15 +7,13 @@ import { StarIcon } from "@/components/ui/icons";
 import WishlistButton from "@/components/ui/WishlistButton";
 
 /**
- * Product card — badge tag + rating + price, with a coral "Choose options"
- * CTA. The gradient panel behind the image is the fallback for products that
- * don't have a real Qikink mockup uploaded from /admin/products yet.
+ * Product card — image, badge, name, price and rating (once real) only.
+ * Deliberately trimmed: tagline and a CTA button live on the product page,
+ * not repeated on every grid card. The gradient panel behind the image is
+ * the fallback for products without a real Qikink mockup uploaded yet.
  */
 
 export default function ProductCard({ product, sizes = "(min-width: 1280px) 384px, (min-width: 1024px) 31vw, 46vw" }: { product: Product; sizes?: string }) {
-  const isSet = ["couple-sets", "matching"].includes(product.category);
-  const isBag = product.shape === "tote";
-  const isAccessory = !["tee", "hoodie"].includes(product.shape);
   const save = savingsPct(product.price, product.compareAtPrice);
   // Products without their own photo fall back to a shared stock shot.
   const image = product.imageUrls?.[0] ?? product.imageUrl ?? FALLBACK_PRODUCT_IMAGE;
@@ -41,39 +39,29 @@ export default function ProductCard({ product, sizes = "(min-width: 1280px) 384p
         <WishlistButton slug={product.slug} className="absolute right-3 top-3" />
       </div>
 
-      {/* Body */}
-      <div className="flex min-h-[220px] flex-1 flex-col p-4 sm:min-h-[235px] sm:p-5">
-        <div>
-          <h3 className="min-h-10 text-xs font-bold leading-snug text-white group-hover:text-coral sm:min-h-11 sm:text-sm md:text-base lg:text-lg">
-            {product.name}
-          </h3>
-        </div>
+      {/* Body — name, price and rating (once real) only; tagline/CTA text live on the product page. */}
+      <div className="flex flex-1 flex-col p-3 sm:p-4">
+        <h3 className="min-h-9 text-xs font-bold leading-snug text-white group-hover:text-coral sm:min-h-10 sm:text-sm md:text-base">
+          {product.name}
+        </h3>
 
-        <p className="mt-1 min-h-5 text-xs leading-relaxed text-ink sm:text-sm">{product.tagline}</p>
-
-        <div className="mt-2 flex min-h-6 items-baseline gap-1 whitespace-nowrap sm:gap-1.5">
-          <span className="shrink-0 text-sm font-bold text-white sm:text-base lg:text-lg">{inr(product.price)}</span>
+        <div className="mt-1.5 flex flex-wrap items-baseline gap-x-1.5 gap-y-0.5">
+          <span className="shrink-0 text-sm font-bold text-white sm:text-base">{inr(product.price)}</span>
           <span className="strike shrink-0 text-[10px] text-ink sm:text-xs">{inr(product.compareAtPrice)}</span>
           {save > 0 && <span className="shrink-0 text-[9px] font-semibold text-coral sm:text-[10px]">Save {save}%</span>}
         </div>
 
         {/* Rating — only shown once real reviews exist; we never invent counts. */}
-        <div className="mt-3 flex min-h-10 items-center gap-1.5 text-xs text-ink">
-          {product.reviews > 0 ? (
-            <>
-              <span className="flex gap-0.5 text-star" aria-hidden>
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <StarIcon key={i} className="h-4 w-4" />
-                ))}
-              </span>
-              <span>({product.reviews})</span>
-            </>
-          ) : (
-            <span>{isSet ? "2 tees per set" : isBag ? "One tote bag" : isAccessory ? "One item" : "Single garment"} · COD available</span>
-          )}
-        </div>
-
-        <span className="btn-primary mt-auto w-full whitespace-nowrap px-2 py-3 text-xs sm:px-4 sm:text-sm md:px-6">{isSet ? "Choose your pair" : isAccessory ? "View product" : "Choose your size"}</span>
+        {product.reviews > 0 && (
+          <div className="mt-1.5 flex items-center gap-1.5 text-xs text-ink">
+            <span className="flex gap-0.5 text-star" aria-hidden>
+              {Array.from({ length: 5 }).map((_, i) => (
+                <StarIcon key={i} className="h-4 w-4" />
+              ))}
+            </span>
+            <span>({product.reviews})</span>
+          </div>
+        )}
       </div>
     </Link>
   );
