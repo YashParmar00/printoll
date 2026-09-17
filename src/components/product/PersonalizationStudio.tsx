@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useSyncExternalStore, type ChangeEvent } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore, type ChangeEvent } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { garmentCount } from "@/lib/checkout-input";
@@ -50,6 +50,10 @@ export default function PersonalizationStudio({ product }: { product: Product })
   const deliveryDate = useSyncExternalStore(subscribeToDate, () => deliveryBy(site.deliveryDays), () => null);
   const gallery = product.imageUrls?.length ? product.imageUrls : product.imageUrl ? [product.imageUrl] : [];
   const [selectedImage, setSelectedImage] = useState(0);
+  // Both the inline "Add to cart" and the sticky mobile bar call handleAdd —
+  // on a validation error, scroll this into view so the message is visible
+  // regardless of which button (often the one at the bottom) was tapped.
+  const personalizeRef = useRef<HTMLDivElement>(null);
 
   // Free the object URL when it changes or on unmount.
   useEffect(() => () => { if (photoUrl) URL.revokeObjectURL(photoUrl); }, [photoUrl]);
@@ -76,18 +80,23 @@ export default function PersonalizationStudio({ product }: { product: Product })
     setPhotoName(null);
   }
 
+  function fail(message: string) {
+    setError(message);
+    personalizeRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+
   function handleAdd() {
-    if (needsPhoto) { setError("Photo previews are available, but photo orders need secure upload delivery before checkout. Please contact us."); return; }
+    if (needsPhoto) { fail("Photo previews are available, but photo orders need secure upload delivery before checkout. Please contact us."); return; }
     if (needsText && !text.trim()) {
-      setError("Please type the names, initials or date to print.");
+      fail("Please type the names, initials or date to print.");
       return;
     }
     if ((sizeCount > 0 && !sizeA) || (sizeCount === 2 && !sizeB)) {
-      setError("Please pick the required garment sizes.");
+      fail("Please pick the required garment sizes.");
       return;
     }
     if (needsPhoto && !photoUrl) {
-      setError("Please upload a photo to personalize.");
+      fail("Please upload a photo to personalize.");
       return;
     }
     setError("");
@@ -108,18 +117,15 @@ export default function PersonalizationStudio({ product }: { product: Product })
   }
 
   const priceBlock = (
-    <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-      <span className="text-3xl font-bold text-noir">{inr(product.price)}</span>
+    <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+      <span className="text-3xl font-bold text-white sm:text-4xl">{inr(product.price)}</span>
       <span className="strike text-lg text-ink">{inr(product.compareAtPrice)}</span>
       {save > 0 && <span className="tag bg-coral text-white">Save {save}%</span>}
-      <span className="inline-flex items-center gap-1 text-sm font-semibold text-coral">
-        <RupeeIcon className="h-4 w-4" /> COD available
-      </span>
     </div>
   );
 
   return (
-    <div className="grid gap-8 lg:grid-cols-2 lg:gap-12">
+    <div className="grid gap-8 lg:grid-cols-2 lg:gap-12 xl:gap-16">
       {/* Left: live preview + gallery */}
       <div>
         {gallery[selectedImage] && !photoUrl ? (
@@ -127,7 +133,7 @@ export default function PersonalizationStudio({ product }: { product: Product })
             <Image src={gallery[selectedImage]} alt={`${product.name} — photo ${selectedImage + 1}`} className="h-full w-full object-contain"  fill sizes="(min-width: 1280px) 576px, (min-width: 1024px) 46vw, 94vw" loading="eager" fetchPriority="high" />
           </div>
         ) : <ProductMockup shape={product.shape} accent={product.accent} text={needsText ? text : undefined} photoUrl={needsPhoto ? photoUrl : undefined} />}
-        {gallery.length > 1 && <div className="mt-3 grid grid-cols-5 gap-3">{gallery.map((url, index) => <button key={url} type="button" onClick={() => setSelectedImage(index)} aria-label={`View product photo ${index + 1}`} className={`relative aspect-square overflow-hidden rounded-xl border bg-sand ${selectedImage === index ? "border-coral ring-2 ring-coral ring-offset-2" : "border-line hover:border-coral"}`}><Image src={url} alt="" fill sizes="(min-width: 1024px) 108px, 18vw" className="object-cover" /><span className="sr-only">{index === 0 ? "Main photo" : `Photo ${index + 1}`}</span></button>)}</div>}
+        {gallery.length > 1 && <div className="mt-3 grid grid-cols-5 gap-2.5 sm:gap-3">{gallery.map((url, index) => <button key={url} type="button" onClick={() => setSelectedImage(index)} aria-label={`View product photo ${index + 1}`} className={`relative aspect-square overflow-hidden rounded-xl bg-sand transition ${selectedImage === index ? "ring-2 ring-coral" : "opacity-60 hover:opacity-100"}`}><Image src={url} alt="" fill sizes="(min-width: 1024px) 108px, 18vw" className="object-cover" /><span className="sr-only">{index === 0 ? "Main photo" : `Photo ${index + 1}`}</span></button>)}</div>}
         <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-sm text-ink">
           <span className="inline-flex items-center gap-1.5"><ShieldIcon className="h-4 w-4 text-coral" /> 7-day damage replacement</span>
           <span className="inline-flex items-center gap-1.5"><TruckIcon className="h-4 w-4 text-coral" /> Free shipping across India</span>
@@ -138,7 +144,7 @@ export default function PersonalizationStudio({ product }: { product: Product })
       <div>
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
-            {product.badge && <span className="tag bg-blush text-noir">{product.badge}</span>}
+            {product.badge && <span className="rounded-full bg-night px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-white">{product.badge}</span>}
             <span className="text-xs font-medium uppercase tracking-wider text-ink">
               {sizeCount === 2 ? "Couple set · 2 tees" : sizeCount === 0 ? "One item" : "Single garment"}
             </span>
@@ -146,27 +152,30 @@ export default function PersonalizationStudio({ product }: { product: Product })
           <WishlistButton slug={product.slug} />
         </div>
 
-        <h1 className="mt-2 text-3xl sm:text-4xl">{product.name}</h1>
+        <h1 className="mt-2 text-3xl text-white sm:text-4xl">{product.name}</h1>
         <p className="mt-2 text-lg text-ink">{product.tagline}</p>
 
         <div className="mt-3 flex items-center gap-2 text-sm text-ink">
           {product.reviews > 0 ? (
             <>
               <StarIcon className="h-4 w-4 text-star" />
-              <span className="font-semibold text-noir">{product.rating.toFixed(1)}</span>
+              <span className="font-semibold text-white">{product.rating.toFixed(1)}</span>
               <span>({product.reviews} reviews)</span>
             </>
           ) : (
-            <span className="tag bg-sand-dark text-noir">Just launched · be the first to review</span>
+            <span className="tag bg-sand text-white">Just launched · be the first to review</span>
           )}
         </div>
 
         <div className="mt-5">{priceBlock}</div>
-        <p className="mt-1 text-sm text-ink">{sizeCount === 2 ? "Price is for the full set: both tees in one box." : sizeCount === 0 ? "Price is for one item." : "Price is for one garment."}</p>
+        <p className="mt-1 flex items-center gap-1.5 text-sm text-ink">
+          <RupeeIcon className="h-4 w-4 text-coral" />
+          {sizeCount === 2 ? "Price is for the full set: both tees in one box." : sizeCount === 0 ? "Price is for one item." : "Price is for one garment."} · COD available
+        </p>
 
         {/* Delivery promise before add-to-cart (RESEARCH §B5) */}
-        <p className="mt-3 inline-flex items-center gap-2 rounded-lg bg-blush px-3 py-2 text-sm font-medium text-noir">
-          <TruckIcon className="h-5 w-5 text-coral" />
+        <p className="mt-3 inline-flex items-center gap-2 rounded-lg bg-coral/10 px-3 py-2 text-sm font-medium text-white">
+          <TruckIcon className="h-5 w-5 shrink-0 text-coral" />
           {deliveryDate ? (
             <>Order today, delivery by <strong className="font-semibold">{deliveryDate}</strong></>
           ) : (
@@ -175,10 +184,11 @@ export default function PersonalizationStudio({ product }: { product: Product })
         </p>
 
         {/* Personalization + sizes */}
-        <div className="mt-6 rounded-2xl border border-line bg-night-card p-4">
+        <div ref={personalizeRef} className="mt-6 scroll-mt-24 rounded-2xl border border-line bg-night-card p-4">
           <p className="flex items-center gap-2 text-sm font-semibold text-coral">
             <SparkleIcon className="h-4 w-4" /> Make it yours. The preview updates live.
           </p>
+          {error && <p className="mt-2 text-sm font-medium text-red-400">{error}</p>}
 
           {needsText && (
             <div className="mt-3">
@@ -278,8 +288,6 @@ export default function PersonalizationStudio({ product }: { product: Product })
             </button>
           </div>
         </div>
-
-        {error && <p className="mt-4 text-sm font-medium text-red-600">{error}</p>}
 
         <button type="button" onClick={handleAdd} className="btn-dark mt-4 w-full">
           Add to cart · {inr(product.price * qty)}

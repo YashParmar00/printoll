@@ -1,27 +1,12 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import type { HomeCollection } from "@/lib/home-collections";
 import type { CatalogCard as Product } from "@/lib/catalog-card";
 import ProductCard from "@/components/ui/ProductCard";
 import SortDropdown from "@/components/ui/SortDropdown";
 import ShopFilters, { FilterOptions } from "@/components/ui/ShopFilters";
-import { useAnnouncementState } from "@/components/site/announcement-state";
-
-// Header.tsx's LightHeader main bar: h-14 (56px) below the sm breakpoint, h-16
-// (64px) from sm up, plus its 1px border-b either way.
-function useMainBarHeight() {
-  const [height, setHeight] = useState(57);
-  useEffect(() => {
-    const query = window.matchMedia("(min-width: 640px)");
-    const update = () => setHeight(query.matches ? 65 : 57);
-    update();
-    query.addEventListener("change", update);
-    return () => query.removeEventListener("change", update);
-  }, []);
-  return height;
-}
 
 const budgets = [
   { value: "all", label: "Any price", min: 0, max: Infinity },
@@ -53,9 +38,6 @@ function Icon({ kind, className = "h-4 w-4" }: { kind: "search" | "filter" | "cl
 export default function CategoryClient({ products, collections }: { products: Product[]; collections: HomeCollection[] }) {
   const params = useSearchParams();
   const [filtersOpen, setFiltersOpen] = useState(false);
-  const announcement = useAnnouncementState();
-  const mainBarHeight = useMainBarHeight();
-  const stickyTop = mainBarHeight + (announcement.visible ? announcement.height : 0);
   const categories = useMemo(() => {
     const items = collections.map(collection => {
       const query = collection.href.split("?")[1] ?? "";
@@ -132,7 +114,7 @@ export default function CategoryClient({ products, collections }: { products: Pr
         })}
       </nav>
 
-      <div style={{ top: `${stickyTop}px` }} className="sticky z-20 -mx-4 mt-3 bg-paper/95 px-4 py-2 backdrop-blur transition-[top] duration-300 ease-out lg:static lg:z-auto lg:mx-0 lg:mt-6 lg:rounded-2xl lg:border lg:border-line lg:bg-sand lg:p-0 lg:backdrop-blur-none">
+      <div className="sticky top-14 z-20 -mx-4 mt-3 bg-paper/95 px-4 py-2 backdrop-blur sm:top-16 lg:static lg:z-auto lg:mx-0 lg:mt-6 lg:rounded-2xl lg:border lg:border-line lg:bg-sand lg:p-0 lg:backdrop-blur-none">
         <div className="flex flex-wrap items-center gap-2 lg:gap-3 lg:p-4">
           <div className="relative min-w-0 flex-1">
             <Icon kind="search" className="pointer-events-none absolute left-2.5 top-2.5 lg:top-4 h-4 w-4 text-ink" />

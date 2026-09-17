@@ -78,7 +78,7 @@ export default async function ProductPage({
       {/* Description + highlights */}
       <section className="container-page mt-14 grid gap-10 lg:grid-cols-3">
         <div className="lg:col-span-2">
-          <h2 className="text-2xl sm:text-3xl">Why you&apos;ll love it</h2>
+          <h2 className="text-2xl text-white sm:text-3xl">Why you&apos;ll love it</h2>
           <div className="mt-4 space-y-4 leading-relaxed text-ink">
             {product.description.map((para, i) => (
               <p key={i}>{para}</p>
@@ -87,12 +87,12 @@ export default async function ProductPage({
           <ProductFAQ faqs={product.faqs} />
         </div>
         <aside>
-          <div className="rounded-2xl border border-line bg-cream p-6">
-            <h3 className="text-lg">What&apos;s included</h3>
+          <div className="rounded-2xl border border-line bg-night-card p-6">
+            <h3 className="text-lg text-white">What&apos;s included</h3>
             <ul className="mt-3 space-y-2.5">
               {product.highlights.map((h) => (
-                <li key={h} className="flex gap-2.5 text-sm text-charcoal">
-                  <CheckIcon className="mt-0.5 h-5 w-5 shrink-0 text-plum" />
+                <li key={h} className="flex gap-2.5 text-sm text-ink">
+                  <CheckIcon className="mt-0.5 h-5 w-5 shrink-0 text-coral" />
                   <span>{h}</span>
                 </li>
               ))}

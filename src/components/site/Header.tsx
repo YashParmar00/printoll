@@ -3,7 +3,6 @@ import { site, whatsappLink } from "@/lib/site";
 import { WhatsAppIcon } from "@/components/ui/icons";
 import CartBadge from "@/components/site/CartBadge";
 import AccountBadge from "@/components/site/AccountBadge";
-import StickyHeader from "@/components/site/StickyHeader";
 import HidingHeader from "@/components/site/HidingHeader";
 
 const nav = [
@@ -62,48 +61,37 @@ function DarkHeader() {
 
 function LightHeader() {
   return (
-    <StickyHeader
-      announcement={
-        <div className="bg-jet text-white/75">
-          <p className="container-page py-2 text-center text-xs font-medium tracking-wide sm:text-[13px]">
-            Free shipping across India · COD available · ₹{site.prepaidDiscount} off on prepaid
-          </p>
-        </div>
-      }
-      main={
-        <div className="border-b border-line bg-paper/95 backdrop-blur">
-          <div className="container-page flex h-14 items-center justify-between gap-4 sm:h-16">
-            <Logo tone="light" />
+    <header className="sticky top-0 z-40 border-b border-line bg-paper/95 backdrop-blur">
+      <div className="container-page flex h-14 items-center justify-between gap-4 sm:h-16">
+        <Logo tone="light" />
 
-            <nav className="hidden items-center gap-8 lg:flex" aria-label="Primary">
-              {nav.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className="text-sm font-medium text-noir transition-colors hover:text-coral"
-                >
-                  {item.label}
-                </Link>
-              ))}
-            </nav>
+        <nav className="hidden items-center gap-8 lg:flex" aria-label="Primary">
+          {nav.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className="text-sm font-medium text-noir transition-colors hover:text-coral"
+            >
+              {item.label}
+            </Link>
+          ))}
+        </nav>
 
-            <div className="flex items-center gap-1.5">
-              <a
-                href={whatsappLink(`Hi ${site.name}, I have a question about a printed item.`)}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-full border border-line px-3 py-2 text-sm font-medium text-noir transition-colors hover:border-[#25D366] hover:text-[#1ebe5a]"
-              >
-                <WhatsAppIcon className="h-5 w-5 text-[#25D366]" />
-                <span className="hidden sm:inline">Chat 10–8</span>
-              </a>
-              <AccountBadge />
-              <CartBadge />
-            </div>
-          </div>
+        <div className="flex items-center gap-1.5">
+          <a
+            href={whatsappLink(`Hi ${site.name}, I have a question about a printed item.`)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 rounded-full border border-line px-3 py-2 text-sm font-medium text-noir transition-colors hover:border-[#25D366] hover:text-[#1ebe5a]"
+          >
+            <WhatsAppIcon className="h-5 w-5 text-[#25D366]" />
+            <span className="hidden sm:inline">Chat 10–8</span>
+          </a>
+          <AccountBadge />
+          <CartBadge />
         </div>
-      }
-    />
+      </div>
+    </header>
   );
 }
 

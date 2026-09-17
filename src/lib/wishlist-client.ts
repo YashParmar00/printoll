@@ -3,9 +3,9 @@
 import { useEffect, useSyncExternalStore } from "react";
 
 /**
- * Shared client-side wishlist state (module-level store, same shape as
- * announcement-state.ts) so every WishlistButton on a page — 12+ product
- * cards — reads one cached fetch instead of each firing its own request.
+ * Shared client-side wishlist state (module-level store) so every
+ * WishlistButton on a page — 12+ product cards — reads one cached fetch
+ * instead of each firing its own request.
  */
 type State = { loaded: boolean; loggedIn: boolean; slugs: Set<string> };
 let state: State = { loaded: false, loggedIn: false, slugs: new Set() };
