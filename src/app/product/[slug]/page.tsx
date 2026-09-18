@@ -76,10 +76,10 @@ export default async function ProductPage({
       </section>
 
       {/* Description + highlights */}
-      <section className="container-page mt-14 grid gap-10 lg:grid-cols-3">
+      <section className="container-page mt-10 grid gap-7 lg:mt-14 lg:grid-cols-3 lg:gap-10">
         <div className="lg:col-span-2">
-          <h2 className="text-2xl text-white sm:text-3xl">Why you&apos;ll love it</h2>
-          <div className="mt-4 space-y-4 leading-relaxed text-ink">
+          <h2 className="text-xl text-white sm:text-3xl">Why you&apos;ll love it</h2>
+          <div className="mt-3 space-y-3 text-sm leading-relaxed text-ink sm:mt-4 sm:space-y-4 sm:text-base">
             {product.description.map((para, i) => (
               <p key={i}>{para}</p>
             ))}
@@ -87,12 +87,12 @@ export default async function ProductPage({
           <ProductFAQ faqs={product.faqs} />
         </div>
         <aside>
-          <div className="rounded-2xl border border-line bg-night-card p-6">
-            <h3 className="text-lg text-white">What&apos;s included</h3>
-            <ul className="mt-3 space-y-2.5">
+          <div className="rounded-2xl border border-line bg-night-card p-4 sm:p-6">
+            <h3 className="text-base text-white sm:text-lg">What&apos;s included</h3>
+            <ul className="mt-3 space-y-2">
               {product.highlights.map((h) => (
-                <li key={h} className="flex gap-2.5 text-sm text-ink">
-                  <CheckIcon className="mt-0.5 h-5 w-5 shrink-0 text-coral" />
+                <li key={h} className="flex gap-2.5 text-[13px] text-ink sm:text-sm">
+                  <CheckIcon className="mt-0.5 h-4 w-4 shrink-0 text-coral sm:h-5 sm:w-5" />
                   <span>{h}</span>
                 </li>
               ))}
@@ -101,7 +101,7 @@ export default async function ProductPage({
         </aside>
       </section>
 
-      <div className="mt-14">
+      <div className="mt-10 lg:mt-14">
         <ProductReviews product={product} />
       </div>
 

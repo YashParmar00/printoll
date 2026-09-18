@@ -77,7 +77,7 @@ export default function ProductBannerCarousel({ collections }: Props) {
       <div className="overflow-hidden">
         <div
           ref={trackRef}
-          className="flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-smooth px-5 pb-4.25 -mb-4.25 sm:gap-4 sm:px-[max(1.25rem,calc((100vw-72rem)/2+1.25rem))]"
+          className="flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-smooth px-5 pb-4.25 -mb-4.25 [touch-action:pan-x] sm:gap-4 sm:px-[max(1.25rem,calc((100vw-72rem)/2+1.25rem))]"
         >
           {collections.map((collection) => {
             const image = collection.imageUrl ?? FALLBACK_PRODUCT_IMAGE;
@@ -85,7 +85,7 @@ export default function ProductBannerCarousel({ collections }: Props) {
               <Link
                 key={collection.id}
                 href={collection.href}
-                className="group relative h-55 w-[78%] shrink-0 snap-start rounded-2xl bg-night p-px sm:h-75 sm:w-[calc(50%-0.5rem)] lg:h-85 lg:w-[calc(33.333%-0.67rem)]"
+                className="group relative h-60 w-[calc(100%+2rem)] shrink-0 snap-start rounded-2xl bg-night p-px sm:h-75 sm:w-[calc(50%-0.5rem)] lg:h-85 lg:w-[calc(33.333%-0.67rem)]"
               >
                 {/* 1px bg-night margin around the clipped box: any rendering
                     seam at the rounded corners blends into it instead of

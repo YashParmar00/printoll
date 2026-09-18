@@ -28,14 +28,19 @@ export default async function FeaturedProducts() {
   return (
     <section id="featured" className="scroll-mt-28 bg-night py-12 sm:py-16">
       <div className="container-page">
-        <div className="mb-7 flex flex-wrap items-end justify-between gap-4 sm:mb-9">
+        <div className="relative mb-7 sm:mb-9">
           <div>
-            <p className="eyebrow-dark text-[10px] sm:text-xs">The Printoll edit</p>
-            <h2 className="mt-1 text-2xl text-white sm:text-3xl md:text-4xl">Best Sellers, Top Picks &amp; Trending</h2>
-          </div>
-          <Link href="/edit" className="inline-flex items-center gap-1.5 text-xs font-semibold text-coral hover:text-coral-light sm:text-sm">
-            See the full edit <ArrowRightIcon className="h-4 w-4" />
+           <div className="flex items-baseline">
+             <p className="eyebrow-dark text-[9px] sm:text-xs">The Printoll edit</p>
+              <div>
+                <Link href="/edit" className="absolute right-0 top-0.5 inline-flex items-center gap-1 text-[11px] font-semibold text-coral hover:text-coral-light sm:text-sm">
+            <span className="sm:hidden">See all</span><span className="hidden sm:inline">See the full edit</span> <ArrowRightIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
           </Link>
+              </div>
+           </div>
+            <h2 className="mt-1 text-[22px] text-white sm:text-3xl md:text-4xl">Best Sellers, Top Picks &amp; Trending</h2>
+          </div>
+         
         </div>
 
         <div className="grid grid-cols-2 gap-4 sm:gap-5 md:grid-cols-4 md:auto-rows-55 md:gap-5">

@@ -41,7 +41,7 @@ export default function SpotlightCard({ product, className = "", sizes = "(min-w
           <div className="mt-1.5 flex items-center gap-2">
             <span className="text-sm font-bold text-white sm:text-base">{inr(product.price)}</span>
             <span className="strike text-[10px] text-white/60 sm:text-xs">{inr(product.compareAtPrice)}</span>
-            {save > 0 && <span className="text-[10px] font-semibold text-coral-light sm:text-xs">Save {save}%</span>}
+            {save > 0 && <span className="text-[10px] font-semibold text-coral-light sm:text-xs whitespace-nowrap">Save {save}%</span>}
           </div>
         </div>
       </div>

@@ -11,16 +11,16 @@ export default function Hero() {
 
       {/* pt clears the floating pill header (fixed, hides on scroll-down / reappears on scroll-up) so the heading never sits under it */}
       <div className="container-page relative pb-8 pt-24 text-center sm:pb-20 sm:pt-32 md:pb-24 md:pt-36">
-        <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.06] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-coral backdrop-blur sm:px-3.5 sm:py-1.5 sm:text-[11px]">
+        <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.06] px-2.5 py-1 text-[9px] font-semibold uppercase tracking-[0.12em] text-coral backdrop-blur sm:px-3.5 sm:py-1.5 sm:text-[11px]">
           <HeartIcon className="h-3.5 w-3.5" />
           Prints for every story
         </span>
 
-        <h1 className="mx-auto mt-3 max-w-4xl text-4xl leading-[1.05] text-white sm:mt-6 sm:text-5xl md:text-6xl lg:text-7xl">
-          Printed for your story.
+        <h1 className="mx-auto mt-2.5 max-w-4xl text-[38px] leading-[1.05] text-white sm:mt-6 sm:text-5xl md:text-6xl lg:text-7xl">
+          Printed for <span className="text-coral-light">your story</span>
         </h1>
 
-        <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-night-ink sm:mt-4 sm:text-base md:text-lg">
+        <p className="mx-auto mt-2.5 max-w-xl text-[13px] leading-relaxed text-night-ink sm:mt-4 sm:text-base md:text-lg">
           Custom tees, matching styles and thoughtful gifts. Made for every kind of connection,
           delivered across India.
         </p>

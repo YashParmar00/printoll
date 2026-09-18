@@ -115,6 +115,30 @@ export const ArrowRightIcon = (p: IconProps) => (
   </svg>
 );
 
+export const ChevronLeftIcon = (p: IconProps) => (
+  <svg {...base(p)}><path d="m15 18-6-6 6-6" /></svg>
+);
+
+export const ChevronRightIcon = (p: IconProps) => (
+  <svg {...base(p)}><path d="m9 18 6-6-6-6" /></svg>
+);
+
+export const ShareIcon = (p: IconProps) => (
+  <svg {...base(p)}><circle cx="18" cy="5" r="2.5" /><circle cx="6" cy="12" r="2.5" /><circle cx="18" cy="19" r="2.5" /><path d="m8.2 10.8 7.6-4.6M8.2 13.2l7.6 4.6" /></svg>
+);
+
+export const TrashIcon = (p: IconProps) => (
+  <svg {...base(p)}><path d="M4 7h16M10 11v5M14 11v5M6 7l1 14h10l1-14M9 7V4h6v3" /></svg>
+);
+
+export const LockIcon = (p: IconProps) => (
+  <svg {...base(p)}><rect x="5" y="10" width="14" height="11" rx="2" /><path d="M8 10V7a4 4 0 0 1 8 0v3" /></svg>
+);
+
+export const LeafIcon = (p: IconProps) => (
+  <svg {...base(p)}><path d="M20 4C11 4 5 8 5 15c0 2.8 1.8 5 4.5 5C16 20 20 12 20 4Z" /><path d="M4 21c3-5 7-8 12-10" /></svg>
+);
+
 export const CheckIcon = (p: IconProps) => (
   <svg {...base(p)}>
     <path d="M5 12l5 5L20 7" />
@@ -143,6 +167,14 @@ export const HeartIcon = (p: IconProps) => (
 export const ShirtIcon = (p: IconProps) => (
   <svg {...base(p)}>
     <path d="M8 3.5 12 5l4-1.5 4 2.5-1.6 4L18 9.4V20H6V9.4l-2.4.6L2 6z" />
+  </svg>
+);
+
+/** Symmetrical tee silhouette for product-customisation actions. */
+export const TeeIcon = (p: IconProps) => (
+  <svg {...base(p)}>
+    <path d="m8.5 4 3.5 1.8L15.5 4 20 7l-2.1 4.1-2.4-1.2V20H8.5V9.9l-2.4 1.2L4 7z" />
+    <path d="M9.2 4c.4 1.5 1.4 2.2 2.8 2.2s2.4-.7 2.8-2.2" />
   </svg>
 );
 

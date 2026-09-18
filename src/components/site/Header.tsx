@@ -19,12 +19,7 @@ const nav = [
  * shows the right one from the page's [data-home-theme] marker.
  */
 export default function Header() {
-  return (
-    <>
-      <div className="chrome-home"><DarkHeader /></div>
-      <div className="chrome-shop"><LightHeader /></div>
-    </>
-  );
+  return <><DarkHeader /><div className="site-header-spacer" aria-hidden="true" /></>;
 }
 
 function DarkHeader() {

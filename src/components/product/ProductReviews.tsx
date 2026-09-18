@@ -8,9 +8,9 @@ import { StarIcon, WhatsAppIcon } from "@/components/ui/icons";
  */
 export default function ProductReviews({ product }: { product: Product }) {
   return (
-    <section className="bg-sand py-14">
+    <section className="bg-sand py-10 sm:py-14">
       <div className="container-page">
-        <h2 className="text-2xl text-white sm:text-3xl">Reviews</h2>
+        <h2 className="text-xl text-white sm:text-3xl">Reviews</h2>
 
         {product.reviews > 0 ? (
           <div className="mt-4 flex items-center gap-2">
@@ -23,7 +23,7 @@ export default function ProductReviews({ product }: { product: Product }) {
             <span className="text-ink">({product.reviews} reviews)</span>
           </div>
         ) : (
-          <div className="mt-4 rounded-2xl border border-line bg-night-card p-6 text-center">
+          <div className="mt-3 rounded-2xl border border-line bg-night-card p-4 text-center sm:mt-4 sm:p-6">
             <p className="font-semibold text-white">No reviews yet</p>
             <p className="mx-auto mt-1 max-w-md text-sm text-ink">
               Be one of our first customers. Real photo reviews from verified buyers will appear here.

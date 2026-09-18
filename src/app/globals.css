@@ -80,6 +80,36 @@ body {
 .chrome-shop { display: contents; }
 body:has([data-home-theme]) .chrome-home { display: contents; }
 body:has([data-home-theme]) .chrome-shop { display: none; }
+/* The shared floating header overlays the homepage hero. Other routes reserve
+   its height so the first page content never sits beneath the navigation. */
+.site-header-spacer { height: 72px; }
+body:has([data-home-theme]) .site-header-spacer { display: none; }
+
+/* Cart lines keep an exact product-image / information grid on small screens,
+   so long names never push the quantity control out of alignment. */
+.cart-item-list > li {
+  display: grid;
+  grid-template-columns: 5.5rem minmax(0, 1fr);
+}
+@media (min-width: 768px) {
+  .cart-item-list > li { grid-template-columns: 8rem minmax(0, 1fr); }
+}
+/* Keep cart metadata dense: size + availability and current + anchor price
+   sit on shared rows instead of building four separate vertical lines. */
+.cart-item-list > li > div > div:first-child > div > p:first-of-type { display: inline; }
+.cart-item-list > li > div > div:first-child > div > p:last-child {
+  display: inline-flex;
+  margin-left: .65rem;
+}
+.cart-item-list > li > div > div:last-child > div:first-child > p:nth-child(2) {
+  display: inline-block;
+  margin: 0 0 0 .5rem;
+}
+.cart-item-list .strike {
+  display: inline-block;
+  margin: 0 0 0 .5rem;
+  vertical-align: baseline;
+}
 
 @layer base {
   h1,
