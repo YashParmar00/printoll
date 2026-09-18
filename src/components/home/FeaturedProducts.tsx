@@ -16,11 +16,11 @@ export default async function FeaturedProducts() {
   // all come from one merchandising bucket.
   const byBadge = new Map(BADGE_ORDER.map(badge => [badge, products.filter(p => p.badge === badge)]));
   const spotlight: typeof products = [];
-  for (let round = 0; spotlight.length < 8 && round < 4; round++) {
+  for (let round = 0; spotlight.length < 6 && round < 4; round++) {
     for (const badge of BADGE_ORDER) {
       const item = byBadge.get(badge)?.[round];
       if (item) spotlight.push(item);
-      if (spotlight.length === 8) break;
+      if (spotlight.length === 6) break;
     }
   }
   if (!spotlight.length) return null;
@@ -28,19 +28,14 @@ export default async function FeaturedProducts() {
   return (
     <section id="featured" className="scroll-mt-28 bg-night py-12 sm:py-16">
       <div className="container-page">
-        <div className="relative mb-7 sm:mb-9">
-          <div>
-           <div className="flex items-baseline">
-             <p className="eyebrow-dark text-[9px] sm:text-xs">The Printoll edit</p>
-              <div>
-                <Link href="/edit" className="absolute right-0 top-0.5 inline-flex items-center gap-1 text-[11px] font-semibold text-coral hover:text-coral-light sm:text-sm">
-            <span className="sm:hidden">See all</span><span className="hidden sm:inline">See the full edit</span> <ArrowRightIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-          </Link>
-              </div>
-           </div>
-            <h2 className="mt-1 text-[22px] text-white sm:text-3xl md:text-4xl">Best Sellers, Top Picks &amp; Trending</h2>
+        <div className="mb-7 sm:mb-9">
+          <div className="flex items-center justify-between gap-3">
+            <p className="eyebrow-dark text-[10px] sm:text-xs">The Printoll edit</p>
+            <Link href="/edit" className="inline-flex min-h-8 shrink-0 items-center gap-1 px-1 text-xs font-semibold text-coral hover:text-coral-light sm:text-sm">
+              <span className="sm:hidden">See all</span><span className="hidden sm:inline">See the full edit</span> <ArrowRightIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+            </Link>
           </div>
-         
+          <h2 className="mt-1 text-[22px] text-white sm:text-3xl md:text-4xl">Best Sellers, Top Picks &amp; Trending</h2>
         </div>
 
         <div className="grid grid-cols-2 gap-4 sm:gap-5 md:grid-cols-4 md:auto-rows-55 md:gap-5">

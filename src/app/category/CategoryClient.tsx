@@ -114,7 +114,7 @@ export default function CategoryClient({ products, collections }: { products: Pr
         })}
       </nav>
 
-      <div className="sticky top-14 z-20 -mx-4 mt-3 bg-paper/95 px-4 py-2 backdrop-blur sm:top-16 lg:static lg:z-auto lg:mx-0 lg:mt-6 lg:rounded-2xl lg:border lg:border-line lg:bg-sand lg:p-0 lg:backdrop-blur-none">
+      <div className="relative z-10 -mx-4 mt-3 bg-paper px-4 py-2 sm:mx-0 sm:px-0 lg:static lg:z-auto lg:mt-6 lg:rounded-2xl lg:border lg:border-line lg:bg-sand lg:p-0">
         <div className="flex flex-wrap items-center gap-2 lg:gap-3 lg:p-4">
           <div className="relative min-w-0 flex-1">
             <Icon kind="search" className="pointer-events-none absolute left-2.5 top-2.5 lg:top-4 h-4 w-4 text-ink" />

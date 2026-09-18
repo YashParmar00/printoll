@@ -227,3 +227,32 @@ export const UserIcon = (p: IconProps) => (
     <path d="M4 20c0-4.4 3.6-7 8-7s8 2.6 8 7" />
   </svg>
 );
+
+export const LogoutIcon = (p: IconProps) => (
+  <svg {...base(p)}>
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+    <path d="M16 17l5-5-5-5M21 12H9" />
+  </svg>
+);
+
+export const HeadsetIcon = (p: IconProps) => (
+  <svg {...base(p)}>
+    <path d="M4 13a8 8 0 0 1 16 0" />
+    <rect x="3" y="13" width="4" height="6" rx="1.5" />
+    <rect x="17" y="13" width="4" height="6" rx="1.5" />
+    <path d="M20 19v1a3 3 0 0 1-3 3h-3" />
+  </svg>
+);
+
+export const PhoneIcon = (p: IconProps) => (
+  <svg {...base(p)}>
+    <path d="M5 4h3.5l1.5 4-2 1.5a11 11 0 0 0 5 5l1.5-2 4 1.5V17.5a1.5 1.5 0 0 1-1.6 1.5A16 16 0 0 1 3.5 5.6 1.5 1.5 0 0 1 5 4Z" />
+  </svg>
+);
+
+export const MapPinIcon = (p: IconProps) => (
+  <svg {...base(p)}>
+    <path d="M12 21s7-6.5 7-11.5A7 7 0 0 0 5 9.5C5 14.5 12 21 12 21Z" />
+    <circle cx="12" cy="9.5" r="2.5" />
+  </svg>
+);

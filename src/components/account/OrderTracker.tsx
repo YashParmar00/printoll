@@ -48,7 +48,7 @@ function stepIndex(status: string) {
 
 const focus = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coral focus-visible:ring-offset-2 focus-visible:ring-offset-paper";
 
-/** The order card + animated stepper shared by /track (guest lookup) and /account/orders (signed-in). */
+/** The order card + animated stepper shared by /track and /account/orders/[orderNumber]. */
 export default function OrderTracker({ order }: { order: TrackedOrder }) {
   const cancelled = order.status === "cancelled";
   const current = stepIndex(order.status);

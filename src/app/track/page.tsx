@@ -1,65 +1,80 @@
-"use client";
+import Image from "next/image";
+import Link from "next/link";
+import type { Metadata } from "next";
+import { redirect } from "next/navigation";
+import { getCurrentCustomer } from "@/lib/customer-auth";
+import { listOrdersByCustomer } from "@/lib/orders";
+import { products, FALLBACK_PRODUCT_IMAGE } from "@/lib/products";
+import { inr } from "@/lib/format";
+import { site, whatsappLink } from "@/lib/site";
+import { STATUS_LABEL } from "@/components/account/OrderTracker";
+import { HeadsetIcon, WhatsAppIcon, BagIcon } from "@/components/ui/icons";
 
-import { useState } from "react";
-import OrderTracker, { OrderNotFound, OrderTrackerFooter, type TrackedOrder } from "@/components/account/OrderTracker";
+export const metadata: Metadata = { title: "Track your order" };
+export const dynamic = "force-dynamic";
 
-const focus = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coral focus-visible:ring-offset-2 focus-visible:ring-offset-paper";
-
-export default function TrackOrderPage() {
-  const [orderNumber, setOrderNumber] = useState("");
-  const [phone, setPhone] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [result, setResult] = useState<TrackedOrder | null>(null);
-  const [notFound, setNotFound] = useState(false);
-
-  async function lookup() {
-    setLoading(true);
-    setError("");
-    setResult(null);
-    setNotFound(false);
-    try {
-      const res = await fetch("/api/track", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ orderNumber, phone }),
-      });
-      const data = await res.json();
-      if (!res.ok) setError(data.error ?? "Something went wrong.");
-      else if (!data.found) setNotFound(true);
-      else setResult(data.order);
-    } catch {
-      setError("Network error. Please try again.");
-    }
-    setLoading(false);
-  }
+export default async function TrackOrderPage() {
+  const customer = await getCurrentCustomer();
+  if (!customer) redirect("/account/login?next=/track");
+  const recentOrders = await listOrdersByCustomer(customer.id);
 
   return (
-    <div className="container-page max-w-2xl py-10 sm:py-14">
-      <p className="eyebrow flex items-center gap-2 text-[10px] sm:text-xs"><span className="h-1.5 w-1.5 rounded-full bg-coral" /> Orders</p>
-      <h1 className="mt-2 text-3xl sm:text-4xl">Track your order</h1>
-      <p className="mt-2 text-sm leading-relaxed text-ink sm:text-base">Enter your order number and the phone number you used at checkout.</p>
+    <div className="container-page max-w-lg py-6 sm:py-10">
+      <Link href="/account" className="text-xs font-semibold text-coral">← My account</Link>
+      <h1 className="mt-2 text-2xl font-extrabold text-white sm:text-3xl">Track your order</h1>
+      <p className="mt-1 text-sm text-ink">Here&apos;s the latest on your orders.</p>
 
-      <div className="mt-6 rounded-2xl border border-line bg-night-card p-5 sm:p-6">
-        <div className="grid gap-4 sm:grid-cols-2">
-          <div>
-            <label htmlFor="on" className="field-label">Order number</label>
-            <input id="on" className="field mt-1" placeholder="AM-YYYYMMDD-XXXX" value={orderNumber} onChange={(e) => setOrderNumber(e.target.value)} onKeyDown={(e) => e.key === "Enter" && lookup()} />
-          </div>
-          <div>
-            <label htmlFor="ph" className="field-label">Phone number</label>
-            <input id="ph" className="field mt-1" inputMode="numeric" maxLength={10} placeholder="10-digit number" value={phone} onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))} onKeyDown={(e) => e.key === "Enter" && lookup()} />
-          </div>
+      {recentOrders.length > 0 ? (
+        <div className="mt-7">
+          <h2 className="text-sm font-bold uppercase tracking-wide text-ink">Your orders</h2>
+          <ul className="mt-3 space-y-2.5">
+            {recentOrders.map((order) => {
+              const firstItem = order.items[0];
+              const product = firstItem ? products.find((p) => p.slug === firstItem.slug) : undefined;
+              const image = product?.imageUrls?.[0] ?? product?.imageUrl ?? FALLBACK_PRODUCT_IMAGE;
+              return (
+                <li key={order.orderNumber}>
+                  <Link href={`/account/orders/${order.orderNumber}`} className="flex items-center gap-3 rounded-2xl border border-line bg-night-card p-3 transition hover:border-coral/40">
+                    <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-xl bg-sand">
+                      <Image src={image} alt="" fill sizes="48px" className="object-cover" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-bold text-white">{order.orderNumber}</p>
+                      <p className="mt-0.5 text-xs text-ink">
+                        {new Date(order.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })} · {inr(order.total)}
+                      </p>
+                    </div>
+                    <span className={`tag shrink-0 ${order.status === "cancelled" ? "bg-red-500/15 text-red-400" : "bg-coral/15 text-coral-light"}`}>{STATUS_LABEL[order.status] ?? order.status}</span>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
         </div>
-        <button type="button" onClick={lookup} disabled={loading || !orderNumber || phone.length !== 10} className={`btn-primary mt-5 w-full sm:w-auto disabled:opacity-60 ${focus}`}>
-          {loading ? "Checking…" : "Track order"}
-        </button>
-        {error && <p className="mt-3 text-sm font-medium text-red-500">{error}</p>}
-      </div>
+      ) : (
+        <div className="mt-7 flex flex-col items-center rounded-2xl border border-dashed border-line bg-sand/50 px-6 py-12 text-center">
+          <span className="flex h-12 w-12 items-center justify-center rounded-full bg-coral/10 text-coral"><BagIcon className="h-5 w-5" /></span>
+          <p className="mt-4 font-semibold text-white">No orders yet</p>
+          <p className="mt-1 text-sm text-ink">Once you place an order, you can track it here.</p>
+          <Link href="/category" className="btn-primary mt-5 text-sm">Browse products</Link>
+        </div>
+      )}
 
-      {notFound && <OrderNotFound />}
-      {result && <div className="mt-6"><OrderTracker order={result} /></div>}
-      <OrderTrackerFooter />
+      <div className="mt-7 flex items-center gap-3 rounded-2xl border border-line bg-night-card p-4">
+        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-coral/10 text-coral"><HeadsetIcon className="h-5 w-5" /></span>
+        <div className="min-w-0 flex-1">
+          <p className="text-sm font-bold text-white">Need help with your order?</p>
+          <p className="text-xs text-ink">Our support team is here for you.</p>
+        </div>
+        <a
+          href={whatsappLink(`Hi ${site.name}, I need help tracking my order.`)}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-coral/40 px-3 py-2 text-xs font-semibold text-coral"
+        >
+          <WhatsAppIcon className="h-3.5 w-3.5" /> Contact
+        </a>
+      </div>
     </div>
   );
 }

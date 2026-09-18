@@ -17,7 +17,7 @@ export default async function AccountOrderPage({ params }: { params: Promise<{ o
 
   return (
     <div className="container-page max-w-2xl py-10 sm:py-14">
-      <Link href="/account/orders" className="text-sm font-semibold text-coral">← My orders</Link>
+      <Link href="/track" className="text-sm font-semibold text-coral">← My orders</Link>
       <h1 className="mt-3 text-3xl sm:text-4xl">Order {order.orderNumber}</h1>
       <div className="mt-6"><OrderTracker order={order} /></div>
     </div>

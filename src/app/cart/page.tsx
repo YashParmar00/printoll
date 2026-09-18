@@ -28,16 +28,14 @@ export default function CartPage() {
     .slice(0, 4);
   return (
     <div className="container-page min-h-[760px] py-6 pb-20 sm:py-10 lg:pb-16">
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <h1 className="text-2xl text-white sm:text-4xl">Your cart</h1>
-          <p className="mt-0.5 text-xs text-ink sm:mt-1 sm:text-sm">
-            {count} item{count === 1 ? "" : "s"}
-          </p>
-        </div>
+      <div className="relative">
+        <h1 className="text-2xl text-white sm:text-4xl">Your cart</h1>
+        <p className="mt-0.5 text-xs text-ink sm:mt-1 sm:text-sm">
+          {count} item{count === 1 ? "" : "s"}
+        </p>
         <Link
           href="/category"
-          className="mt-1 inline-flex shrink-0 items-center gap-1 text-xs font-semibold text-coral hover:text-coral-light sm:text-sm"
+          className="absolute bottom-0 right-0 inline-flex items-center gap-1 text-xs font-semibold text-coral hover:text-coral-light sm:text-sm"
         >
           Continue shopping{" "}
           <ArrowRightIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />

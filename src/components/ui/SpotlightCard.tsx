@@ -38,10 +38,10 @@ export default function SpotlightCard({ product, className = "", sizes = "(min-w
             effect and the text would render at the top instead of the bottom. */}
         <div className="absolute inset-x-0 bottom-0 w-full p-4 sm:p-5">
           <h3 className="text-sm font-bold leading-snug text-white sm:text-base md:text-lg">{product.name}</h3>
-          <div className="mt-1.5 flex items-center gap-2">
+          <div className="mt-1 flex items-baseline gap-1.5">
             <span className="text-sm font-bold text-white sm:text-base">{inr(product.price)}</span>
             <span className="strike text-[10px] text-white/60 sm:text-xs">{inr(product.compareAtPrice)}</span>
-            {save > 0 && <span className="text-[10px] font-semibold text-coral-light sm:text-xs whitespace-nowrap">Save {save}%</span>}
+            {save > 0 && <span className="text-[10px] font-semibold text-coral-light whitespace-nowrap">Save {save}%</span>}
           </div>
         </div>
       </div>

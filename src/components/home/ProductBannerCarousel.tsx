@@ -77,7 +77,7 @@ export default function ProductBannerCarousel({ collections }: Props) {
       <div className="overflow-hidden">
         <div
           ref={trackRef}
-          className="flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-smooth px-5 pb-4.25 -mb-4.25 [touch-action:pan-x] sm:gap-4 sm:px-[max(1.25rem,calc((100vw-72rem)/2+1.25rem))]"
+          className="hide-scrollbar flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-smooth px-5 pb-4.25 -mb-4.25 [touch-action:pan-x] sm:gap-4 sm:px-[max(1.25rem,calc((100vw-72rem)/2+1.25rem))]"
         >
           {collections.map((collection) => {
             const image = collection.imageUrl ?? FALLBACK_PRODUCT_IMAGE;
